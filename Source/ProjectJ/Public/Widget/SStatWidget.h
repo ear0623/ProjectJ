@@ -6,6 +6,7 @@
 #include "Components/Widget.h"
 #include "SStatWidget.generated.h"
 
+class UButton;
 /**
  * 
  */
@@ -13,5 +14,11 @@ UCLASS()
 class PROJECTJ_API USStatWidget : public UWidget
 {
 	GENERATED_BODY()
+	
+private:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UButton> SampleButton;
+
+protected:
 	
 };
