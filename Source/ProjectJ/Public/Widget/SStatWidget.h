@@ -15,8 +15,8 @@ class PROJECTJ_API USStatWidget : public UWidget
 {
 	GENERATED_BODY()
 	
-private:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
+public:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(BindWidget))
 	TObjectPtr<UButton> SampleButton;
 
 protected:
