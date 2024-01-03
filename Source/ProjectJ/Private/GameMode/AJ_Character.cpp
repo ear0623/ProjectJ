@@ -56,15 +56,28 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	if (UEIC)
 	{
 		// 상속받은 AAJ_Character 에 Jump 관련한 함수는 이미 있기 때문에 AAJ_Character.h에 ABBC::Jump 함수를 만들지 않아도 됨
+		
+		//점프
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
-		// AAJ_Character.h에 만든 액션에 바인딩을 걸어주고 호출하는 코드 작성
+		//무브
 		UEIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAJ_Character::Move);
+		//룩
 		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
+		//공격
+		UEIC->BindAction(IA_Shoot, ETriggerEvent::Started, this, &AAJ_Character::Shoot);
+		//앉기
+		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::Crouch);
+		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
+		//재장전
+		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
 	}
 
 }
 
+/////////////////입력 키 함수 설정/////////////////////////////////////////////////////////
+
+//무브
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
 	// 입력값 Value 로 부터 2축(X, Y)형태의 값을 추출.
@@ -85,6 +98,7 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 	AddMovementInput(RightVector, Dir.X);
 }
 
+//룩
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
 	// 캐릭터의 회전을 위해서 입력값으로부터 값을 추출.
@@ -93,5 +107,58 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 	// Yaw 에 대한, Pitch 에 대한 이동값을 추가.
 	AddControllerYawInput(Rotation.X);
 	AddControllerPitchInput(Rotation.Y);
+}
+
+//앉기
+void AAJ_Character::Crouch(const FInputActionValue& Value)
+{
+	ServerCrouch();
+}
+void AAJ_Character::StopCrouching(const FInputActionValue& Value)
+{
+}
+
+//재장전
+void AAJ_Character::Reload(const FInputActionValue& Value)
+{
+	ServerReload();
+}
+
+//공격
+void AAJ_Character::Shoot(const FInputActionValue& Value)
+{
+	ServerShoot();
+}
+
+
+/////////네트워크///////////////////////////////////////////////////////////////////
+
+//앉기
+void AAJ_Character::ServerCrouch_Implementation()
+{
+	MultiCrouch();
+}
+void AAJ_Character::MultiCrouch_Implementation()
+{
+}
+
+//공격
+void AAJ_Character::ServerShoot_Implementation()
+{
+	MultiShoot();
+}
+void AAJ_Character::MultiShoot_Implementation()
+{
+	PlayAnimMontage(ShootMontage);
+}
+
+//재장전
+void AAJ_Character::ServerReload_Implementation()
+{
+	MultiReload();
+}
+void AAJ_Character::MultiReload_Implementation()
+{
+	PlayAnimMontage(ReloadMontage);
 }
 
