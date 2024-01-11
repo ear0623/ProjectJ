@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h" //인풋액션을 사용하기 위해 반드시 이 위치에 넣는다.
+#include "WeaponInterface.h"
 #include "AJ_Character.generated.h"
+
+DECLARE_DELEGATE(FDele_UpdateShoot);
 
 // 전방 선언 
 class USpringArmComponent; //스프링암 사용을 위해 선언
@@ -37,16 +40,16 @@ class PROJECTJ_API AAJ_Character : public ACharacter
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Move;
 	//룩
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Look;
 	//앉기 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Crouch;
 	//재장전
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Reload;
 	//공격
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Shoot;
 
 	////////////입력키 함수 설정///////////////////////////////////////////////////////////////////////////
@@ -102,6 +105,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
+
+//////////////////////////////////Delgate/////////////////////////////////////////////////////////////////////
+public:
+	
+	FDele_UpdateShoot UpdateShoot;
+	
 
 public:
 	// Sets default values for this character's properties

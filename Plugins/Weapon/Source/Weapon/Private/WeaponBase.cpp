@@ -12,9 +12,11 @@ AWeaponBase::AWeaponBase()
 	// CDO 생성 및 루트컴포넌트 설정
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
 	RootComponent=WeaponMesh;
-
+	if (WeaponMesh != nullptr)
+	{
+		WeaponMesh->SetSimulatePhysics(true);
+	}
 	
-
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +30,11 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void AWeaponBase::WeaponShoot()
+{
 
 }
 

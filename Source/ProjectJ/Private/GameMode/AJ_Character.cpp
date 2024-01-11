@@ -145,6 +145,7 @@ void AAJ_Character::MultiCrouch_Implementation()
 //АјАн
 void AAJ_Character::ServerShoot_Implementation()
 {
+	UpdateShoot.Execute();
 	MultiShoot();
 }
 void AAJ_Character::MultiShoot_Implementation()
