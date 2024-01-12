@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h" //인풋액션을 사용하기 위해 반드시 이 위치에 넣는다.
-#include "WeaponInterface.h"
 #include "AJ_Character.generated.h"
 
 DECLARE_DELEGATE(FDele_UpdateShoot);
+DECLARE_DELEGATE(FDele_UpdateInteraction);
+
 
 // 전방 선언 
 class USpringArmComponent; //스프링암 사용을 위해 선언
@@ -51,6 +52,9 @@ class PROJECTJ_API AAJ_Character : public ACharacter
 	//공격
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Shoot;
+	//상호작용
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Interaction;
 
 	////////////입력키 함수 설정///////////////////////////////////////////////////////////////////////////
 	
@@ -66,7 +70,9 @@ class PROJECTJ_API AAJ_Character : public ACharacter
 	//재장전
 	void Reload(const FInputActionValue& Value);
 	//공격
-	void Shoot(const FInputActionValue& Value);
+	void Trigger(const FInputActionValue& Value);
+	//상호작용
+	void Interaction(const FInputActionValue& Value);
 
 
 /////////////////////////////네트워크  코드 영역/////////////////////////////////////////////////////////////////
@@ -76,7 +82,6 @@ public:
 	void ServerCrouch();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiCrouch();
-
 
 	//공격
 	UFUNCTION(Server, Reliable)
@@ -89,6 +94,12 @@ public:
 	void ServerReload();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiReload();
+
+	//상호작용
+	UFUNCTION(Server, Reliable)
+	void ServerInteraction();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiInteraction();
 
 
 //////////////////////////////////애님몽타지/////////////////////////////////////////////////////////////////////
@@ -105,11 +116,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
+	
+
 
 //////////////////////////////////Delgate/////////////////////////////////////////////////////////////////////
-public:
+private:
 	
 	FDele_UpdateShoot UpdateShoot;
+	FDele_UpdateInteraction UpdateInteraction;
 	
 
 public:

@@ -7,14 +7,6 @@
 #include "WeaponInterface.generated.h"
 
 
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	AMMO UMETA(DisplayName = "Ammo"),
-	Magazine UMETA(DisplayName = "Mag"),
-	AssaultRifle UMETA(DisplayName = "AR"),
-};
-
 UINTERFACE(Blueprintable)
 class UWeaponInterface : public UInterface
 {
@@ -28,4 +20,6 @@ class WEAPON_API IWeaponInterface
 public:
 	
 	virtual void WeaponShoot()=0;
+
+	
 };

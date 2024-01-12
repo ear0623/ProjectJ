@@ -65,12 +65,14 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		//룩
 		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
 		//공격
-		UEIC->BindAction(IA_Shoot, ETriggerEvent::Started, this, &AAJ_Character::Shoot);
+		UEIC->BindAction(IA_Shoot, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
 		//앉기
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::Crouch);
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
 		//재장전
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
+		//상호작용
+		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
 	}
 
 }
@@ -125,9 +127,14 @@ void AAJ_Character::Reload(const FInputActionValue& Value)
 }
 
 //공격
-void AAJ_Character::Shoot(const FInputActionValue& Value)
+void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
 	ServerShoot();
+}
+
+void AAJ_Character::Interaction(const FInputActionValue& Value)
+{
+	ServerInteraction();
 }
 
 
@@ -163,3 +170,12 @@ void AAJ_Character::MultiReload_Implementation()
 	PlayAnimMontage(ReloadMontage);
 }
 
+void AAJ_Character::ServerInteraction_Implementation()
+{
+	MultiInteraction();
+}
+
+void AAJ_Character::MultiInteraction_Implementation()
+{
+	UpdateInteraction.Execute();
+}

@@ -3,15 +3,20 @@
 
 #include "WeaponBase.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
+
 
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	// CDO 생성 및 루트컴포넌트 설정
+	// CDO 생성 및 컴포넌트 설정
+	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	RootComponent = SphereCollision;
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
-	RootComponent=WeaponMesh;
+	WeaponMesh->SetupAttachment(SphereCollision);
 	if (WeaponMesh != nullptr)
 	{
 		WeaponMesh->SetSimulatePhysics(true);
@@ -23,7 +28,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnWeaponBeingOverap);
 }
 
 // Called every frame
@@ -36,5 +42,15 @@ void AWeaponBase::Tick(float DeltaTime)
 void AWeaponBase::WeaponShoot()
 {
 
+}
+
+void AWeaponBase::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	OwnedCharacter = Cast<ACharacter>(OtherActor);
+	if (OwnedCharacter != nullptr)
+	{
+		SetOwner(OwnedCharacter);
+	}
+	
 }
 
