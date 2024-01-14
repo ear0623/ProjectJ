@@ -10,12 +10,12 @@
 class UStaticMeshComponent;
 class USphereComponent;
 class ACharacter;
+class UParticleSystem;
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	ShotGun UMETA(DisplayName = "SG"),
-	HandGun UMETA(DisplayName = "HG"),
 	AssaultRifle UMETA(DisplayName = "AR"),
 };
 
@@ -55,6 +55,9 @@ private:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ACharacter> OwnedCharacter;
 
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UParticleSystem> TriggerEffect;
+
 public:
 	/////////인터페이스///////////////////////////////////////////////////////////////////
 	virtual void WeaponShoot()override;
@@ -62,4 +65,6 @@ public:
 public:
 	//MyOverrap
 	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void Trigger();
 };

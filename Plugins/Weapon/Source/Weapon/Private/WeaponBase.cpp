@@ -5,6 +5,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "AmmoBase.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -52,5 +54,15 @@ void AWeaponBase::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, 
 		SetOwner(OwnedCharacter);
 	}
 	
+}
+
+void AWeaponBase::Trigger()
+{
+	//soundspawn
+	
+	//TObjectPtr<USceneComponent> SaveLocation = WeaponMesh->GetSocketByName(TEXT("Muzzle"));
+	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TriggerEffect,);
+	//Bullet 생성
+	GetWorld()->SpawnActor<AAmmoBase>();
 }
 

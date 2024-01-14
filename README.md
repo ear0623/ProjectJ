@@ -12,3 +12,5 @@ ProjectJ
 2024.01.11 Plugin 토대 제작 및 인터페이스 베이스 생성 
 
 2024.01.11 Ammo 클래스 생성 및 변수 생성, EnumClass 생성
+
+2024.01.13  발사관련 Ammo Trigger함수생성

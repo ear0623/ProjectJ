@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "AmmoBase.generated.h"
 
+class UStaticMeshComponent;
+
 UENUM(BlueprintType)
 enum class EBulletType : uint8
 {
@@ -33,36 +35,51 @@ public:
 
 private:
 	
-////////////////////////////////인자///////////////////////////
+////////////////////////////////가속도계산///////////////////////////
 	//속도
-	FVector Velocity;
+	float Velocity;
+	//속도X
+	float AccelateX;
+	//속도Y
+	float AccelateY;
 	//밀도
-	float Dencity;
+	float AirDencity;
 	//단면적
-	float Cross_sectional_area;
+	float CrossSectionalArea;
 	//항력
 	float Drag;
 	//항력계수
-	float Coefficient;
+	float  DragCoefficient;
 	//질량
 	float Mass;
 	//가속도
 	float Accelate;
 	//힘
 	float Force;
-	//divide
-	int32 Divide_half;
 	//sin
 	float Sin;
 	//cos
 	float Cos;
-///////////////////////////////기타//////////////////////////
+///////////////////////////////변수//////////////////////////
 	//Damage
 	float Damage;
+	
+	////////Component///////////////////////////////////////////////////////////////////
+	//외형
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> AmmoMesh;
+
+	//무기타입
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	EBulletType AmmoType;
+
 	
 public:
 
 	void MoveAmmo();
+
 	void Tirrger();
+	
+
 
 };
