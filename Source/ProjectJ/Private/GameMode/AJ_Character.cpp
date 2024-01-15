@@ -8,6 +8,8 @@
 #include "Components/SkeletalMeshComponent.h"//스켈레탈메쉬
 #include "EnhancedInputComponent.h"//향상된 입력
 #include "Kismet/KismetMathLibrary.h"//캐릭터 기준 회전값을 구하기 위해 필요
+#include "GameFramework/CharacterMovementComponent.h" // 캐릭터 무브먼트를 이용하기 위해 필요
+
 
 
 // Sets default values
@@ -29,7 +31,12 @@ AAJ_Character::AAJ_Character()
 
 	// 캐릭터 초기 회전값(Pitch, Yaw, Roll)
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
-	//
+	
+	//앉기 초기 값
+	bIsCrouching = false; // 기본값을 fals로 둔다
+	 
+	//캐릭터 달리기 속도
+	SprintSpeedMultiplier = 2.0f; // 달리기 배속
 }
 
 // Called when the game starts or when spawned
@@ -65,12 +72,17 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		//룩
 		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
 		//공격
-		UEIC->BindAction(IA_Shoot, ETriggerEvent::Started, this, &AAJ_Character::Shoot);
+		UEIC->BindAction(IA_Trigger, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
 		//앉기
-		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::Crouch);
+		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::StartCrouch);
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
 		//재장전
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
+		//상호작용
+		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
+		//달리기
+		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
+		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
 
 }
@@ -110,12 +122,33 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 }
 
 //앉기
-void AAJ_Character::Crouch(const FInputActionValue& Value)
+void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
-	ServerCrouch();
+	if (!bIsCrouching)
+	{ // 앉기 전 원본 값 저장
+		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
+		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+		// 위치, 높이가 절반씩 줄어든다
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
+		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
+		Crouch();
+		bIsCrouching = true;
+	}
+	PlayAnimMontage(CrouchMontage);
 }
 void AAJ_Character::StopCrouching(const FInputActionValue& Value)
 {
+	if (bIsCrouching)
+	{	
+		UnCrouch();
+		bIsCrouching = false;
+		// 앉기 전 사이즈로 돌린다.
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
+		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
+
+	}
+	PlayAnimMontage(StopCrouchMontage);
 }
 
 //재장전
@@ -125,31 +158,45 @@ void AAJ_Character::Reload(const FInputActionValue& Value)
 }
 
 //공격
-void AAJ_Character::Shoot(const FInputActionValue& Value)
+void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
-	ServerShoot();
+	ServerTrigger();
+}
+
+//인터랙샨
+void AAJ_Character::Interaction(const FInputActionValue& Value)
+{
+	ServerInteraction();
+}
+
+
+//달리기
+void AAJ_Character::Sprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+	PlayAnimMontage(SprintMontage);
+}
+
+void AAJ_Character::StopSprint(const FInputActionValue& Value)
+{
+	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+	PlayAnimMontage(StopSprintMontage);
 }
 
 
 /////////네트워크///////////////////////////////////////////////////////////////////
 
-//앉기
-void AAJ_Character::ServerCrouch_Implementation()
-{
-	MultiCrouch();
-}
-void AAJ_Character::MultiCrouch_Implementation()
-{
-}
+
 
 //공격
-void AAJ_Character::ServerShoot_Implementation()
-{
-	MultiShoot();
+void AAJ_Character::ServerTrigger_Implementation() 
+{ //여기서 터짐 왠진몰루
+	//UpdateTrigger.Execute();
+	//MultiTrigger();
 }
-void AAJ_Character::MultiShoot_Implementation()
+void AAJ_Character::MultiTrigger_Implementation()
 {
-	PlayAnimMontage(ShootMontage);
+	PlayAnimMontage(TriggerMontage);
 }
 
 //재장전
@@ -162,3 +209,13 @@ void AAJ_Character::MultiReload_Implementation()
 	PlayAnimMontage(ReloadMontage);
 }
 
+
+void AAJ_Character::ServerInteraction_Implementation()
+{
+	MultiInteraction();
+}
+
+void AAJ_Character::MultiInteraction_Implementation()
+{
+	UpdateInteraction.Execute();
+}

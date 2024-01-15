@@ -7,6 +7,10 @@
 #include "InputActionValue.h" //인풋액션을 사용하기 위해 반드시 이 위치에 넣는다.
 #include "AJ_Character.generated.h"
 
+DECLARE_DELEGATE(FDele_UpdateShoot);
+DECLARE_DELEGATE(FDele_UpdateInteraction);
+
+
 // 전방 선언 
 class USpringArmComponent; //스프링암 사용을 위해 선언
 class UCameraComponent; //카메라 사용을 위해 선언
@@ -37,17 +41,23 @@ class PROJECTJ_API AAJ_Character : public ACharacter
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Move;
 	//룩
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Look;
 	//앉기 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Crouch;
 	//재장전
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Reload;
 	//공격
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Trigger;
+	//상호작용
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Interaction;
+	//달리기
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
-	UInputAction* IA_Shoot;
+	UInputAction* IA_Sprint;
 
 	////////////입력키 함수 설정///////////////////////////////////////////////////////////////////////////
 	
@@ -58,28 +68,37 @@ class PROJECTJ_API AAJ_Character : public ACharacter
 	//룰
 	void Look(const FInputActionValue& Value);
 	//앉기
-	void Crouch(const FInputActionValue& Value);
+	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouching(const FInputActionValue& Value);
+	bool bIsCrouching;
+	// 원본캡슐컴포넌트의 절반 높이, 위치로 설정
+	FVector OriginalCapsuleLocation;
+	float OriginalCapsuleHalfHeight;
 	//재장전
 	void Reload(const FInputActionValue& Value);
 	//공격
-	void Shoot(const FInputActionValue& Value);
+	void Trigger(const FInputActionValue& Value);
+	//상호작용
+	void Interaction(const FInputActionValue& Value);
+	//달리기
+	void Sprint(const FInputActionValue& Value);
+	void StopSprint(const FInputActionValue& Value);
+	float SprintSpeedMultiplier;
 
 
 /////////////////////////////네트워크  코드 영역/////////////////////////////////////////////////////////////////
 public:
-	//앉기
-	UFUNCTION(Server, Reliable)
-	void ServerCrouch();
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiCrouch();
-
+	//앉기 //movement라고 이름이 붙은 컴포넌트는 Replicated가 설정되어있다.
+	//UFUNCTION(Server, Reliable)
+	//void ServerCrouch();
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MultiCrouch();
 
 	//공격
 	UFUNCTION(Server, Reliable)
-	void ServerShoot();
+	void ServerTrigger();
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiShoot();
+	void MultiTrigger();
 	
 	//재장전
 	UFUNCTION(Server, Reliable)
@@ -87,21 +106,42 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiReload();
 
+	//상호작용
+	UFUNCTION(Server, Reliable)
+	void ServerInteraction();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiInteraction();
+
 
 //////////////////////////////////애님몽타지/////////////////////////////////////////////////////////////////////
 public:
 	//공격
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> ShootMontage;
+	TObjectPtr<UAnimMontage>TriggerMontage;
 
 	//앉기
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> CrouchMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> StopCrouchMontage;
 
 	//재장전
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
+	//달리기
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> SprintMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> StopSprintMontage;
+
+
+//////////////////////////////////Delgate/////////////////////////////////////////////////////////////////////
+private:
+	
+	FDele_UpdateShoot UpdateTrigger;
+	FDele_UpdateInteraction UpdateInteraction;
+	
 
 public:
 	// Sets default values for this character's properties
