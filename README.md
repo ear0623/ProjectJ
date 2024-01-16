@@ -18,3 +18,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.14 character.cc 194번째에서 계속 게임터짐 이유모룸
 
 2024.01.16 character에 있는 deligate 임시로 해제 weapon beginoverrap 작업중
+
+2024.01.16 Weapon의 AttachD 작업

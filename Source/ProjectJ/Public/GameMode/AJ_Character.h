@@ -18,10 +18,29 @@ class UInputAction;//
 struct FInputActionValue;//
 class UAnimMontage;//애님몽타지 사용을 위해 선언
 
+
 UCLASS()
 class PROJECTJ_API AAJ_Character : public ACharacter
 {
 	GENERATED_BODY()
+
+
+public:
+	// Sets default values for this character's properties
+	AAJ_Character();
+
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 
 	/////////////카메라 변수 추가////////////////////////////////
 
@@ -136,29 +155,18 @@ public:
 	TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
-//////////////////////////////////Delgate/////////////////////////////////////////////////////////////////////
+//////////////////////////////////델리게이트/////////////////////////////////////////////////////////////////////
 public:
 
 	//FDele_UpdateShoot UpdateTrigger; 
 
 	FDele_UpdateInteraction UpdateInteraction; 
 
-public:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
-public:
-	// Sets default values for this character's properties
-	AAJ_Character();
 
+
+	//////////////////////////////////액터관련///////////////////////////////////////////////////////////////////
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	bool bIsEquiped;
 };	

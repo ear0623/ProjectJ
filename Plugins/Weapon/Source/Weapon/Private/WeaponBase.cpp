@@ -12,27 +12,29 @@
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
 	// CDO 생성 및 컴포넌트 설정
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	RootComponent = SphereCollision;
+	//weapon
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponComponent"));
 	WeaponMesh->SetupAttachment(SphereCollision);
 	if (WeaponMesh != nullptr)
 	{
-		WeaponMesh->SetSimulatePhysics(true);
+		WeaponMesh->SetSimulatePhysics(false);
 	}
+	WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
+	//bool
 }
-
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnWeaponBeingOverap);
-	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 }
+
 
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
@@ -49,24 +51,39 @@ void AWeaponBase::WeaponShoot()
 
 void AWeaponBase::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 	OwnedCharacter = Cast<ACharacter>(OtherActor);
 	if (IsValid(OwnedCharacter))
 	{
 		SetOwner(OwnedCharacter);
 		UE_LOG(LogTemp, Warning, TEXT("SetOwner"));
+		EquipWeapon();
 	}
 	
 	
-	if (OwnedCharacter != nullptr)
+
+	
+}
+
+void AWeaponBase::EquipWeapon()
+{
+	if (IsValid(OwnedCharacter->GetOwner()))
 	{
-		OwnedCharacter->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("RightHand"));
-		
-		//AttachToActor(OwnedCharacter, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RightHand");
-		//OwnedCharacter->AttachToComponent(OwnedCharacter->GetMesh());
-		UE_LOG(LogTemp, Warning, TEXT("Attach"));
+		UE_LOG(LogTemp, Warning, TEXT("True"));
+		GetOwner()->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		UE_LOG(LogTemp, Warning, TEXT("DetachFromActor"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("False"));
 	}
 
+	this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand")); 
+	SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	UE_LOG(LogTemp, Warning, TEXT("Attach")); 
+	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
+	
 
 void AWeaponBase::Trigger()
 {

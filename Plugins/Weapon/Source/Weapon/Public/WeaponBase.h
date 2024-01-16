@@ -63,9 +63,11 @@ public:
 	virtual void WeaponShoot()override;
 
 public:
-	//MyOverrap
+	/////////¿À¹ö·¾///////////////////////////////////////////////////////////////////
 	UFUNCTION()
 	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void EquipWeapon();
 
 	void Trigger();
 };

@@ -46,6 +46,8 @@ AAJ_Character::AAJ_Character()
 void AAJ_Character::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	
 }
 //delegate
@@ -57,6 +59,8 @@ void AAJ_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	//DOREPLIFETIME(AAJ_Character, UpdateInteraction);
 
 }
+
+
 
 // Called every frame
 void AAJ_Character::Tick(float DeltaTime)
