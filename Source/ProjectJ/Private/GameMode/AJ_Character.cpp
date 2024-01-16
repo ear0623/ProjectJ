@@ -9,6 +9,9 @@
 #include "EnhancedInputComponent.h"//향상된 입력
 #include "Kismet/KismetMathLibrary.h"//캐릭터 기준 회전값을 구하기 위해 필요
 #include "GameFramework/CharacterMovementComponent.h" // 캐릭터 무브먼트를 이용하기 위해 필요
+#include "Net/UnrealNetwork.h"//델리게이트사용시 필요한 해드.
+
+
 
 
 
@@ -44,6 +47,15 @@ void AAJ_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+//delegate
+void AAJ_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AAJ_Character, UpdateTrigger);
+	//DOREPLIFETIME(AAJ_Character, UpdateInteraction);
+
 }
 
 // Called every frame
@@ -190,9 +202,9 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 
 //공격
 void AAJ_Character::ServerTrigger_Implementation() 
-{ //여기서 터짐 왠진몰루
+{ 
 	//UpdateTrigger.Execute();
-	//MultiTrigger();
+	MultiTrigger();
 }
 void AAJ_Character::MultiTrigger_Implementation()
 {

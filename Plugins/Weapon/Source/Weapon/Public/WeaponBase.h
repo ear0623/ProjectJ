@@ -52,7 +52,7 @@ private:
 	TObjectPtr<USphereComponent> SphereCollision;
 
 	////////Variable/////////////////////////////////////////////////////////////////////
-	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly,Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ACharacter> OwnedCharacter;
 
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
@@ -64,6 +64,7 @@ public:
 
 public:
 	//MyOverrap
+	UFUNCTION()
 	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void Trigger();

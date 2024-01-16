@@ -137,12 +137,14 @@ public:
 
 
 //////////////////////////////////Delgate/////////////////////////////////////////////////////////////////////
-private:
-	
-	FDele_UpdateShoot UpdateTrigger;
-	FDele_UpdateInteraction UpdateInteraction;
-	
+public:
 
+	//FDele_UpdateShoot UpdateTrigger; 
+
+	FDele_UpdateInteraction UpdateInteraction; 
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
 public:
 	// Sets default values for this character's properties
 	AAJ_Character();
@@ -158,8 +160,5 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
-
 
 };	

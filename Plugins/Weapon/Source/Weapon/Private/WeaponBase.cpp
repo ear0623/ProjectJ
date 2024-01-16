@@ -23,7 +23,6 @@ AWeaponBase::AWeaponBase()
 	{
 		WeaponMesh->SetSimulatePhysics(true);
 	}
-	
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +31,7 @@ void AWeaponBase::BeginPlay()
 	Super::BeginPlay();
 
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnWeaponBeingOverap);
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 }
 
 // Called every frame
@@ -39,6 +39,7 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 void AWeaponBase::WeaponShoot()
@@ -49,11 +50,22 @@ void AWeaponBase::WeaponShoot()
 void AWeaponBase::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	OwnedCharacter = Cast<ACharacter>(OtherActor);
-	if (OwnedCharacter != nullptr)
+	if (IsValid(OwnedCharacter))
 	{
 		SetOwner(OwnedCharacter);
+		UE_LOG(LogTemp, Warning, TEXT("SetOwner"));
 	}
 	
+	
+	if (OwnedCharacter != nullptr)
+	{
+		OwnedCharacter->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("RightHand"));
+		
+		//AttachToActor(OwnedCharacter, FAttachmentTransformRules::SnapToTargetNotIncludingScale, "RightHand");
+		//OwnedCharacter->AttachToComponent(OwnedCharacter->GetMesh());
+		UE_LOG(LogTemp, Warning, TEXT("Attach"));
+	}
+
 }
 
 void AWeaponBase::Trigger()
