@@ -1,7 +1,7 @@
 ProjectJ
 =============
-올리기 전 최신버전으로 Pull 한 후 실행
--------------
+예시.
+C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 
 
 
@@ -14,3 +14,5 @@ ProjectJ
 2024.01.11 Ammo 클래스 생성 및 변수 생성, EnumClass 생성
 
 2024.01.13  발사관련 Ammo Trigger함수생성
+
+2024.01.14 character.cc 194번째에서 계속 게임터짐 이유모룸
