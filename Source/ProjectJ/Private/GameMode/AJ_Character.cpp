@@ -52,6 +52,7 @@ void AAJ_Character::BeginPlay()
 	Super::BeginPlay();
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAJ_Character::OnWeaponBeingOverap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AAJ_Character::OnWeaponEndOverap);
 }
 
 // Called every frame
@@ -227,23 +228,24 @@ void AAJ_Character::ServerInteraction_Implementation()
 
 void AAJ_Character::MultiInteraction_Implementation()
 {
-	if (bIsEquiped == true)
+	if (Weapon != nullptr)
 	{
-		Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		bIsEquiped = false;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
-		Weapon->DropWeapon();
-	}
-	if (Weapon != nullptr &&Weapon->GetOwner() == nullptr)
-	{
-		Weapon->SetOwner(this);
-		Weapon->OwnedCharacter = this;
-		if (bIsEquiped == false)
+		Weapon->SetOwner(this); 
+		Weapon->OwnedCharacter = this; 
+		if (bIsEquiped == true)
+		{
+			//Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			bIsEquiped = false;
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
+			Weapon->DropWeapon();
+		}
+		else
 		{
 			Weapon->EquipWeapon();
 			bIsEquiped = true;
 		}
 	}
+	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
 }
 
@@ -255,4 +257,13 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	//UE_LOG»ç¿ë¹ý
 	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
 
+}
+
+void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Weapon != nullptr)
+	{
+		SetOwner(NULL);
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
 }

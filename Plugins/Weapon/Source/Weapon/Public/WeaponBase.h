@@ -93,6 +93,11 @@ public:
 
 	void DropWeapon_Implementation();
 
+	UFUNCTION(Server, Reliable)
+	void DropWeapon_Multicast();
+
+	void DropWeapon_Multicast_Implementation();
+
 	void Trigger();
 
 public:

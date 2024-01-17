@@ -29,10 +29,13 @@ AWeaponBase::AWeaponBase()
 	if (WeaponMesh != nullptr)
 	{
 		WeaponMesh->SetSimulatePhysics(false);
+		WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	}
-	WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
-	//
+	
+	//replicated
 	SetReplicates(true);
+	SphereCollision->SetIsReplicated(true);
+	WeaponMesh->SetIsReplicated(true);
 }
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
@@ -79,7 +82,7 @@ void AWeaponBase::EquipWeapon_Multicast_Implementation()
 {
 	SphereCollision->SetSimulatePhysics(false);
 	WeaponMesh->SetSimulatePhysics(false);
-	SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SphereCollision->SetCollisionProfileName("NoCollision");
 	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand"));
 	UE_LOG(LogTemp, Warning, TEXT("Attach"));
@@ -87,15 +90,20 @@ void AWeaponBase::EquipWeapon_Multicast_Implementation()
 
 void AWeaponBase::DropWeapon_Implementation()
 {
-	//SphereCollision->SetSimulatePhysics(true);
-	WeaponMesh->SetSimulatePhysics(true);
-	//SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	WeaponMesh->SetCollisionProfileName(TEXT("WeaponPresets"));
-	//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	DropWeapon_Multicast();
+}
+	
+
+void AWeaponBase::DropWeapon_Multicast_Implementation()
+{
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); 
+	SphereCollision->SetSimulatePhysics(true);
+	WeaponMesh->SetSimulatePhysics(false);
+	SphereCollision->SetCollisionProfileName("WeaponPresets");
+	WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	UE_LOG(LogTemp, Warning, TEXT("Detach"));
 	SetOwner(nullptr);
 }
-	
 
 void AWeaponBase::Trigger()
 {
