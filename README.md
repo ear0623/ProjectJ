@@ -21,3 +21,4 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 
 2024.01.16 Weapon의 AttachD 작업
 2024.01.17 Character Animation 수정
+2024.01.17 Character Animation 다시 수정

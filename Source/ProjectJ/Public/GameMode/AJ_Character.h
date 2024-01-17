@@ -17,6 +17,7 @@ class UCameraComponent; //카메라 사용을 위해 선언
 class UInputAction;//
 struct FInputActionValue;//
 class UAnimMontage;//애님몽타지 사용을 위해 선언
+class AWeaponBase;
 
 
 UCLASS()
@@ -167,6 +168,20 @@ public:
 
 	//////////////////////////////////액터관련///////////////////////////////////////////////////////////////////
 
-protected:
+		
+	
+
+	public:
+// Weapon 을 상속받고 있는 클래스가 들어올 수 있기에 변수는 클래스.
+	UFUNCTION(BlueprintCallable)	
+	void EquipWeapon(TSubclassOf<class AWeaponBase> WeaponClass);
+
+
+	// 캐릭터에서 가지고 있을 무기 변수
+	UPROPERTY(BlueprintReadWrite)
+	AActor* m_EquipWeapon;
+
+	// Equip 변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsEquiped;
 };	

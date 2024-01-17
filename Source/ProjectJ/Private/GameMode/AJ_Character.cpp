@@ -10,7 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"//캐릭터 기준 회전값을 구하기 위해 필요
 #include "GameFramework/CharacterMovementComponent.h" // 캐릭터 무브먼트를 이용하기 위해 필요
 #include "Net/UnrealNetwork.h"//델리게이트사용시 필요한 해드.
-
+#include "Weapon/Public/WeaponBase.h" //
 
 
 
@@ -40,6 +40,9 @@ AAJ_Character::AAJ_Character()
 	 
 	//캐릭터 달리기 속도
 	SprintSpeedMultiplier = 2.0f; // 달리기 배속
+
+	//bIsEquiped
+	bIsEquiped = false;
 }
 
 // Called when the game starts or when spawned
@@ -165,7 +168,33 @@ void AAJ_Character::StopCrouching(const FInputActionValue& Value)
 
 	}
 	PlayAnimMontage(StopCrouchMontage);
+} 
+
+
+//무기 착용
+void AAJ_Character::EquipWeapon(TSubclassOf<class AWeaponBase> WeaponClass)
+{
+	// 무기 스폰 및 좌표 초기값 지정
+	m_EquipWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, FVector(0, 0, 0), FRotator(0, 0, 0));
+
+	// 형변환 통해서 가져오기 실패 시 아무것도 하지 않음(return)
+	AWeaponBase* pWeapon = Cast<AWeaponBase>(m_EquipWeapon);
+	if (false == IsValid(pWeapon))
+		return;
+
+	pWeapon->m_pOwnChar = this;
+
+	// 임시로 Weapon 붙이기 - SnapToTarget 즉 무기를 붙이되 스케일은 미포함, 소켓 이름은 Weapon
+	m_EquipWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Weapon"));
+	
+	if (bIsEquiped == false)
+	{
+		bIsEquiped = true;
+	};
+
 }
+
+
 
 //재장전
 void AAJ_Character::Reload(const FInputActionValue& Value)
@@ -213,6 +242,7 @@ void AAJ_Character::ServerTrigger_Implementation()
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
+	
 }
 
 //재장전
