@@ -8,7 +8,7 @@
 #include "AJ_Character.generated.h"
 
 DECLARE_DELEGATE(FDele_UpdateShoot);
-DECLARE_DELEGATE(FDele_UpdateInteraction);
+
 
 
 // 전방 선언 
@@ -17,6 +17,7 @@ class UCameraComponent; //카메라 사용을 위해 선언
 class UInputAction;//
 struct FInputActionValue;//
 class UAnimMontage;//애님몽타지 사용을 위해 선언
+class AWeaponBase;
 
 
 UCLASS()
@@ -155,18 +156,13 @@ public:
 	TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
-//////////////////////////////////델리게이트/////////////////////////////////////////////////////////////////////
-public:
-
-	//FDele_UpdateShoot UpdateTrigger; 
-
-	FDele_UpdateInteraction UpdateInteraction; 
-
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
-
-
 	//////////////////////////////////액터관련///////////////////////////////////////////////////////////////////
 
 protected:
+	UFUNCTION()
+	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	TObjectPtr<AWeaponBase> Weapon;
+
 	bool bIsEquiped;
 };	

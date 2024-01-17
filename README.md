@@ -20,3 +20,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.16 character에 있는 deligate 임시로 해제 weapon beginoverrap 작업중
 
 2024.01.16 Weapon의 AttachD 작업
+
+2024.01.17 Attach 수정

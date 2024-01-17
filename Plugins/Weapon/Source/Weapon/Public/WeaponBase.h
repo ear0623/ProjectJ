@@ -7,6 +7,8 @@
 #include "WeaponInterface.h"
 #include "WeaponBase.generated.h"
 
+DECLARE_DELEGATE(FDele_UpdateInteraction);
+
 class UStaticMeshComponent;
 class USphereComponent;
 class ACharacter;
@@ -52,22 +54,46 @@ private:
 	TObjectPtr<USphereComponent> SphereCollision;
 
 	////////Variable/////////////////////////////////////////////////////////////////////
-	UPROPERTY(BlueprintReadOnly,Category = "Variable",meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<ACharacter> OwnedCharacter;
-
+	
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> TriggerEffect;
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Variable", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ACharacter> OwnedCharacter;
+
+	//////////////////////////////////델리게이트/////////////////////////////////////////////////////////////////////
+public:
+
+	//FDele_UpdateShoot UpdateTrigger; 
+
+	FDele_UpdateInteraction UpdateInteraction;
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
+
 
 public:
 	/////////인터페이스///////////////////////////////////////////////////////////////////
 	virtual void WeaponShoot()override;
 
 public:
-	/////////오버렙///////////////////////////////////////////////////////////////////
-	UFUNCTION()
-	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	/////////액터///////////////////////////////////////////////////////////////////
+	UFUNCTION(Server, Reliable)
 	void EquipWeapon();
 
+	void EquipWeapon_Implementation();
+
+	UFUNCTION(NetMulticast,Reliable)
+	void EquipWeapon_Multicast();
+
+	void EquipWeapon_Multicast_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void DropWeapon();
+
+	void DropWeapon_Implementation();
+
 	void Trigger();
+
+public:
 };
