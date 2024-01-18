@@ -26,6 +26,27 @@ void APlayerHUD::BeginPlay()
 
 void APlayerHUD::BindMyPlayerState()
 {
+	APlayerController* pc = GetWorld()->GetFirstPlayerController();
+	if (IsValid(pc))
+	{
+		APlayerPlayerState* ps = Cast<APlayerPlayerState>(pc->PlayerState);
+		if (IsValid(ps))
+		{
+			ps->m_Dele_UpdateHp.AddDynamic(this, &APlayerHUD::OnUpdateMyHp);
+			OnUpdateMyHp(ps->m_CurHp, 100);
+
+			ps->m_Dele_UpdateSTM.AddDynamic(this, &APlayerHUD::OnUpdateMySTM);
+			OnUpdateMySTM(ps->m_CurSTM, 150);
+
+			ps->m_Dele_UpdateMag.AddDynamic(this, &APlayerHUD::OnUpdateMyMag);
+			OnUpdateMyMag(ps->m_Mag);
+
+			return;
+		}
+	}
+
+	FTimerManager& timerManger = GetWorld()->GetTimerManager();
+	timerManger.SetTimer(th_BindMyPlayerState, this, &APlayerHUD::BindMyPlayerState, 0.01f, false);
 }
 
 void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp)
