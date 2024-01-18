@@ -41,7 +41,8 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	WeaponShoot();
+	test();
 }
 
 
@@ -64,7 +65,9 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 void AWeaponBase::WeaponShoot()
 {
-
+	IWeaponInterface* CallWeaponInterface= Cast<IWeaponInterface>(this);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("RecWeaponShoot"));
+	CallWeaponInterface->UpdateTrigger.AddDynamic(this, &AWeaponBase::Trigger);
 }
 
 void AWeaponBase::EquipWeapon_Implementation()
@@ -115,15 +118,23 @@ void AWeaponBase::DropWeapon_Multicast_Implementation()
 
 void AWeaponBase::Trigger()
 {
-
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
 	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
 	FTransform MuzleTransfrom = { FRotator(0.0f,0.0f,0.0f),MuzzleLocation, FVector(1.0f,1.0f,1.0f)};
 	if (TriggerEffect != nullptr)
 	{
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	//Bullet 생성
 	//GetWorld()->SpawnActor<AAmmoBase>();
+}
+
+void AWeaponBase::test()
+{
+	IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("test"));
+	CallWeaponInterface->UpdateTrigger.AddDynamic(this, &AWeaponBase::Trigger);
 }
 
 

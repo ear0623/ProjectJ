@@ -200,9 +200,12 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 
 
 //°ø°Ý
-void AAJ_Character::ServerTrigger_Implementation() 
-{ 
+void AAJ_Character::ServerTrigger_Implementation()
+{
 	MultiTrigger();
+	IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("ServerTrigger")));
+	CallWeaponInterface->UpdateTrigger.Broadcast();
 }
 void AAJ_Character::MultiTrigger_Implementation()
 {
@@ -210,7 +213,7 @@ void AAJ_Character::MultiTrigger_Implementation()
 
 	if (WeaponData != nullptr)
 	{
-		WeaponData->Trigger();
+		//WeaponData->Trigger();
 	}
 	//weapon->effect, bullet->spawnÀ»
 }

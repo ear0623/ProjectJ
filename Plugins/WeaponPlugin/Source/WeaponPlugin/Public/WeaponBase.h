@@ -96,8 +96,10 @@ public:
 
 	void DropWeapon_Multicast_Implementation();
 
+	UFUNCTION()
 	void Trigger();
 	//chracter-trigger- winterface- weapon
 public:
-
+	UFUNCTION()
+	void test();
 };
