@@ -10,14 +10,6 @@
 #include "Kismet/KismetMathLibrary.h" //Character Rotation value
 #include "GameFramework/CharacterMovementComponent.h" //CharacterMovementComponent
 #include "Net/UnrealNetwork.h"//
-#include "Weapon/Public/WeaponBase.h"//puginWeapon
-#include "Camera/CameraComponent.h" //ī�޶�
-#include "GameFramework/SpringArmComponent.h"//��������
-#include "Components/CapsuleComponent.h" //ĸ��������Ʈ
-#include "Components/SkeletalMeshComponent.h"//���̷�Ż�޽�
-#include "EnhancedInputComponent.h"//���� �Է�
-#include "Kismet/KismetMathLibrary.h"//ĳ���� ���� ȸ������ ���ϱ� ���� �ʿ�
-#include "GameFramework/CharacterMovementComponent.h" // ĳ���� �����Ʈ�� �̿��ϱ� ���� �ʿ�
 #include "WeaponBase.h"
 #include "WeaponInterface.h"
 
@@ -121,35 +113,7 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
 		//Interaction
 		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		//Sprint
-// Called to bind functionality to input �÷��̾� �Է¿� ���� ���ε� ����
-void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// ����ȯ�� ���ؼ� PlayerInputComponent �� UEnhancedInputComponent ������ ĳ����.
-   // ��, ���� �Է� ����� �����ϴ� Ŀ���� �Է� ������Ʈ Ŭ������ UEnhancedInputComponent ��ĳ����.
-	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (UEIC)
-	{
-		// ��ӹ��� AAJ_Character �� Jump ������ �Լ��� �̹� �ֱ� ������ AAJ_Character.h�� ABBC::Jump �Լ��� ������ �ʾƵ� ��
 		
-		//����
-		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
-		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
-		//����
-		UEIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAJ_Character::Move);
-		//��
-		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
-		//����
-		UEIC->BindAction(IA_Trigger, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
-		//�ɱ�
-		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::StartCrouch);
-		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
-		//������
-		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
-		//��ȣ�ۿ�
-		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		//�޸���
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
@@ -227,10 +191,6 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 }
 
 
-// Reload
-	PlayAnimMontage(StopCrouchMontage);
-}
-
 //������
 void AAJ_Character::Reload(const FInputActionValue& Value)
 {
@@ -266,40 +226,8 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 	PlayAnimMontage(StopSprintMontage);
 }
 
-// Weapon Overlap
-void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	
-	Weapon = Cast<AWeaponBase>(OtherActor);
-
-	//UE_LOG����
-	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
-}
-
-void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (Weapon != nullptr)
-	{
-		Weapon->SetOwner(nullptr);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
-	}
-
-}
-
-
-
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
-
-
 //Trigger
-void AAJ_Character::ServerTrigger_Implementation() 
-{ 
-/////////��Ʈ��ũ///////////////////////////////////////////////////////////////////
-
-
-
-//����
 void AAJ_Character::ServerTrigger_Implementation()
 {
 	MultiTrigger();
@@ -317,9 +245,7 @@ void AAJ_Character::MultiTrigger_Implementation()
 	}
 	//weapon->effect, bullet->spawn��
 }
-
 //Reload
-//������
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();

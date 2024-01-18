@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h" // InputAction 
-#include "InputActionValue.h" //��ǲ�׼��� ����ϱ� ���� �ݵ�� �� ��ġ�� �ִ´�.
 #include "WeaponInterface.h"
 #include "AJ_Character.generated.h"
 
@@ -135,7 +134,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiInteraction();
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
-
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
 	

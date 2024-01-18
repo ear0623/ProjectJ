@@ -20,7 +20,7 @@ class WEAPONPLUGIN_API IWeaponInterface
 	GENERATED_BODY()
 
 public:
-	
+	UFUNCTION()
 	virtual void WeaponShoot()=0;
 
 	//UFUNCTION(BlueprintAssignable)
