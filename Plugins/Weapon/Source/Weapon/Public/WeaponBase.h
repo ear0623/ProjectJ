@@ -7,7 +7,7 @@
 #include "WeaponInterface.h"
 #include "WeaponBase.generated.h"
 
-DECLARE_DELEGATE(FDele_UpdateInteraction);
+DECLARE_MULTICAST_DELEGATE(FDele_UpdateTrigger);
 
 class UStaticMeshComponent;
 class USphereComponent;
@@ -65,9 +65,8 @@ public:
 	//////////////////////////////////µ®∏Æ∞‘¿Ã∆Æ/////////////////////////////////////////////////////////////////////
 public:
 
-	//FDele_UpdateShoot UpdateTrigger; 
-
-	FDele_UpdateInteraction UpdateInteraction;
+	
+	FDele_UpdateTrigger UpdateTrigger;
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
 

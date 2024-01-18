@@ -2,6 +2,7 @@
 
 
 #include "AmmoBase.h"
+#include "Weapon/Public/WeaponBase.h"
 
 
 // Sets default values
@@ -47,6 +48,7 @@ void AAmmoBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Ammobase->Trigger().AddDynamic();
 }
 
 // Called every frame

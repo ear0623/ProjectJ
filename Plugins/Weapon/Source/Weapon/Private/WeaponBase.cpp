@@ -59,7 +59,7 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	
+	DOREPLIFETIME(AWeaponBase, UpdateTrigger);
 }
 
 void AWeaponBase::WeaponShoot()
@@ -115,12 +115,15 @@ void AWeaponBase::DropWeapon_Multicast_Implementation()
 
 void AWeaponBase::Trigger()
 {
-	//soundspawn
-	
-	//TObjectPtr<USceneComponent> SaveLocation = WeaponMesh->GetSocketByName(TEXT("Muzzle"));
-	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TriggerEffect,);
+
+	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
+	FTransform MuzleTransfrom = { FRotator(0.0f,0.0f,0.0f),MuzzleLocation, FVector(1.0f,1.0f,1.0f)};
+	if (TriggerEffect != nullptr)
+	{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
+	}
 	//Bullet 생성
-	GetWorld()->SpawnActor<AAmmoBase>();
+	//GetWorld()->SpawnActor<AAmmoBase>();
 }
 
 

@@ -7,9 +7,6 @@
 #include "InputActionValue.h" //��ǲ�׼��� ����ϱ� ���� �ݵ�� �� ��ġ�� �ִ´�.
 #include "AJ_Character.generated.h"
 
-DECLARE_DELEGATE(FDele_UpdateShoot);
-
-
 
 // ���� ���� 
 class USpringArmComponent; //�������� ����� ���� ����
@@ -119,6 +116,8 @@ public:
 	void ServerTrigger();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiTrigger();
+
+	void MultiTrigger_Implementation();
 	
 	//������
 	UFUNCTION(Server, Reliable)
@@ -131,8 +130,9 @@ public:
 	void ServerInteraction();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiInteraction();
+/////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
-
+	
 //////////////////////////////////�ִԸ�Ÿ��/////////////////////////////////////////////////////////////////////
 public:
 	//����

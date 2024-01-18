@@ -206,13 +206,19 @@ void AAJ_Character::ServerTrigger_Implementation()
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
+
+	if (Weapon != nullptr)
+	{
+		Weapon->Trigger();
+	}
+	//weapon->effect, bullet->spawn을
 }
 
 //재장전
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
-	//character make variable->intputdata->weapon.h->delegate->equipWeapon
+	
 }
 void AAJ_Character::MultiReload_Implementation()
 {
@@ -234,7 +240,6 @@ void AAJ_Character::MultiInteraction_Implementation()
 		Weapon->OwnedCharacter = this; 
 		if (bIsEquiped == true)
 		{
-			//Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			bIsEquiped = false;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
 			Weapon->DropWeapon();
