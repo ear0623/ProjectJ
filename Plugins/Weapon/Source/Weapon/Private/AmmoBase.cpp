@@ -48,7 +48,7 @@ void AAmmoBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Ammobase->Trigger().AddDynamic();
+	//Ammobase->Trigger().AddDynamic();
 }
 
 // Called every frame
