@@ -9,7 +9,8 @@
 #include "EnhancedInputComponent.h"//향상된 입력
 #include "Kismet/KismetMathLibrary.h"//캐릭터 기준 회전값을 구하기 위해 필요
 #include "GameFramework/CharacterMovementComponent.h" // 캐릭터 무브먼트를 이용하기 위해 필요
-#include "Net/UnrealNetwork.h"//델리게이트사용시 필요한 해드.
+#include "Weapon/Public/WeaponBase.h"//puginWeapon
+
 
 
 
@@ -40,6 +41,9 @@ AAJ_Character::AAJ_Character()
 	 
 	//캐릭터 달리기 속도
 	SprintSpeedMultiplier = 2.0f; // 달리기 배속
+
+	//Bool
+	bIsEquiped = false;
 }
 
 // Called when the game starts or when spawned
@@ -47,20 +51,9 @@ void AAJ_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
-	
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAJ_Character::OnWeaponBeingOverap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AAJ_Character::OnWeaponEndOverap);
 }
-//delegate
-void AAJ_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	//DOREPLIFETIME(AAJ_Character, UpdateTrigger);
-	//DOREPLIFETIME(AAJ_Character, UpdateInteraction);
-
-}
-
-
 
 // Called every frame
 void AAJ_Character::Tick(float DeltaTime)
@@ -183,6 +176,7 @@ void AAJ_Character::Trigger(const FInputActionValue& Value)
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
+	
 }
 
 
@@ -207,7 +201,6 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 //공격
 void AAJ_Character::ServerTrigger_Implementation() 
 { 
-	//UpdateTrigger.Execute();
 	MultiTrigger();
 }
 void AAJ_Character::MultiTrigger_Implementation()
@@ -219,6 +212,7 @@ void AAJ_Character::MultiTrigger_Implementation()
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
+	//character make variable->intputdata->weapon.h->delegate->equipWeapon
 }
 void AAJ_Character::MultiReload_Implementation()
 {
@@ -228,10 +222,52 @@ void AAJ_Character::MultiReload_Implementation()
 
 void AAJ_Character::ServerInteraction_Implementation()
 {
+	
 	MultiInteraction();
 }
 
 void AAJ_Character::MultiInteraction_Implementation()
 {
-	UpdateInteraction.Execute();
+	if (Weapon != nullptr)
+	{
+		Weapon->SetOwner(this); 
+		Weapon->OwnedCharacter = this; 
+		if (bIsEquiped == true)
+		{
+			//Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			bIsEquiped = false;
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
+			Weapon->DropWeapon();
+			Weapon = nullptr;
+		}
+		else
+		{
+			Weapon->EquipWeapon();
+			bIsEquiped = true;
+		}
+	}
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
+}
+
+void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
+	Weapon = Cast<AWeaponBase>(OtherActor);
+
+	
+	//UE_LOG사용법
+	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
+
+}
+
+void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Weapon != nullptr)
+	{
+		Weapon->SetOwner(nullptr);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
+		
+	}
+	
 }
