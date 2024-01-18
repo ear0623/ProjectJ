@@ -15,10 +15,11 @@ class UInputAction;//
 struct FInputActionValue;//
 class UAnimMontage;//�ִԸ�Ÿ�� ����� ���� ����
 class AWeaponBase;
+class UWeaponInterface;
 
 
 UCLASS()
-class PROJECTJ_API AAJ_Character : public ACharacter
+class PROJECTJ_API AAJ_Character : public ACharacter , public IWeaponInterface
 {
 	GENERATED_BODY()
 
@@ -165,7 +166,11 @@ protected:
 	UFUNCTION()
 	void OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	TObjectPtr<AWeaponBase> Weapon;
+	TObjectPtr<AWeaponBase> WeaponData;
 
 	bool bIsEquiped;
+
+	//interface
+	virtual void WeaponShoot()override;
+
 };	

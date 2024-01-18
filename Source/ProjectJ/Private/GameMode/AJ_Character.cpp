@@ -9,7 +9,9 @@
 #include "EnhancedInputComponent.h"//향상된 입력
 #include "Kismet/KismetMathLibrary.h"//캐릭터 기준 회전값을 구하기 위해 필요
 #include "GameFramework/CharacterMovementComponent.h" // 캐릭터 무브먼트를 이용하기 위해 필요
-#include "Weapon/Public/WeaponBase.h"//puginWeapon
+#include "WeaponBase.h"
+#include "WeaponInterface.h"
+
 
 
 
@@ -176,7 +178,6 @@ void AAJ_Character::Trigger(const FInputActionValue& Value)
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
-	
 }
 
 
@@ -207,9 +208,9 @@ void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
 
-	if (Weapon != nullptr)
+	if (WeaponData != nullptr)
 	{
-		Weapon->Trigger();
+		WeaponData->Trigger();
 	}
 	//weapon->effect, bullet->spawn을
 }
@@ -234,20 +235,20 @@ void AAJ_Character::ServerInteraction_Implementation()
 
 void AAJ_Character::MultiInteraction_Implementation()
 {
-	if (Weapon != nullptr)
+	if (WeaponData != nullptr)
 	{
-		Weapon->SetOwner(this); 
-		Weapon->OwnedCharacter = this; 
+		WeaponData->SetOwner(this);
+		WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
 		{
 			bIsEquiped = false;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
-			Weapon->DropWeapon();
-			Weapon = nullptr;
+			WeaponData->DropWeapon();
+			WeaponData = nullptr;
 		}
 		else
 		{
-			Weapon->EquipWeapon();
+			WeaponData->EquipWeapon();
 			bIsEquiped = true;
 		}
 	}
@@ -258,7 +259,7 @@ void AAJ_Character::MultiInteraction_Implementation()
 void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	Weapon = Cast<AWeaponBase>(OtherActor);
+	WeaponData = Cast<AWeaponBase>(OtherActor);
 
 	
 	//UE_LOG사용법
@@ -268,11 +269,16 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 
 void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Weapon != nullptr)
+	if (WeaponData != nullptr)
 	{
-		Weapon->SetOwner(nullptr);
+		WeaponData->SetOwner(nullptr);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
 		
 	}
+	
+}
+
+void AAJ_Character::WeaponShoot()
+{
 	
 }
