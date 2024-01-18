@@ -23,3 +23,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 
 2024.01.17 Attach 및 physic 동작 확인(클라이언트).
 
+2024.01.17 Character Animation 수정
+2024.01.17 Character Animation 다시 수정

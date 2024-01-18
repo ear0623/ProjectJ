@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h" //ÀÎÇ²¾×¼ÇÀ» »ç¿ëÇÏ±â À§ÇØ ¹Ýµå½Ã ÀÌ À§Ä¡¿¡ ³Ö´Â´Ù.
+#include "InputActionValue.h" //ï¿½ï¿½Ç²ï¿½×¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ýµï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ö´Â´ï¿½.
 #include "AJ_Character.generated.h"
 
 DECLARE_DELEGATE(FDele_UpdateShoot);
 
 
 
-// Àü¹æ ¼±¾ð 
-class USpringArmComponent; //½ºÇÁ¸µ¾Ï »ç¿ëÀ» À§ÇØ ¼±¾ð
-class UCameraComponent; //Ä«¸Þ¶ó »ç¿ëÀ» À§ÇØ ¼±¾ð
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
+class USpringArmComponent; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+class UCameraComponent; //Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 class UInputAction;//
 struct FInputActionValue;//
-class UAnimMontage;//¾Ö´Ô¸ùÅ¸Áö »ç¿ëÀ» À§ÇØ ¼±¾ð
+class UAnimMontage;//ï¿½Ö´Ô¸ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 class AWeaponBase;
 
 
@@ -43,120 +43,120 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-	/////////////Ä«¸Þ¶ó º¯¼ö Ãß°¡////////////////////////////////
+	/////////////Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½////////////////////////////////
 
-	//½ºÇÁ¸µ¾Ï
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComponent;
-	//Ä«¸Þ¶ó
+	//Ä«ï¿½Þ¶ï¿½
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComponent;
 
-	//////////////////////////////////ÀÔ·ÂÅ° ¼³Á¤//////////////////////////////////////////////////////////////
+	//////////////////////////////////ï¿½Ô·ï¿½Å° ï¿½ï¿½ï¿½ï¿½//////////////////////////////////////////////////////////////
 
-	//Á¡ÇÁ
+	//ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Jump;
-	//¹«ºê
+	//ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Move;
-	//·è
+	//ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Look;
-	//¾É±â 
+	//ï¿½É±ï¿½ 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Crouch;
-	//ÀçÀåÀü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Reload;
-	//°ø°Ý
+	//ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Trigger;
-	//»óÈ£ÀÛ¿ë
+	//ï¿½ï¿½È£ï¿½Û¿ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Interaction;
-	//´Þ¸®±â
+	//ï¿½Þ¸ï¿½ï¿½ï¿½
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
 	UInputAction* IA_Sprint;
 
-	////////////ÀÔ·ÂÅ° ÇÔ¼ö ¼³Á¤///////////////////////////////////////////////////////////////////////////
+	////////////ï¿½Ô·ï¿½Å° ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½///////////////////////////////////////////////////////////////////////////
 	
-	//Á¡ÇÁ´Â ÀÌ¹Ì ±âº»¼¼ÆÃ¿¡ ÀÖ±â ¶§¹®¿¡ Ãß°¡ ¾ÈÇØÁÜ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½âº»ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
-	//¹«ºê
+	//ï¿½ï¿½ï¿½ï¿½
 	void Move(const FInputActionValue& Value);
-	//·ê
+	//ï¿½ï¿½
 	void Look(const FInputActionValue& Value);
-	//¾É±â
+	//ï¿½É±ï¿½
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouching(const FInputActionValue& Value);
 	bool bIsCrouching;
-	// ¿øº»Ä¸½¶ÄÄÆ÷³ÍÆ®ÀÇ Àý¹Ý ³ôÀÌ, À§Ä¡·Î ¼³Á¤
+	// ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FVector OriginalCapsuleLocation;
 	float OriginalCapsuleHalfHeight;
-	//ÀçÀåÀü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void Reload(const FInputActionValue& Value);
-	//°ø°Ý
+	//ï¿½ï¿½ï¿½ï¿½
 	void Trigger(const FInputActionValue& Value);
-	//»óÈ£ÀÛ¿ë
+	//ï¿½ï¿½È£ï¿½Û¿ï¿½
 	void Interaction(const FInputActionValue& Value);
-	//´Þ¸®±â
+	//ï¿½Þ¸ï¿½ï¿½ï¿½
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
 	float SprintSpeedMultiplier;
 
 
-/////////////////////////////³×Æ®¿öÅ©  ÄÚµå ¿µ¿ª/////////////////////////////////////////////////////////////////
+/////////////////////////////ï¿½ï¿½Æ®ï¿½ï¿½Å©  ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½/////////////////////////////////////////////////////////////////
 public:
-	//¾É±â //movement¶ó°í ÀÌ¸§ÀÌ ºÙÀº ÄÄÆ÷³ÍÆ®´Â Replicated°¡ ¼³Á¤µÇ¾îÀÖ´Ù.
+	//ï¿½É±ï¿½ //movementï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Replicatedï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½Ö´ï¿½.
 	//UFUNCTION(Server, Reliable)
 	//void ServerCrouch();
 	//UFUNCTION(NetMulticast, Reliable)
 	//void MultiCrouch();
 
-	//°ø°Ý
+	//ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(Server, Reliable)
 	void ServerTrigger();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiTrigger();
 	
-	//ÀçÀåÀü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UFUNCTION(Server, Reliable)
 	void ServerReload();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiReload();
 
-	//»óÈ£ÀÛ¿ë
+	//ï¿½ï¿½È£ï¿½Û¿ï¿½
 	UFUNCTION(Server, Reliable)
 	void ServerInteraction();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiInteraction();
 
 
-//////////////////////////////////¾Ö´Ô¸ùÅ¸Áö/////////////////////////////////////////////////////////////////////
+//////////////////////////////////ï¿½Ö´Ô¸ï¿½Å¸ï¿½ï¿½/////////////////////////////////////////////////////////////////////
 public:
-	//°ø°Ý
+	//ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage>TriggerMontage;
 
-	//¾É±â
+	//ï¿½É±ï¿½
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> CrouchMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> StopCrouchMontage;
 
-	//ÀçÀåÀü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
-	//´Þ¸®±â
+	//ï¿½Þ¸ï¿½ï¿½ï¿½
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> SprintMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
-	//////////////////////////////////¾×ÅÍ°ü·Ã///////////////////////////////////////////////////////////////////
+	//////////////////////////////////ï¿½ï¿½ï¿½Í°ï¿½ï¿½ï¿½///////////////////////////////////////////////////////////////////
 
 protected:
 	UFUNCTION()
