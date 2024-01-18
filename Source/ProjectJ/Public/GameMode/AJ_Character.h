@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h" //��ǲ�׼��� ����ϱ� ���� �ݵ�� �� ��ġ�� �ִ´�.
+#include "InputActionValue.h" // InputAction 
 #include "AJ_Character.generated.h"
 
 DECLARE_DELEGATE(FDele_UpdateShoot);
@@ -12,12 +12,12 @@ DECLARE_DELEGATE(FDele_UpdateShoot);
 
 
 // ���� ���� 
-class USpringArmComponent; //�������� ����� ���� ����
-class UCameraComponent; //ī�޶� ����� ���� ����
-class UInputAction;//
-struct FInputActionValue;//
-class UAnimMontage;//�ִԸ�Ÿ�� ����� ���� ����
-class AWeaponBase;
+class USpringArmComponent; //SpringArmComponent
+class UCameraComponent; // CameraComponent
+class UInputAction;// InputAction
+struct FInputActionValue;//InputActionValue
+class UAnimMontage;//AnimMontage
+class AWeaponBase; // AWeaponBase
 
 
 UCLASS()
@@ -43,39 +43,39 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-	/////////////ī�޶� ���� �߰�////////////////////////////////
+	/////////////CharacterComponent////////////////////////////////
 
-	//��������
+	//SpringArm
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArmComponent;
-	//ī�޶�
+	//Camera
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComponent;
 
-	//////////////////////////////////�Է�Ű ����//////////////////////////////////////////////////////////////
+	//////////////////////////////////Input//////////////////////////////////////////////////////////////
 
-	//����
+	//Jump
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Jump;
-	//����
+	//Move
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Move;
-	//��
+	//Look
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Look;
-	//�ɱ� 
+	//Crouch 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Crouch;
-	//������
+	//Reload
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Reload;
-	//����
+	//Trigger
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Trigger;
-	//��ȣ�ۿ�
+	//Interaction
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Interaction;
-	//�޸���
+	//Sprint
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
 	UInputAction* IA_Sprint;
 
@@ -83,81 +83,75 @@ public:
 	
 	//������ �̹� �⺻���ÿ� �ֱ� ������ �߰� ������
 	
-	//����
+	// Move
 	void Move(const FInputActionValue& Value);
-	//��
+	// Look
 	void Look(const FInputActionValue& Value);
-	//�ɱ�
+	// Crouch
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouching(const FInputActionValue& Value);
-	bool bIsCrouching;
-	// ����ĸ��������Ʈ�� ���� ����, ��ġ�� ����
+	
+	// CapsulComponent
 	FVector OriginalCapsuleLocation;
 	float OriginalCapsuleHalfHeight;
-	//������
+	// Reload
 	void Reload(const FInputActionValue& Value);
-	//����
+	// Trigger
 	void Trigger(const FInputActionValue& Value);
-	//��ȣ�ۿ�
+	// Interaction
 	void Interaction(const FInputActionValue& Value);
-	//�޸���
+	// Sprint
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
 	float SprintSpeedMultiplier;
 
 
-/////////////////////////////��Ʈ��ũ  �ڵ� ����/////////////////////////////////////////////////////////////////
+/////////////////////////////Network/////////////////////////////////////////////////////////////////
 public:
-	//�ɱ� //movement��� �̸��� ���� ������Ʈ�� Replicated�� �����Ǿ��ִ�.
-	//UFUNCTION(Server, Reliable)
-	//void ServerCrouch();
-	//UFUNCTION(NetMulticast, Reliable)
-	//void MultiCrouch();
 
-	//����
+	//Trigger
 	UFUNCTION(Server, Reliable)
 	void ServerTrigger();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiTrigger();
 	
-	//������
+	//Reload
 	UFUNCTION(Server, Reliable)
 	void ServerReload();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiReload();
 
-	//��ȣ�ۿ�
+	//Interaction
 	UFUNCTION(Server, Reliable)
 	void ServerInteraction();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiInteraction();
 
 
-//////////////////////////////////�ִԸ�Ÿ��/////////////////////////////////////////////////////////////////////
+//////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
 public:
-	//����
+	// Trigger
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage>TriggerMontage;
 
-	//�ɱ�
+	// Crouch
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> CrouchMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> StopCrouchMontage;
 
-	//������
+	// Reload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
-	//�޸���
+	// Sprint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> SprintMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
-	//////////////////////////////////���Ͱ���///////////////////////////////////////////////////////////////////
-
+	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
 protected:
 	UFUNCTION()
 	void OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -167,5 +161,12 @@ protected:
 
 	TObjectPtr<AWeaponBase> Weapon;
 
+
+	//variables bool bIsEquiped
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsEquiped;
+
+	///////////////////////Variables//////////////////
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsCrouching;
 };	

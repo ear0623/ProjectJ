@@ -2,15 +2,14 @@
 
 
 #include "GameMode/AJ_Character.h"
-#include "Camera/CameraComponent.h" //ī�޶�
-#include "GameFramework/SpringArmComponent.h"//��������
-#include "Components/CapsuleComponent.h" //ĸ��������Ʈ
-#include "Components/SkeletalMeshComponent.h"//���̷�Ż�޽�
-#include "EnhancedInputComponent.h"//���� �Է�
-#include "Kismet/KismetMathLibrary.h"//ĳ���� ���� ȸ������ ���ϱ� ���� �ʿ�
-#include "GameFramework/CharacterMovementComponent.h" // ĳ���� �����Ʈ�� �̿��ϱ� ���� �ʿ�
-#include "Net/UnrealNetwork.h"//��������Ʈ���� �ʿ��� �ص�.
-#include "Weapon/Public/WeaponBase.h" //
+#include "Camera/CameraComponent.h" //Camera
+#include "GameFramework/SpringArmComponent.h"//SpringArm
+#include "Components/CapsuleComponent.h" //CapsuleComponent
+#include "Components/SkeletalMeshComponent.h"//SkeletalMeshComponent
+#include "EnhancedInputComponent.h"//EnhancedInput
+#include "Kismet/KismetMathLibrary.h" //Character Rotation value
+#include "GameFramework/CharacterMovementComponent.h" //CharacterMovementComponent
+#include "Net/UnrealNetwork.h"//
 #include "Weapon/Public/WeaponBase.h"//puginWeapon
 
 
@@ -24,29 +23,28 @@ AAJ_Character::AAJ_Character()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//SpringArm�̶�� �̸����� SpringArmComponent �߰�,RootConent�� �ڽ�����
+	//SpringArm 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 
-	//Camera��� �̸����� CameraComponent �߰�, SpringArm�� �ڽ�����
+	//Camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
-	//ĳ���� �ʱ� ��ġ ��
+	// Character initial position value
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 
-	// ĳ���� �ʱ� ȸ����(Pitch, Yaw, Roll)
+	// Character initial Rotation value
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
 	
-	//�ɱ� �ʱ� ��
-	bIsCrouching = false; // �⺻���� fals�� �д�
+	// Crouch variables
+	bIsCrouching = false;
 	 
-	//ĳ���� �޸��� �ӵ�
-	SprintSpeedMultiplier = 2.0f; // �޸��� ���
+	//Sprint Velocity
+	SprintSpeedMultiplier = 2.0f;
 
-	//bIsEquiped
-	//Bool
-	bIsEquiped = false;
+	//Equip variables 
+	bIsEquiped = false; 
 }
 
 // Called when the game starts or when spawned
@@ -65,34 +63,33 @@ void AAJ_Character::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input �÷��̾� �Է¿� ���� ���ε� ����
+// Bind Input
 void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// ����ȯ�� ���ؼ� PlayerInputComponent �� UEnhancedInputComponent ������ ĳ����.
-   // ��, ���� �Է� ����� �����ϴ� Ŀ���� �Է� ������Ʈ Ŭ������ UEnhancedInputComponent ��ĳ����.
+	
 	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UEIC)
 	{
-		// ��ӹ��� AAJ_Character �� Jump ������ �Լ��� �̹� �ֱ� ������ AAJ_Character.h�� ABBC::Jump �Լ��� ������ �ʾƵ� ��
 		
-		//����
+		
+		//Jump
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
-		//����
+		//Move
 		UEIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAJ_Character::Move);
-		//��
+		//Look
 		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
-		//����
+		//Trigger
 		UEIC->BindAction(IA_Trigger, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
-		//�ɱ�
+		//Crouch
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::StartCrouch);
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
-		//������
+		//Reload
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
-		//��ȣ�ۿ�
+		//Interaction
 		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		//�޸���
+		//Sprint
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
@@ -101,7 +98,7 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 /////////////////�Է� Ű �Լ� ����/////////////////////////////////////////////////////////
 
-//����
+// Move
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
 	// �Է°� Value �� ���� 2��(X, Y)������ ���� ����.
@@ -122,7 +119,7 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 	AddMovementInput(RightVector, Dir.X);
 }
 
-//��
+// Look
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
 	// ĳ������ ȸ���� ���ؼ� �Է°����κ��� ���� ����.
@@ -133,7 +130,9 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(Rotation.Y);
 }
 
-//�ɱ�
+
+
+// Crouch
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
 	if (!bIsCrouching)
@@ -144,64 +143,40 @@ void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 		// ��ġ, ���̰� ���ݾ� �پ���
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
 		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
-		Crouch();
+		//Crouch();
 		bIsCrouching = true;
 	}
 	PlayAnimMontage(CrouchMontage);
 }
-void AAJ_Character::StopCrouching(const FInputActionValue& Value)
+
+void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 {
 	if (bIsCrouching)
-	{	
-		UnCrouch();
+	{
+		//UnCrouch();
 		bIsCrouching = false;
 		// �ɱ� �� ������� ������.
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
 		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
-
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
 	}
-	PlayAnimMontage(StopCrouchMontage);
-} 
-
-
-//���� ����
-void AAJ_Character::EquipWeapon(TSubclassOf<class AWeaponBase> WeaponClass)
-{
-	// ���� ���� �� ��ǥ �ʱⰪ ����
-	m_EquipWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, FVector(0, 0, 0), FRotator(0, 0, 0));
-
-	// ����ȯ ���ؼ� �������� ���� �� �ƹ��͵� ���� ����(return)
-	AWeaponBase* pWeapon = Cast<AWeaponBase>(m_EquipWeapon);
-	if (false == IsValid(pWeapon))
-		return;
-
-	pWeapon->m_pOwnChar = this;
-
-	// �ӽ÷� Weapon ���̱� - SnapToTarget �� ���⸦ ���̵� �������� ������, ���� �̸��� Weapon
-	m_EquipWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("Weapon"));
-	
-	if (bIsEquiped == false)
-	{
-		bIsEquiped = true;
-	};
 
 }
 
 
-
-//������
+// Reload
 void AAJ_Character::Reload(const FInputActionValue& Value)
 {
 	ServerReload();
 }
 
-//����
+// Trigger
 void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
 	ServerTrigger();
 }
 
-//���ͷ���
+//Interaction
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
@@ -209,7 +184,7 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 }
 
 
-//�޸���
+//Sprint
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
@@ -222,12 +197,33 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 	PlayAnimMontage(StopSprintMontage);
 }
 
+// Weapon Overlap
+void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
+	
+	Weapon = Cast<AWeaponBase>(OtherActor);
 
-/////////��Ʈ��ũ///////////////////////////////////////////////////////////////////
+	//UE_LOG����
+	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
+}
+
+void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Weapon != nullptr)
+	{
+		Weapon->SetOwner(nullptr);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
+	}
+
+}
 
 
 
-//����
+///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Trigger
 void AAJ_Character::ServerTrigger_Implementation() 
 { 
 	MultiTrigger();
@@ -238,7 +234,7 @@ void AAJ_Character::MultiTrigger_Implementation()
 	
 }
 
-//������
+//Reload
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
@@ -250,9 +246,9 @@ void AAJ_Character::MultiReload_Implementation()
 }
 
 
+//Interaction
 void AAJ_Character::ServerInteraction_Implementation()
 {
-	
 	MultiInteraction();
 }
 
@@ -279,22 +275,3 @@ void AAJ_Character::MultiInteraction_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
 }
 
-void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	Weapon = Cast<AWeaponBase>(OtherActor);
-	
-	//UE_LOG����
-	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
-
-}
-
-void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (Weapon != nullptr)
-	{
-		Weapon->SetOwner(nullptr);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
-	}
-	
-}
