@@ -28,3 +28,7 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.18 MH - AJPlayerController -> DEL -> PlayerPlayerController
 
 2024.01.18 플러그인 새로 생성 및 이전. character-> interface->weapon&aamo 전달 안됨
+
+2024.01.17 Character Animation 다시 수정
+
+2024.01.18 crouch move 

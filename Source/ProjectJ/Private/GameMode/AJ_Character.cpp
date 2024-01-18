@@ -2,13 +2,22 @@
 
 
 #include "GameMode/AJ_Character.h"
-#include "Camera/CameraComponent.h" //Ä«¸Þ¶ó
-#include "GameFramework/SpringArmComponent.h"//½ºÇÁ¸µ¾Ï
-#include "Components/CapsuleComponent.h" //Ä¸½¶ÄÄÆ÷³ÍÆ®
-#include "Components/SkeletalMeshComponent.h"//½ºÄÌ·¹Å»¸Þ½¬
-#include "EnhancedInputComponent.h"//Çâ»óµÈ ÀÔ·Â
-#include "Kismet/KismetMathLibrary.h"//Ä³¸¯ÅÍ ±âÁØ È¸Àü°ªÀ» ±¸ÇÏ±â À§ÇØ ÇÊ¿ä
-#include "GameFramework/CharacterMovementComponent.h" // Ä³¸¯ÅÍ ¹«ºê¸ÕÆ®¸¦ ÀÌ¿ëÇÏ±â À§ÇØ ÇÊ¿ä
+#include "Camera/CameraComponent.h" //Camera
+#include "GameFramework/SpringArmComponent.h"//SpringArm
+#include "Components/CapsuleComponent.h" //CapsuleComponent
+#include "Components/SkeletalMeshComponent.h"//SkeletalMeshComponent
+#include "EnhancedInputComponent.h"//EnhancedInput
+#include "Kismet/KismetMathLibrary.h" //Character Rotation value
+#include "GameFramework/CharacterMovementComponent.h" //CharacterMovementComponent
+#include "Net/UnrealNetwork.h"//
+#include "Weapon/Public/WeaponBase.h"//puginWeapon
+#include "Camera/CameraComponent.h" //Ä«ï¿½Þ¶ï¿½
+#include "GameFramework/SpringArmComponent.h"//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#include "Components/CapsuleComponent.h" //Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+#include "Components/SkeletalMeshComponent.h"//ï¿½ï¿½ï¿½Ì·ï¿½Å»ï¿½Þ½ï¿½
+#include "EnhancedInputComponent.h"//ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½
+#include "Kismet/KismetMathLibrary.h"//Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+#include "GameFramework/CharacterMovementComponent.h" // Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 #include "WeaponBase.h"
 #include "WeaponInterface.h"
 
@@ -24,25 +33,47 @@ AAJ_Character::AAJ_Character()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//SpringArmÀÌ¶ó´Â ÀÌ¸§À¸·Î SpringArmComponent Ãß°¡,RootConentÀÇ ÀÚ½ÄÀ¸·Î
+	//SpringArm 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 
-	//Camera¶ó´Â ÀÌ¸§À¸·Î CameraComponent Ãß°¡, SpringArmÀÇ ÀÚ½ÄÀ¸·Î
+	//Camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
-	//Ä³¸¯ÅÍ ÃÊ±â À§Ä¡ °ª
+	// Character initial position value
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 
-	// Ä³¸¯ÅÍ ÃÊ±â È¸Àü°ª(Pitch, Yaw, Roll)
+	// Character initial Rotation value
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
 	
-	//¾É±â ÃÊ±â °ª
-	bIsCrouching = false; // ±âº»°ªÀ» fals·Î µÐ´Ù
+	// Crouch variables
+	bIsCrouching = false;
 	 
-	//Ä³¸¯ÅÍ ´Þ¸®±â ¼Óµµ
-	SprintSpeedMultiplier = 2.0f; // ´Þ¸®±â ¹è¼Ó
+	//Sprint Velocity
+	SprintSpeedMultiplier = 2.0f;
+
+	//Equip variables 
+	bIsEquiped = false; 
+	//SpringArmï¿½Ì¶ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ SpringArmComponent ï¿½ß°ï¿½,RootConentï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComponent->SetupAttachment(RootComponent);
+
+	//Cameraï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ CameraComponent ï¿½ß°ï¿½, SpringArmï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	//Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+
+	// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ È¸ï¿½ï¿½ï¿½ï¿½(Pitch, Yaw, Roll)
+	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
+	
+	//ï¿½É±ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½
+	bIsCrouching = false; // ï¿½âº»ï¿½ï¿½ï¿½ï¿½ falsï¿½ï¿½ ï¿½Ð´ï¿½
+	 
+	//Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½Óµï¿½
+	SprintSpeedMultiplier = 2.0f; // ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	//Bool
 	bIsEquiped = false;
@@ -64,124 +95,165 @@ void AAJ_Character::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input ÇÃ·¹ÀÌ¾î ÀÔ·Â¿¡ ´ëÇÑ ¹ÙÀÎµù ¼³Á¤
+// Bind Input
 void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// Çüº¯È¯À» ÅëÇØ¼­ PlayerInputComponent ¸¦ UEnhancedInputComponent ÇüÀ¸·Î Ä³½ºÆÃ.
-   // Áï, Çâ»óµÈ ÀÔ·Â ±â´ÉÀ» Á¦°øÇÏ´Â Ä¿½ºÅÒ ÀÔ·Â ÄÄÆ÷³ÍÆ® Å¬·¡½ºÀÎ UEnhancedInputComponent ·ÎÄ³½ºÆÃ.
+	
 	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UEIC)
 	{
-		// »ó¼Ó¹ÞÀº AAJ_Character ¿¡ Jump °ü·ÃÇÑ ÇÔ¼ö´Â ÀÌ¹Ì ÀÖ±â ¶§¹®¿¡ AAJ_Character.h¿¡ ABBC::Jump ÇÔ¼ö¸¦ ¸¸µéÁö ¾Ê¾Æµµ µÊ
 		
-		//Á¡ÇÁ
+		
+		//Jump
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
-		//¹«ºê
+		//Move
 		UEIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAJ_Character::Move);
-		//·è
+		//Look
 		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
-		//°ø°Ý
+		//Trigger
 		UEIC->BindAction(IA_Trigger, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
-		//¾É±â
+		//Crouch
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::StartCrouch);
 		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
-		//ÀçÀåÀü
+		//Reload
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
-		//»óÈ£ÀÛ¿ë
+		//Interaction
 		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		//´Þ¸®±â
+		//Sprint
+// Called to bind functionality to input ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ô·Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½
+void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	// ï¿½ï¿½ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ PlayerInputComponent ï¿½ï¿½ UEnhancedInputComponent ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½.
+   // ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UEnhancedInputComponent ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½.
+	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (UEIC)
+	{
+		// ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ AAJ_Character ï¿½ï¿½ Jump ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AAJ_Character.hï¿½ï¿½ ABBC::Jump ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Æµï¿½ ï¿½ï¿½
+		
+		//ï¿½ï¿½ï¿½ï¿½
+		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
+		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
+		//ï¿½ï¿½ï¿½ï¿½
+		UEIC->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AAJ_Character::Move);
+		//ï¿½ï¿½
+		UEIC->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AAJ_Character::Look);
+		//ï¿½ï¿½ï¿½ï¿½
+		UEIC->BindAction(IA_Trigger, ETriggerEvent::Started, this, &AAJ_Character::Trigger);
+		//ï¿½É±ï¿½
+		UEIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AAJ_Character::StartCrouch);
+		UEIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &AAJ_Character::StopCrouching);
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
+		//ï¿½ï¿½È£ï¿½Û¿ï¿½
+		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
+		//ï¿½Þ¸ï¿½ï¿½ï¿½
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
 
 }
 
-/////////////////ÀÔ·Â Å° ÇÔ¼ö ¼³Á¤/////////////////////////////////////////////////////////
+/////////////////ï¿½Ô·ï¿½ Å° ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½/////////////////////////////////////////////////////////
 
-//¹«ºê
+// Move
+//ï¿½ï¿½ï¿½ï¿½
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
-	// ÀÔ·Â°ª Value ·Î ºÎÅÍ 2Ãà(X, Y)ÇüÅÂÀÇ °ªÀ» ÃßÃâ.
+	// ï¿½Ô·Â°ï¿½ Value ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½(X, Y)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	FVector2d Dir = Value.Get<FVector2D>();
 
-	//ÇöÀç ÄÁÆ®·Ñ·¯ÀÇ È¸Àü °ªÀ» °¡Á®¿Í¼­ Yaw°ª¸¸ »ç¿ëÇØ Ä³¸¯ÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâÀ» ±¸ÇÑ´Ù.
-	//Yaw¿¡ ÇØ´çÇÏ´Â °ª ÀÌ¿Ü¿¡´Â 0À» ³Ö´Â ÀÌÀ¯´Â Yaw°ª¸¸ ±¸ÇÏ±â À§ÇÔ
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ Yawï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
+	//Yawï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½Ì¿Ü¿ï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Yawï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FRotator CameraRotation = GetControlRotation();
 	FRotator DirectionRotation = FRotator(0, CameraRotation.Yaw, 0);
 	
-	//°¡Á®¿Â °ªÀ» ¹ÙÅÁÀ¸·Î Ä³¸¯ÅÍ°¡ ÀüÁøÇÏ´Â ¹æÇâÀÇ º¤ÅÍ°ª°ú ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿ÇÏ´Â º¤ÅÍ°ªÀ» ±¸ÇÏ°ÔµÊ.
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Í°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°Ôµï¿½.
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(DirectionRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(DirectionRotation);
 
-	// ÀüÁø ¹æÇâÀÇ º¤ÅÍ¿Í ÀüÈÄ ÀÌµ¿ ÀÔ·Â Dir.Y ¸¦ °öÇØ¼­ ÀÌµ¿°ªÀ» Ãß°¡.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Ô·ï¿½ Dir.Y ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
 	AddMovementInput(ForwardVector, Dir.Y);
-	// ¿ìÃø ¹æÇâÀÇ º¤ÅÍ¿Í ÁÂ¿ì ÀÌµ¿ ÀÔ·Â Dir.X ¸¦ °öÇØ¼­ ÀÌµ¿°ªÀ» Ãß°¡.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½Â¿ï¿½ ï¿½Ìµï¿½ ï¿½Ô·ï¿½ Dir.X ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
 	AddMovementInput(RightVector, Dir.X);
 }
 
-//·è
+// Look
+//ï¿½ï¿½
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
-	// Ä³¸¯ÅÍÀÇ È¸ÀüÀ» À§ÇØ¼­ ÀÔ·Â°ªÀ¸·ÎºÎÅÍ °ªÀ» ÃßÃâ.
+	// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ô·Â°ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	FVector2d Rotation = Value.Get<FVector2D>();
 
-	// Yaw ¿¡ ´ëÇÑ, Pitch ¿¡ ´ëÇÑ ÀÌµ¿°ªÀ» Ãß°¡.
+	// Yaw ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, Pitch ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
 	AddControllerYawInput(Rotation.X);
 	AddControllerPitchInput(Rotation.Y);
 }
 
-//¾É±â
+
+
+// Crouch
+//ï¿½É±ï¿½
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
 	if (!bIsCrouching)
-	{ // ¾É±â Àü ¿øº» °ª ÀúÀå
+	{ // ï¿½É±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
 		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
-		// À§Ä¡, ³ôÀÌ°¡ Àý¹Ý¾¿ ÁÙ¾îµç´Ù
+		// ï¿½ï¿½Ä¡, ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½Ý¾ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
 		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
-		Crouch();
+		//Crouch();
 		bIsCrouching = true;
 	}
 	PlayAnimMontage(CrouchMontage);
 }
-void AAJ_Character::StopCrouching(const FInputActionValue& Value)
+
+void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 {
 	if (bIsCrouching)
-	{	
-		UnCrouch();
+	{
+		//UnCrouch();
 		bIsCrouching = false;
-		// ¾É±â Àü »çÀÌÁî·Î µ¹¸°´Ù.
+		// ï¿½É±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
 		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
-
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
 	}
+
+}
+
+
+// Reload
 	PlayAnimMontage(StopCrouchMontage);
 }
 
-//ÀçÀåÀü
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void AAJ_Character::Reload(const FInputActionValue& Value)
 {
 	ServerReload();
 }
 
-//°ø°Ý
+// Trigger
+//ï¿½ï¿½ï¿½ï¿½
 void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
 	ServerTrigger();
 }
 
-//ÀÎÅÍ·¢¼¢
+//Interaction
+//ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
 }
 
 
-//´Þ¸®±â
+//Sprint
+//ï¿½Þ¸ï¿½ï¿½ï¿½
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
@@ -194,12 +266,40 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 	PlayAnimMontage(StopSprintMontage);
 }
 
+// Weapon Overlap
+void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
+	
+	Weapon = Cast<AWeaponBase>(OtherActor);
 
-/////////³×Æ®¿öÅ©///////////////////////////////////////////////////////////////////
+	//UE_LOGï¿½ï¿½ï¿½ï¿½
+	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
+}
+
+void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Weapon != nullptr)
+	{
+		Weapon->SetOwner(nullptr);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
+	}
+
+}
 
 
 
-//°ø°Ý
+///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Trigger
+void AAJ_Character::ServerTrigger_Implementation() 
+{ 
+/////////ï¿½ï¿½Æ®ï¿½ï¿½Å©///////////////////////////////////////////////////////////////////
+
+
+
+//ï¿½ï¿½ï¿½ï¿½
 void AAJ_Character::ServerTrigger_Implementation()
 {
 	MultiTrigger();
@@ -215,10 +315,11 @@ void AAJ_Character::MultiTrigger_Implementation()
 	{
 		//WeaponData->Trigger();
 	}
-	//weapon->effect, bullet->spawnÀ»
+	//weapon->effect, bullet->spawnï¿½ï¿½
 }
 
-//ÀçÀåÀü
+//Reload
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
@@ -230,9 +331,9 @@ void AAJ_Character::MultiReload_Implementation()
 }
 
 
+//Interaction
 void AAJ_Character::ServerInteraction_Implementation()
 {
-	
 	MultiInteraction();
 }
 
@@ -265,7 +366,7 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	WeaponData = Cast<AWeaponBase>(OtherActor);
 
 	
-	//UE_LOG»ç¿ë¹ý
+	//UE_LOGï¿½ï¿½ï¿½ï¿½
 	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
 
 }
