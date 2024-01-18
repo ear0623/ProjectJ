@@ -80,24 +80,29 @@ void AWeaponBase::EquipWeapon_Implementation()
 
 void AWeaponBase::EquipWeapon_Multicast_Implementation() 
 {
-	SphereCollision->SetSimulatePhysics(false);
-	WeaponMesh->SetSimulatePhysics(false);
-	SphereCollision->SetCollisionProfileName("NoCollision");
-	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
-	this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand"));
-	UE_LOG(LogTemp, Warning, TEXT("Attach"));
+	FName CheckName = GetAttachParentSocketName();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString()));
+
+	if (GetAttachParentSocketName() == NAME_None)
+	{
+		SphereCollision->SetSimulatePhysics(false);
+		WeaponMesh->SetSimulatePhysics(false);
+		SphereCollision->SetCollisionProfileName("NoCollision");
+		WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+		this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand"));
+		UE_LOG(LogTemp, Warning, TEXT("Attach"));
+	}
 }
 
 void AWeaponBase::DropWeapon_Implementation()
 {
 	DropWeapon_Multicast();
 }
-	
 
 void AWeaponBase::DropWeapon_Multicast_Implementation()
 {
-	FName CheckName = GetAttachParentSocketName();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString()));
+	FName CheckName = GetAttachParentSocketName(); 
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString())); 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); 
 	SphereCollision->SetSimulatePhysics(true);
 	WeaponMesh->SetSimulatePhysics(false);
@@ -105,6 +110,7 @@ void AWeaponBase::DropWeapon_Multicast_Implementation()
 	WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	UE_LOG(LogTemp, Warning, TEXT("Detach"));
 	SetOwner(nullptr);
+	
 }
 
 void AWeaponBase::Trigger()
