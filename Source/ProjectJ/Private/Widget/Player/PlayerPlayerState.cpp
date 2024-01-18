@@ -34,6 +34,7 @@ void APlayerPlayerState::UpdateBind()
 		APlayerHUD* pHud = Cast<APlayerHUD>(pPlayer0->GetHUD());
 		if (pHud)
 		{
+
 			return;
 
 		}

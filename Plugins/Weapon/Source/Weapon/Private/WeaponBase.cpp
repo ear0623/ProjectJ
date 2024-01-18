@@ -59,7 +59,7 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AWeaponBase, UpdateTrigger);
+	//DOREPLIFETIME(AWeaponBase, UpdateTrigger);
 }
 
 void AWeaponBase::WeaponShoot()
