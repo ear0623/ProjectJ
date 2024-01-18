@@ -263,7 +263,8 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (Weapon != nullptr)
 	{
-		SetOwner(NULL);
+		Weapon->SetOwner(nullptr);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
+	
 }

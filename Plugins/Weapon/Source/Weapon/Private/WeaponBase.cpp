@@ -96,6 +96,8 @@ void AWeaponBase::DropWeapon_Implementation()
 
 void AWeaponBase::DropWeapon_Multicast_Implementation()
 {
+	FName CheckName = GetAttachParentSocketName();
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString()));
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); 
 	SphereCollision->SetSimulatePhysics(true);
 	WeaponMesh->SetSimulatePhysics(false);
