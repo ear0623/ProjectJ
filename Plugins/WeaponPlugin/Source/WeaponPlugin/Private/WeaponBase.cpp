@@ -7,7 +7,6 @@
 #include "GameFramework/Character.h"
 #include "AmmoBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "Net/UnrealNetwork.h"//델리게이트사용시 필요한 해드.
 
 
 // Sets default values
@@ -31,7 +30,6 @@ AWeaponBase::AWeaponBase()
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	}
-	
 	//replicated
 	SetReplicates(true);
 	SphereCollision->SetIsReplicated(true);
@@ -41,8 +39,7 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	WeaponShoot();
-	test();
+
 }
 
 
@@ -51,49 +48,56 @@ void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
 }
 
 
-//기준(1상속 원칙)-> 상속 혹은 여러cpp에서 일괄적으로 처리하고싶어.(약한 관계성을 만들기위에)
+
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(AWeaponBase, UpdateTrigger);
 }
 
-void AWeaponBase::WeaponShoot()
+void AWeaponBase::WeaponShoot_Implementation()
 {
-	IWeaponInterface* CallWeaponInterface= Cast<IWeaponInterface>(this);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("RecWeaponShoot"));
-	CallWeaponInterface->UpdateTrigger.AddDynamic(this, &AWeaponBase::Trigger);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("WeaponShoot_Implementation"));
+}
+
+void AWeaponBase::SettingOwner_Implementation(ACharacter* character)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("SettingOwner_Implementation"));
+
+	this->SetOwner(character);
+	
+	OwnedCharacter = character;
+}
+
+void AWeaponBase::ClearOwner_Implementation()
+{
+	this->SetOwner(nullptr);
+	//OwnedCharacter = nullptr;
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("ClearOwner_Implementation"));
 }
 
 void AWeaponBase::EquipWeapon_Implementation()
 {
-	/*SphereCollision->SetSimulatePhysics(false);
-	WeaponMesh->SetSimulatePhysics(false);
-	SphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
-	WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
-	this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand"));
-	UE_LOG(LogTemp, Warning, TEXT("Attach"));	*/
+	EquipWeapon_Server();
+}
+void AWeaponBase::EquipWeapon_Server_Implementation()
+{
 	EquipWeapon_Multicast();
 }
 
-void AWeaponBase::EquipWeapon_Multicast_Implementation() 
+void AWeaponBase::EquipWeapon_Multicast_Implementation()
 {
-	FName CheckName = GetAttachParentSocketName();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString()));
-
 	if (GetAttachParentSocketName() == NAME_None)
 	{
+		
 		SphereCollision->SetSimulatePhysics(false);
 		WeaponMesh->SetSimulatePhysics(false);
 		SphereCollision->SetCollisionProfileName("NoCollision");
 		WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
-		this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand"));
-		UE_LOG(LogTemp, Warning, TEXT("Attach"));
+		this->AttachToComponent(OwnedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("RightHand")); 
 	}
 }
 
@@ -104,15 +108,16 @@ void AWeaponBase::DropWeapon_Implementation()
 
 void AWeaponBase::DropWeapon_Multicast_Implementation()
 {
-	FName CheckName = GetAttachParentSocketName(); 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"), *CheckName.ToString())); 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform); 
 	SphereCollision->SetSimulatePhysics(true);
 	WeaponMesh->SetSimulatePhysics(false);
 	SphereCollision->SetCollisionProfileName("WeaponPresets");
 	WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
-	UE_LOG(LogTemp, Warning, TEXT("Detach"));
 	SetOwner(nullptr);
+	if (OwnedCharacter != nullptr)
+	{
+		OwnedCharacter = nullptr;
+	}
 	
 }
 
@@ -127,14 +132,7 @@ void AWeaponBase::Trigger()
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	//Bullet 생성
-	//GetWorld()->SpawnActor<AAmmoBase>();
-}
-
-void AWeaponBase::test()
-{
-	IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("test"));
-	CallWeaponInterface->UpdateTrigger.AddDynamic(this, &AWeaponBase::Trigger);
+	//GetWorld()->SpawnActor<>();
 }
 
 

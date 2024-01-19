@@ -9,20 +9,13 @@
 #include "AJ_Character.generated.h"
 
 
-// ���� ���� 
 class USpringArmComponent; //SpringArmComponent
 class UCameraComponent; // CameraComponent
 class UInputAction;// InputAction
 struct FInputActionValue;//InputActionValue
 class UAnimMontage;//AnimMontage
 class AWeaponBase; // AWeaponBase
-class USpringArmComponent; //�������� ����� ���� ����
-class UCameraComponent; //ī�޶� ����� ���� ����
-class UInputAction;//
-struct FInputActionValue;//
-class UAnimMontage;//�ִԸ�Ÿ�� ����� ���� ����
-class AWeaponBase;
-class UWeaponInterface;
+class IWeaponInterface;
 
 
 UCLASS()
@@ -137,7 +130,7 @@ public:
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
 	
-//////////////////////////////////�ִԸ�Ÿ��/////////////////////////////////////////////////////////////////////
+
 public:
 	// Trigger
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
@@ -168,8 +161,9 @@ protected:
 	UFUNCTION()
 	void OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	TObjectPtr<AWeaponBase> WeaponData;
+	IWeaponInterface* WeaponData;
 
+	TObjectPtr<AWeaponBase> WeaponClass;
 
 	//variables bool bIsEquiped
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
@@ -178,7 +172,6 @@ protected:
 	///////////////////////Variables//////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsCrouching;
-	//interface
-	virtual void WeaponShoot()override;
+
 
 };	

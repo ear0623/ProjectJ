@@ -13,6 +13,8 @@ class UStaticMeshComponent;
 class USphereComponent;
 class ACharacter;
 class UParticleSystem;
+class UAmmoComponent;
+class AAmmoBase;
 
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
@@ -58,6 +60,7 @@ private:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> TriggerEffect;
 
+
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Variable", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ACharacter> OwnedCharacter;
@@ -72,26 +75,52 @@ public:
 
 public:
 	/////////인터페이스///////////////////////////////////////////////////////////////////
-	virtual void WeaponShoot()override;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void WeaponShoot();
+
+	void WeaponShoot_Implementation();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SettingOwner(ACharacter *character);
+
+	void SettingOwner_Implementation(ACharacter *character);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ClearOwner();
+
+	void ClearOwner_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void EquipWeapon();
+
+	void EquipWeapon_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DropWeapon();
+
+	void DropWeapon_Implementation();
 
 public:
 	/////////액터///////////////////////////////////////////////////////////////////
 	UFUNCTION(Server, Reliable)
-	void EquipWeapon();
+	void EquipWeapon_Server();
 
-	void EquipWeapon_Implementation();
+	void EquipWeapon_Server_Implementation();
 
 	UFUNCTION(NetMulticast,Reliable)
 	void EquipWeapon_Multicast();
 
 	void EquipWeapon_Multicast_Implementation();
 
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void DropWeapon();
 
-	void DropWeapon_Implementation();
+	void DropWeapon_Implementation();*/
 
-	UFUNCTION(Server, Reliable)
+	//UFUNCTION(Server, Reliable)
+	//void DropWeapon_Multicast();
+	UFUNCTION(NetMulticast, Reliable)
 	void DropWeapon_Multicast();
 
 	void DropWeapon_Multicast_Implementation();
@@ -100,6 +129,5 @@ public:
 	void Trigger();
 	//chracter-trigger- winterface- weapon
 public:
-	UFUNCTION()
-	void test();
+
 };

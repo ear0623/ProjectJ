@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WeaponInterface.h"
 #include "AmmoBase.generated.h"
 
 class UStaticMeshComponent;
 class AWeaponBase;
+class IWeaponInterface;
+class UAmmoComponent;
 
 UENUM(BlueprintType)
 enum class EBulletType : uint8
@@ -18,7 +21,7 @@ enum class EBulletType : uint8
 };
 
 UCLASS()
-class WEAPONPLUGIN_API AAmmoBase : public AActor
+class WEAPONPLUGIN_API AAmmoBase : public AActor,public IWeaponInterface
 {
 	GENERATED_BODY()
 	
@@ -34,37 +37,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//interface
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SettingOwner(ACharacter* character);
+
+	void SettingOwner_Implementation(ACharacter* character);
+
 private:
-	
-////////////////////////////////가속도계산///////////////////////////
-	//속도
-	float Velocity;
-	//속도X
-	float AccelateX;
-	//속도Y
-	float AccelateY;
-	//밀도
-	float AirDencity;
-	//단면적
-	float CrossSectionalArea;
-	//항력
-	float Drag;
-	//항력계수
-	float  DragCoefficient;
-	//질량
-	float Mass;
-	//가속도
-	float Accelate;
-	//힘
-	float Force;
-	//sin
-	float Sin;
-	//cos
-	float Cos;
-///////////////////////////////변수//////////////////////////
-	//Damage
-	float Damage;
-	
 	////////Component///////////////////////////////////////////////////////////////////
 	//외형
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
@@ -74,16 +54,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	EBulletType AmmoType;
 
-	TObjectPtr<AWeaponBase> Ammobase;
-	
-public:
-	void BindState_Ammo();
-
-	UFUNCTION()
-	void SpawnAmmo();
-
-	void Tirrger();
-	
-
-
+	//TObjectPtr<AWeaponBase> Ammobase;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Variable", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAmmoComponent> AmmoCompo;
 };

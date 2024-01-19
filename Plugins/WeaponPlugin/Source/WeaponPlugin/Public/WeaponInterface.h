@@ -6,7 +6,6 @@
 #include "UObject/Interface.h"
 #include "WeaponInterface.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDele_UppateTrigger);
 
 
 UINTERFACE(Blueprintable)
@@ -20,10 +19,19 @@ class WEAPONPLUGIN_API IWeaponInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	virtual void WeaponShoot()=0;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void WeaponShoot();
 
-	//UFUNCTION(BlueprintAssignable)
-	FDele_UppateTrigger UpdateTrigger;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SettingOwner(ACharacter *character);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void ClearOwner();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void EquipWeapon();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void DropWeapon();
 
 };

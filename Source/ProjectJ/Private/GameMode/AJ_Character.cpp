@@ -10,14 +10,9 @@
 #include "Kismet/KismetMathLibrary.h" //Character Rotation value
 #include "GameFramework/CharacterMovementComponent.h" //CharacterMovementComponent
 #include "Net/UnrealNetwork.h"//
-#include "WeaponBase.h"
 #include "WeaponInterface.h"
-
-
-
-
-
-
+#include "WeaponBase.h"
+#include "AmmoBase.h"
 
 // Sets default values
 AAJ_Character::AAJ_Character()
@@ -47,28 +42,7 @@ AAJ_Character::AAJ_Character()
 
 	//Equip variables 
 	bIsEquiped = false; 
-	//SpringArm�̶�� �̸����� SpringArmComponent �߰�,RootConent�� �ڽ�����
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComponent->SetupAttachment(RootComponent);
 
-	//Camera��� �̸����� CameraComponent �߰�, SpringArm�� �ڽ�����
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
-
-	//ĳ���� �ʱ� ��ġ ��
-	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
-
-	// ĳ���� �ʱ� ȸ����(Pitch, Yaw, Roll)
-	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
-	
-	//�ɱ� �ʱ� ��
-	bIsCrouching = false; // �⺻���� fals�� �д�
-	 
-	//ĳ���� �޸��� �ӵ�
-	SprintSpeedMultiplier = 2.0f; // �޸��� ���
-
-	//Bool
-	bIsEquiped = false;
 }
 
 // Called when the game starts or when spawned
@@ -120,27 +94,26 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 }
 
-/////////////////�Է� Ű �Լ� ����/////////////////////////////////////////////////////////
+
 
 // Move
-//����
+
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
 	// �Է°� Value �� ���� 2��(X, Y)������ ���� ����.
 	FVector2d Dir = Value.Get<FVector2D>();
 
-	//���� ��Ʈ�ѷ��� ȸ�� ���� �����ͼ� Yaw���� ����� ĳ���Ͱ� �ٶ󺸴� ������ ���Ѵ�.
-	//Yaw�� �ش��ϴ� �� �̿ܿ��� 0�� �ִ� ������ Yaw���� ���ϱ� ����
+
 	FRotator CameraRotation = GetControlRotation();
 	FRotator DirectionRotation = FRotator(0, CameraRotation.Yaw, 0);
 	
-	//������ ���� �������� ĳ���Ͱ� �����ϴ� ������ ���Ͱ��� ���������� �̵��ϴ� ���Ͱ��� ���ϰԵ�.
+
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(DirectionRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(DirectionRotation);
 
-	// ���� ������ ���Ϳ� ���� �̵� �Է� Dir.Y �� ���ؼ� �̵����� �߰�.
+
 	AddMovementInput(ForwardVector, Dir.Y);
-	// ���� ������ ���Ϳ� �¿� �̵� �Է� Dir.X �� ���ؼ� �̵����� �߰�.
+	
 	AddMovementInput(RightVector, Dir.X);
 }
 
@@ -163,7 +136,7 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
 	if (!bIsCrouching)
-	{ // �ɱ� �� ���� �� ����
+	{
 		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
 		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
@@ -180,9 +153,7 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 {
 	if (bIsCrouching)
 	{
-		//UnCrouch();
 		bIsCrouching = false;
-		// �ɱ� �� ������� ������.
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
 		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
@@ -205,7 +176,6 @@ void AAJ_Character::Trigger(const FInputActionValue& Value)
 }
 
 //Interaction
-//���ͷ���
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
@@ -213,7 +183,6 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 
 
 //Sprint
-//�޸���
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
 	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
@@ -231,19 +200,18 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 void AAJ_Character::ServerTrigger_Implementation()
 {
 	MultiTrigger();
-	IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("ServerTrigger")));
-	CallWeaponInterface->UpdateTrigger.Broadcast();
 }
+	
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
-
+	
 	if (WeaponData != nullptr)
 	{
-		//WeaponData->Trigger();
+		IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
+		CallWeaponInterface->Execute_WeaponShoot(WeaponClass);
 	}
-	//weapon->effect, bullet->spawn��
+	
 }
 //Reload
 void AAJ_Character::ServerReload_Implementation()
@@ -267,29 +235,31 @@ void AAJ_Character::MultiInteraction_Implementation()
 {
 	if (WeaponData != nullptr)
 	{
-		WeaponData->SetOwner(this);
-		WeaponData->OwnedCharacter = this;
+		AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
+		WeaponData->Execute_SettingOwner(WeaponClass,this);
+		//WeaponData->Execute_SettingOwner_If_OnlyOne(ammoClass, this);
+		//WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
 		{
 			bIsEquiped = false;
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("DropWeapon")));
-			WeaponData->DropWeapon();
+			WeaponData->Execute_DropWeapon(WeaponClass);
 			WeaponData = nullptr;
 		}
 		else
 		{
-			WeaponData->EquipWeapon();
+			//무기를 들고있을 경우 drop처리
+			WeaponData->Execute_EquipWeapon(WeaponClass);
 			bIsEquiped = true;
 		}
 	}
-	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
 }
 
 void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	WeaponData = Cast<AWeaponBase>(OtherActor);
+	WeaponClass = Cast<AWeaponBase>(OtherActor);
+	WeaponData = Cast<IWeaponInterface>(OtherActor);
 
 	
 	//UE_LOG����
@@ -301,14 +271,8 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 {
 	if (WeaponData != nullptr)
 	{
-		WeaponData->SetOwner(nullptr);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("EndOverrap")));
-		
+		WeaponData->Execute_ClearOwner(WeaponClass);
 	}
 	
 }
 
-void AAJ_Character::WeaponShoot()
-{
-	
-}
