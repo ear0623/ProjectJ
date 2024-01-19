@@ -16,13 +16,13 @@ class UInputAction;// InputAction
 struct FInputActionValue;//InputActionValue
 class UAnimMontage;//AnimMontage
 class AWeaponBase; // AWeaponBase
-class USpringArmComponent; //�������� ����� ���� ����
-class UCameraComponent; //ī�޶� ����� ���� ����
-class UInputAction;//
-struct FInputActionValue;//
-class UAnimMontage;//�ִԸ�Ÿ�� ����� ���� ����
-class AWeaponBase;
-class UWeaponInterface;
+class USpringArmComponent; // SpringArmComponent
+class UCameraComponent; // CameraComponent
+class UInputAction;// InputAction
+struct FInputActionValue;// InputActionValue
+class UAnimMontage;// AnimMontage
+class AWeaponBase; //WeaponBase
+class UWeaponInterface; // WeaponInterface
 
 
 UCLASS()
@@ -86,7 +86,6 @@ public:
 
 	////////////�Է�Ű �Լ� ����///////////////////////////////////////////////////////////////////////////
 	
-	//������ �̹� �⺻���ÿ� �ֱ� ������ �߰� ������
 	
 	// Move
 	void Move(const FInputActionValue& Value);
@@ -108,7 +107,7 @@ public:
 	// Sprint
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
-	float SprintSpeedMultiplier;
+	
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -137,27 +136,26 @@ public:
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
 	
-//////////////////////////////////�ִԸ�Ÿ��/////////////////////////////////////////////////////////////////////
 public:
 	// Trigger
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage>TriggerMontage;
 
 	// Crouch
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> CrouchMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> StopCrouchMontage;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	//TObjectPtr<UAnimMontage> CrouchMontage;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	//TObjectPtr<UAnimMontage> StopCrouchMontage;
 
 	// Reload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
 	// Sprint
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> SprintMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> StopSprintMontage;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	//TObjectPtr<UAnimMontage> SprintMontage;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	//TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
@@ -171,13 +169,30 @@ protected:
 	TObjectPtr<AWeaponBase> WeaponData;
 
 
-	//variables bool bIsEquiped
+
+
+
+	///////////////////////Variables//////////////////
+
+	
+public:
+	//Crouch varuables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsCrouching;
+
+	//Equip variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsEquiped;
 
-	///////////////////////Variables//////////////////
+	//Sprint variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
-	bool bIsCrouching;
+	bool bIsSprint; //Sprint variabel
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	float AJDefaultWalkSpeed; //CharacterDefaultWalkSpeed
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	float SprintSpeedMultiplier; //Sprint Speed
+
+
 	//interface
 	virtual void WeaponShoot()override;
 

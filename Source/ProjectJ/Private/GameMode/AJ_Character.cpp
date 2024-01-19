@@ -39,36 +39,16 @@ AAJ_Character::AAJ_Character()
 	// Character initial Rotation value
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
 	
-	// Crouch variables
-	bIsCrouching = false;
+	//Crouch value
+	bIsCrouching = false; 
 	 
-	//Sprint Velocity
-	SprintSpeedMultiplier = 2.0f;
-
-	//Equip variables 
-	bIsEquiped = false; 
-	//SpringArm�̶�� �̸����� SpringArmComponent �߰�,RootConent�� �ڽ�����
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComponent->SetupAttachment(RootComponent);
-
-	//Camera��� �̸����� CameraComponent �߰�, SpringArm�� �ڽ�����
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
-
-	//ĳ���� �ʱ� ��ġ ��
-	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
-
-	// ĳ���� �ʱ� ȸ����(Pitch, Yaw, Roll)
-	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
-	
-	//�ɱ� �ʱ� ��
-	bIsCrouching = false; // �⺻���� fals�� �д�
-	 
-	//ĳ���� �޸��� �ӵ�
-	SprintSpeedMultiplier = 2.0f; // �޸��� ���
-
-	//Bool
+	//Equip Value
 	bIsEquiped = false;
+
+	//Sprint 
+	SprintSpeedMultiplier = 1.5f; //Sprint Speed
+	bIsSprint = false;//Spint valuables value
+	AJDefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed; //DefaultSpeed
 }
 
 // Called when the game starts or when spawned
@@ -113,7 +93,7 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
 		//Interaction
 		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		
+		//Sprint
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
@@ -123,7 +103,6 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 /////////////////�Է� Ű �Լ� ����/////////////////////////////////////////////////////////
 
 // Move
-//����
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
 	// �Է°� Value �� ���� 2��(X, Y)������ ���� ����.
@@ -145,7 +124,6 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 }
 
 // Look
-//��
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
 	// ĳ������ ȸ���� ���ؼ� �Է°����κ��� ���� ����.
@@ -159,7 +137,6 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 
 
 // Crouch
-//�ɱ�
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
 	if (!bIsCrouching)
@@ -173,9 +150,8 @@ void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 		//Crouch();
 		bIsCrouching = true;
 	}
-	PlayAnimMontage(CrouchMontage);
+	//PlayAnimMontage(CrouchMontage);
 }
-
 void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 {
 	if (bIsCrouching)
@@ -190,43 +166,49 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 
 }
 
+//Sprint
+void AAJ_Character::Sprint(const FInputActionValue& Value)
+{
+	if (!bIsSprint)
+	{
+		bIsSprint = true;
+		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+	}
 
-//������
+}
+
+void AAJ_Character::StopSprint(const FInputActionValue& Value)
+{
+	if (bIsSprint)
+	{
+		bIsSprint = false;
+		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
+	}
+}
+
+
+//Reload
 void AAJ_Character::Reload(const FInputActionValue& Value)
 {
 	ServerReload();
 }
 
 // Trigger
-//����
 void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
 	ServerTrigger();
 }
 
 //Interaction
-//���ͷ���
+
 void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
 }
 
 
-//Sprint
-//�޸���
-void AAJ_Character::Sprint(const FInputActionValue& Value)
-{
-	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
-	PlayAnimMontage(SprintMontage);
-}
-
-void AAJ_Character::StopSprint(const FInputActionValue& Value)
-{
-	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
-	PlayAnimMontage(StopSprintMontage);
-}
-
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
+
 //Trigger
 void AAJ_Character::ServerTrigger_Implementation()
 {

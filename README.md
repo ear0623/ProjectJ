@@ -31,4 +31,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 
 2024.01.17 Character Animation 다시 수정
 
-2024.01.18 crouch move 
+2024.01.18 crouch movement adjust 
+2024.01.19 Sprint Animaion 
