@@ -3,7 +3,8 @@
 
 #include "AmmoBase.h"
 #include "WeaponBase.h"
-#include "AmmoComponent.h"
+#include "Components/StaticMeshComponent.h"
+
 
 
 // Sets default values
@@ -13,8 +14,8 @@ AAmmoBase::AAmmoBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//componenet
-	AmmoCompo = CreateDefaultSubobject<UAmmoComponent>(TEXT("AmmoComponent"));
-	
+	AmmoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AmmoComponent"));
+	RootComponent =AmmoMesh;
 	
 }
 

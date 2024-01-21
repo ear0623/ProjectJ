@@ -13,7 +13,7 @@ class UStaticMeshComponent;
 class USphereComponent;
 class ACharacter;
 class UParticleSystem;
-class UAmmoComponent;
+class UMagZineComponent;
 class AAmmoBase;
 
 UENUM(BlueprintType)
@@ -60,7 +60,8 @@ private:
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> TriggerEffect;
 
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Variable", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMagZineComponent> MagzineCompo;
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Variable", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ACharacter> OwnedCharacter;
@@ -68,10 +69,7 @@ public:
 	//////////////////////////////////델리게이트/////////////////////////////////////////////////////////////////////
 public:
 
-	
-
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
-
 
 public:
 	/////////인터페이스///////////////////////////////////////////////////////////////////

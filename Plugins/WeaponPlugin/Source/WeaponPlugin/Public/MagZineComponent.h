@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "WeaponInterface.h"
-#include "AmmoComponent.generated.h"
+#include "MagZineComponent.generated.h"
 
 class UStaticMeshComponent;
 class AWeaponBase;
@@ -21,13 +21,13 @@ enum class EBulletComponent : uint8
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class WEAPONPLUGIN_API UAmmoComponent : public UActorComponent
+class WEAPONPLUGIN_API UMagZineComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UAmmoComponent();
+	UMagZineComponent();
 
 protected:
 	// Called when the game starts
@@ -74,7 +74,7 @@ public:
 	void BindState_Ammo();
 
 	UFUNCTION()
-	void SpawnAmmo();
+	void SpawnAmmo(const FVector& Location,const FRotator& Rotation);
 
 	void Tirrger();
 
@@ -82,6 +82,11 @@ public:
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USceneComponent> ArrowCompo;
-		
+	TObjectPtr<USceneComponent> SceneCompo;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> Bullet;
+
+	FVector SpawnLocation;
+
 };

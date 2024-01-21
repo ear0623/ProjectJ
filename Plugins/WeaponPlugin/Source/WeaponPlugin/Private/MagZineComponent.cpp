@@ -1,21 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AmmoComponent.h"
+#include "MagZineComponent.h"
 #include "Components/SceneComponent.h"
 
+
 // Sets default values for this component's properties
-UAmmoComponent::UAmmoComponent()
+UMagZineComponent::UMagZineComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	AmmoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ammo"));
-	ArrowCompo = CreateDefaultSubobject<USceneComponent>(TEXT("Arrow"));
-
-	//Vector Location =
-	//ArrowCompo->AddRelativeLocation()
+	SpawnLocation = { 0, 0, 0 };
 	//속도
 	Velocity = 200;
 	//속도X
@@ -46,7 +43,7 @@ UAmmoComponent::UAmmoComponent()
 
 
 // Called when the game starts
-void UAmmoComponent::BeginPlay()
+void UMagZineComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -56,23 +53,35 @@ void UAmmoComponent::BeginPlay()
 
 
 // Called every frame
-void UAmmoComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UMagZineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
 }
 
-void UAmmoComponent::BindState_Ammo()
+void UMagZineComponent::BindState_Ammo()
 {
 }
 
-void UAmmoComponent::SpawnAmmo()
+void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotation)
 {
-	//GetWorld()->SpawnActor(AmmoMesh,)
+	SpawnLocation = Location;
+	FRotator SpawnRotation = Rotation;
+	FTransform SpawnTransform = { SpawnRotation,SpawnLocation,FVector(1.0f,1.0f,1.0f) };
+	FActorSpawnParameters ActorSpawnParamers;
+	ActorSpawnParamers.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	TObjectPtr<AActor> spawnedActor= GetWorld()->SpawnActor<AActor>(Bullet,SpawnTransform,ActorSpawnParamers);
+	if (spawnedActor)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("spawnedActor")));
+	}
+
+	
 }
 
-void UAmmoComponent::Tirrger()
+void UMagZineComponent::Tirrger()
 {
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();

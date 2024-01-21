@@ -237,7 +237,6 @@ void AAJ_Character::MultiInteraction_Implementation()
 	{
 		AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
 		WeaponData->Execute_SettingOwner(WeaponClass,this);
-		//WeaponData->Execute_SettingOwner_If_OnlyOne(ammoClass, this);
 		//WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
 		{

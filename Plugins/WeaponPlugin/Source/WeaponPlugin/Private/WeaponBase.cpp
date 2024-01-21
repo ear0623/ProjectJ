@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "AmmoBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "MagZineComponent.h"
 
 
 // Sets default values
@@ -30,6 +31,7 @@ AWeaponBase::AWeaponBase()
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	}
+	MagzineCompo = CreateDefaultSubobject<UMagZineComponent>(TEXT("MazgineComponent"));
 	//replicated
 	SetReplicates(true);
 	SphereCollision->SetIsReplicated(true);
@@ -60,16 +62,15 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 void AWeaponBase::WeaponShoot_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("WeaponShoot_Implementation"));
+	Trigger();
 }
 
 void AWeaponBase::SettingOwner_Implementation(ACharacter* character)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("SettingOwner_Implementation"));
-
 	this->SetOwner(character);
-	
 	OwnedCharacter = character;
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s"),OwnedCharacter.GetFName()));
+
 }
 
 void AWeaponBase::ClearOwner_Implementation()
@@ -125,14 +126,16 @@ void AWeaponBase::Trigger()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
 	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
-	FTransform MuzleTransfrom = { FRotator(0.0f,0.0f,0.0f),MuzzleLocation, FVector(1.0f,1.0f,1.0f)};
+	FRotator MuzzleRotation = WeaponMesh->GetRelativeRotation();
+	FTransform MuzleTransfrom = { MuzzleRotation,MuzzleLocation, FVector(1.0f,1.0f,1.0f)}; 
 	if (TriggerEffect != nullptr)
 	{
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	//Bullet 생성
-	//GetWorld()->SpawnActor<>();
+	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation);
+
 }
 
 

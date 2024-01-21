@@ -10,7 +10,7 @@
 class UStaticMeshComponent;
 class AWeaponBase;
 class IWeaponInterface;
-class UAmmoComponent;
+
 
 UENUM(BlueprintType)
 enum class EBulletType : uint8
@@ -54,7 +54,5 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	EBulletType AmmoType;
 
-	//TObjectPtr<AWeaponBase> Ammobase;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Variable", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAmmoComponent> AmmoCompo;
+
 };
