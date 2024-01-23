@@ -11,6 +11,7 @@ class UStaticMeshComponent;
 class AWeaponBase;
 class IWeaponInterface;
 class USceneComponent;
+class AAmmoBase;
 
 UENUM(BlueprintType)
 enum class EBulletComponent : uint8
@@ -46,6 +47,8 @@ private:
 	float AccelateX;
 	//속도Y
 	float AccelateY;
+	//속도Z
+	float AccelateZ;
 	//밀도
 	float AirDencity;
 	//단면적
@@ -64,6 +67,8 @@ private:
 	float Sin;
 	//cos
 	float Cos;
+	//tan
+	float Tan;
 	///////////////////////////////변수//////////////////////////
 		//Damage
 	float Damage;
@@ -76,7 +81,7 @@ public:
 	UFUNCTION()
 	void SpawnAmmo(const FVector& Location,const FRotator& Rotation);
 
-	void Tirrger();
+	void Fire();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
@@ -85,8 +90,9 @@ public:
 	TObjectPtr<USceneComponent> SceneCompo;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> Bullet;
+	TSubclassOf<AAmmoBase> Bullet;
 
 	FVector SpawnLocation;
 
+	TObjectPtr<AAmmoBase> SpawnedActor;
 };

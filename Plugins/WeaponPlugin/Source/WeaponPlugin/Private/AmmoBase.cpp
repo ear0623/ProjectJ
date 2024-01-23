@@ -16,7 +16,9 @@ AAmmoBase::AAmmoBase()
 	//componenet
 	AmmoMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AmmoComponent"));
 	RootComponent =AmmoMesh;
-	
+	FVector BulletForwardVector = GetActorForwardVector();
+	FRotator MuzzleRotation = FRotator(BulletForwardVector.X, 0, 0);
+	AmmoMesh->SetSimulatePhysics(true);
 }
 
 // Called when the game starts or when spawned

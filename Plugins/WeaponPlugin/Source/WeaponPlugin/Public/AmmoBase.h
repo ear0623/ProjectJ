@@ -44,15 +44,19 @@ public:
 
 	void SettingOwner_Implementation(ACharacter* character);
 
+	//FHitResult;
+
 private:
 	////////Component///////////////////////////////////////////////////////////////////
-	//외형
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UStaticMeshComponent> AmmoMesh;
-
 	//무기타입
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	EBulletType AmmoType;
 
+public:
+	//외형
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> AmmoMesh;
+
+	
 
 };

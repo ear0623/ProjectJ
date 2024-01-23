@@ -126,7 +126,8 @@ void AWeaponBase::Trigger()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
 	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
-	FRotator MuzzleRotation = WeaponMesh->GetRelativeRotation();
+	FVector BulletForwardVector = WeaponMesh->GetSocketTransform(TEXT("Muzzle")).GetUnitAxis(EAxis::X);
+	FRotator MuzzleRotation = FRotator(BulletForwardVector.X,0,0);
 	FTransform MuzleTransfrom = { MuzzleRotation,MuzzleLocation, FVector(1.0f,1.0f,1.0f)}; 
 	if (TriggerEffect != nullptr)
 	{
@@ -134,7 +135,9 @@ void AWeaponBase::Trigger()
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	//Bullet 생성
+	
 	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation);
+	MagzineCompo->Fire();
 
 }
 

@@ -43,6 +43,8 @@ AAJ_Character::AAJ_Character()
 	//Equip variables 
 	bIsEquiped = false; 
 
+	
+
 }
 
 // Called when the game starts or when spawned

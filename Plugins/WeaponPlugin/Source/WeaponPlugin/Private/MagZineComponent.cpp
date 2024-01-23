@@ -3,6 +3,7 @@
 
 #include "MagZineComponent.h"
 #include "Components/SceneComponent.h"
+#include "WeaponPlugin/Public/AmmoBase.h"
 
 
 // Sets default values for this component's properties
@@ -19,6 +20,8 @@ UMagZineComponent::UMagZineComponent()
 	AccelateX = 0;
 	//속도Y
 	AccelateY = 0;
+	//속도Z
+	AccelateZ = 0;
 	//밀도
 	AirDencity = 1;
 	//단면적
@@ -37,6 +40,8 @@ UMagZineComponent::UMagZineComponent()
 	Sin = 30;
 	//cos
 	Cos = 30;
+	//cos
+	Tan = 30;
 
 
 }
@@ -72,19 +77,20 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	FActorSpawnParameters ActorSpawnParamers;
 	ActorSpawnParamers.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	
-	TObjectPtr<AActor> spawnedActor= GetWorld()->SpawnActor<AActor>(Bullet,SpawnTransform,ActorSpawnParamers);
-	if (spawnedActor)
+	SpawnedActor= GetWorld()->SpawnActor<AAmmoBase>(Bullet,SpawnTransform,ActorSpawnParamers);
+	if (SpawnedActor)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("spawnedActor")));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
 	}
 
 	
 }
 
-void UMagZineComponent::Tirrger()
+void UMagZineComponent::Fire()
 {
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();
+	
 	float diameter = 0;
 	CrossSectionalArea = 3.14 * (diameter * diameter) / 4;
 	DragCoefficient = (Velocity * Velocity) * CrossSectionalArea * AirDencity * Drag / 2;
@@ -92,9 +98,13 @@ void UMagZineComponent::Tirrger()
 	Accelate = Force / Mass;
 	float SaveCos = cos(Cos);
 	float SaveSin = sin(Sin);
+	float SaveTan = tan(Tan);
 	AccelateX = Accelate * SaveCos;
 	AccelateY = Accelate * SaveSin - 9.8f;
+	AccelateZ = Accelate * SaveTan;
 
-	//AmmoMesh->AddImpulse(FVector(AccelateX, 0, AccelateY));
+	FVector Impulse = (FVector(AccelateX * 10, AccelateY*-1, AccelateZ * 10));
+	SpawnedActor->AmmoMesh->AddImpulse(Impulse);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"),Impulse.X,Impulse.Y,Impulse.Z));
 }
 

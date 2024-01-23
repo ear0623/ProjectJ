@@ -8,6 +8,7 @@
 #include "WeaponInterface.h"
 #include "AJ_Character.generated.h"
 
+//DECLARE_MULTICAST_DELEGATE_OneParam(FDele_Update)
 
 class USpringArmComponent; //SpringArmComponent
 class UCameraComponent; // CameraComponent
