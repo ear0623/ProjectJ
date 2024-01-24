@@ -12,6 +12,7 @@ class AWeaponBase;
 class IWeaponInterface;
 class USceneComponent;
 class AAmmoBase;
+class WeaponBase;
 
 UENUM(BlueprintType)
 enum class EBulletComponent : uint8
@@ -81,7 +82,7 @@ public:
 	UFUNCTION()
 	void SpawnAmmo(const FVector& Location,const FRotator& Rotation);
 
-	void Fire();
+	void Fire(AWeaponBase* AWeaponBase);
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
@@ -95,4 +96,5 @@ public:
 	FVector SpawnLocation;
 
 	TObjectPtr<AAmmoBase> SpawnedActor;
+
 };

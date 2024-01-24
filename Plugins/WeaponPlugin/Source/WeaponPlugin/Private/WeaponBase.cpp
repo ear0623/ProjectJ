@@ -137,7 +137,7 @@ void AWeaponBase::Trigger()
 	//Bullet 생성
 	
 	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation);
-	MagzineCompo->Fire();
+	MagzineCompo->Fire(this);
 
 }
 

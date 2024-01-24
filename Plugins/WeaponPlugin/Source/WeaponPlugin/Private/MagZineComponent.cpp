@@ -4,6 +4,7 @@
 #include "MagZineComponent.h"
 #include "Components/SceneComponent.h"
 #include "WeaponPlugin/Public/AmmoBase.h"
+#include "WeaponBase.h"
 
 
 // Sets default values for this component's properties
@@ -25,17 +26,17 @@ UMagZineComponent::UMagZineComponent()
 	//밀도
 	AirDencity = 1;
 	//단면적
-	CrossSectionalArea = 0;
+	CrossSectionalArea = 1;
 	//항력
-	Drag = 0;
+	Drag = 1;
 	//항력계수
-	DragCoefficient = 0;
+	DragCoefficient = 1;
 	//질량
 	Mass = 100;
 	//가속도
-	Accelate = 0;
+	Accelate = 1;
 	//힘
-	Force = 0;
+	Force = 1;
 	//sin
 	Sin = 30;
 	//cos
@@ -86,25 +87,31 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	
 }
 
-void UMagZineComponent::Fire()
+
+void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 {
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();
 	
-	float diameter = 0;
-	CrossSectionalArea = 3.14 * (diameter * diameter) / 4;
+	float diameter = 1;
+	CrossSectionalArea = FMath::Pow(diameter, 2) * 3.14 / 4;// 3.14 * (diameter * diameter) / 4;
 	DragCoefficient = (Velocity * Velocity) * CrossSectionalArea * AirDencity * Drag / 2;
 	Force = DragCoefficient;
 	Accelate = Force / Mass;
 	float SaveCos = cos(Cos);
 	float SaveSin = sin(Sin);
-	float SaveTan = tan(Tan);
+
 	AccelateX = Accelate * SaveCos;
 	AccelateY = Accelate * SaveSin - 9.8f;
-	AccelateZ = Accelate * SaveTan;
 
-	FVector Impulse = (FVector(AccelateX * 10, AccelateY*-1, AccelateZ * 10));
-	SpawnedActor->AmmoMesh->AddImpulse(Impulse);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"),Impulse.X,Impulse.Y,Impulse.Z));
+	if (AWeaponBase&&SpawnedActor)
+	{
+		FVector Impulse = FVector(AccelateX, 0, AccelateY);
+		FRotator DesiredRotation = FRotationMatrix::MakeFromX(Impulse).Rotator();
+		SpawnedActor->SetActorRotation(DesiredRotation);
+		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
+	}
+	
 }
 

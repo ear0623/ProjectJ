@@ -10,6 +10,7 @@
 class UStaticMeshComponent;
 class AWeaponBase;
 class IWeaponInterface;
+class AController;
 
 
 UENUM(BlueprintType)
@@ -52,11 +53,17 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	EBulletType AmmoType;
 
+	//instigater
+	TObjectPtr<AController> Controller;
+
 public:
 	//¿ÜÇü
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
-	
+	UFUNCTION()
+	void AmmoBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 };

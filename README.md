@@ -36,3 +36,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.19 Ammo 제작 돌입, character->weapon 구조를 character->interface->character 구조로 변경
 
 2024.01.22 AmmoSpawn
+
+2024.01.22 SpawnActor 의 TakeDamage 제작중.
