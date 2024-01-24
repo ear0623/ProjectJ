@@ -61,9 +61,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
-	UFUNCTION()
-	void AmmoBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+
 
 };

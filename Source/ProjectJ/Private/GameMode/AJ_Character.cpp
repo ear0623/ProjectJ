@@ -43,6 +43,8 @@ AAJ_Character::AAJ_Character()
 	//Equip variables 
 	bIsEquiped = false; 
 
+	//HP
+	HP = 100;
 	
 
 }
@@ -237,7 +239,7 @@ void AAJ_Character::MultiInteraction_Implementation()
 {
 	if (WeaponData != nullptr)
 	{
-		AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
+		//AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
 		WeaponData->Execute_SettingOwner(WeaponClass,this);
 		//WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
@@ -258,11 +260,24 @@ void AAJ_Character::MultiInteraction_Implementation()
 
 void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
-	WeaponClass = Cast<AWeaponBase>(OtherActor);
-	WeaponData = Cast<IWeaponInterface>(OtherActor);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Name %s"), *OtherActor->GetClass()->GetName()));
 
-	
+	WeaponClass = Cast<AWeaponBase>(OtherActor);
+	if (WeaponClass)
+	{
+		WeaponData = Cast<IWeaponInterface>(OtherActor);
+	}
+
+	AmmoBase = Cast<AAmmoBase>(OtherActor)
+	if(AmmoBase)
+	{
+		//damage계산 나중에 delegate로 계산
+		//-10이 아니라 takedamage로 self 제외.
+		HP -= 10;
+		AmmoBase->K2_DestroyActor();
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("AmmoClassOverlap"));
+	}
+
 	//UE_LOG����
 	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
 
@@ -270,10 +285,21 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 
 void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (WeaponData != nullptr)
+
+	if (WeaponClass)
 	{
-		WeaponData->Execute_ClearOwner(WeaponClass);
+		if (WeaponData != nullptr)
+		{
+			WeaponData->Execute_ClearOwner(WeaponClass);
+		}
 	}
-	
+	else if (AmmoBase)
+	{
+		if (IsValid(AmmoBase))
+		{
+			AmmoBase->K2_DestroyActor();
+		}
+		
+	}
 }
 

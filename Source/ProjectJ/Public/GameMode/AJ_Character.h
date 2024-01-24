@@ -17,6 +17,7 @@ struct FInputActionValue;//InputActionValue
 class UAnimMontage;//AnimMontage
 class AWeaponBase; // AWeaponBase
 class IWeaponInterface;
+class AAmmoBase;
 
 
 UCLASS()
@@ -173,6 +174,13 @@ protected:
 	///////////////////////Variables//////////////////
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsCrouching;
+
+	//HP
+	float HP;
+
+	//
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	TObjectPtr<AAmmoBase> AmmoBase;
 
 
 };	

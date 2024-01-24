@@ -127,5 +127,9 @@ public:
 	void Trigger();
 	//chracter-trigger- winterface- weapon
 public:
+	FName WeaponTag;
 
+	FName GetWeaponTag()const { return WeaponTag; }
+
+	void SetWeaponTag(const FName& newTag) { WeaponTag = newTag; }
 };

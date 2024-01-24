@@ -16,7 +16,7 @@ UMagZineComponent::UMagZineComponent()
 
 	SpawnLocation = { 0, 0, 0 };
 	//속도
-	Velocity = 200;
+	Velocity =1;
 	//속도X
 	AccelateX = 0;
 	//속도Y
@@ -81,6 +81,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	SpawnedActor= GetWorld()->SpawnActor<AAmmoBase>(Bullet,SpawnTransform,ActorSpawnParamers);
 	if (SpawnedActor)
 	{
+	
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
 	}
 
@@ -110,7 +111,7 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 		FRotator DesiredRotation = FRotationMatrix::MakeFromX(Impulse).Rotator();
 		SpawnedActor->SetActorRotation(DesiredRotation);
 		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }

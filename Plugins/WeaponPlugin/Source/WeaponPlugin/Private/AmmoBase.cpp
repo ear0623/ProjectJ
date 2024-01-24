@@ -5,6 +5,7 @@
 #include "WeaponBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Controller.h"
+#include "Engine/DamageEvents.h" 
 
 
 
@@ -27,9 +28,7 @@ void AAmmoBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
 	//Ammobase->Trigger().AddDynamic();
-	OnActorBeginOverlap.AddDynamic(this, &AAmmoBase::AmmoBeginOverlap);
 }
 
 // Called every frame
@@ -53,24 +52,17 @@ void AAmmoBase::SettingOwner_Implementation(ACharacter* character)
 	}
 }
 
-void AAmmoBase::AmmoBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
-{
-	//swith º°·Î
-	float DamageAmount = 10;
-	//FDamageEvent DamageEvent;
-	//TakeDamage(DamageAmount,,Controller,OverlappedActor);
-}
 
-float AAmmoBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	
-	DamageAmount;
-	Controller = EventInstigator;
-	DamageCauser;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("TakeDamage"));
-
-	return 0.0f;
-}
+//float AAmmoBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+//{
+//	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+//
+//	
+//	DamageAmount;
+//	Controller = EventInstigator;
+//	DamageCauser;
+//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("TakeDamage"));
+//
+//	return 0.0f;
+//}
 

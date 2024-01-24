@@ -36,6 +36,9 @@ AWeaponBase::AWeaponBase()
 	SetReplicates(true);
 	SphereCollision->SetIsReplicated(true);
 	WeaponMesh->SetIsReplicated(true);
+
+	//Tag
+	WeaponTag = FName(TEXT("Weapon"));
 }
 // Called when the game starts or when spawned
 void AWeaponBase::BeginPlay()
@@ -91,7 +94,7 @@ void AWeaponBase::EquipWeapon_Server_Implementation()
 
 void AWeaponBase::EquipWeapon_Multicast_Implementation()
 {
-	if (GetAttachParentSocketName() == NAME_None)
+	if (GetAttachParentSocketName() == NAME_None&&OwnedCharacter)
 	{
 		
 		SphereCollision->SetSimulatePhysics(false);
@@ -124,7 +127,7 @@ void AWeaponBase::DropWeapon_Multicast_Implementation()
 
 void AWeaponBase::Trigger()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
 	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
 	FVector BulletForwardVector = WeaponMesh->GetSocketTransform(TEXT("Muzzle")).GetUnitAxis(EAxis::X);
 	FRotator MuzzleRotation = FRotator(BulletForwardVector.X,0,0);
@@ -132,7 +135,7 @@ void AWeaponBase::Trigger()
 	if (TriggerEffect != nullptr)
 	{
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	//Bullet 생성
 	
