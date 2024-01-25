@@ -13,6 +13,7 @@
 #include "WeaponInterface.h"
 #include "WeaponBase.h"
 #include "AmmoBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAJ_Character::AAJ_Character()
@@ -214,13 +215,12 @@ void AAJ_Character::ServerTrigger_Implementation()
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
-	
+	//캐릭터 전체가 영향이 있는듯
 	if (WeaponData != nullptr)
 	{
-		IWeaponInterface* CallWeaponInterface = Cast<IWeaponInterface>(this);
-		CallWeaponInterface->Execute_WeaponShoot(WeaponClass);
+		WeaponData->Execute_WeaponShoot(WeaponClass);
 	}
-	
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WeaponData Null")));
 }
 //Reload
 void AAJ_Character::ServerReload_Implementation()
@@ -275,11 +275,27 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
-	{
-		//damage계산 나중에 delegate로 계산
-		//-10이 아니라 takedamage로 self 제외.
-		HP -= 10;
-		AmmoBase->K2_DestroyActor();
+	{	
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("%s"), *SweepResult.GetActor()->GetName()));
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);//트레이스채널로 다시체크?
+
+
+		TArray<FOverlapResult> Overlaps;
+
+		GetWorld()->OverlapMultiByObjectType(Overlaps, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams::AllDynamicObjects, FCollisionShape::MakeCapsule(32.0f, 88.0f), QueryParams);
+		for (const FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor() == this)
+			{
+				//damage계산 나중에 delegate로 계산
+				//-10이 아니라 takedamage로 self 제외.
+				HP -= 10;
+				AmmoBase->K2_DestroyActor();
+				break;
+			}
+		}
+		
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("AmmoClassOverlap"));
 	}
 
@@ -295,7 +311,7 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (WeaponData != nullptr)
 		{
-			WeaponData->Execute_ClearOwner(WeaponClass);
+			//WeaponData->Execute_ClearOwner(WeaponClass);
 		}
 	}
 	else if (AmmoBase)

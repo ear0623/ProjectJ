@@ -4,8 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "SocketSubsystem.h"
+#include "Interfaces/IPv4/IPv4Address.h"
 #include "PlayerGameInstance.generated.h"
 
+
+class FSocket;
+class ISocketSubsystem;
 /**
  * 
  */
@@ -14,8 +19,12 @@ class PROJECTJ_API UPlayerGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+public:
 
+	UPlayerGameInstance();
 
+	virtual void Init();
 
-
+	FSocket* Socket;
+	ISocketSubsystem* SocketSubsystem;
 };

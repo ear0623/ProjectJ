@@ -42,3 +42,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.22 SpawnActor 의 TakeDamage 제작중.
 
 2024.01.25 overrap 부분 ammo 삭제 후 캐릭터의 overlap부분에 작업, 작업중(0!=0) 발생
+
+2024 01.25 코드 정리,instance에 FSocket으로 클라이언트코드작성 및 (0 !=0)이 winterface.gen.cpp에서 발생한것으로 확인.
