@@ -180,8 +180,7 @@ public:
 	float SprintSpeedMultiplier; //Sprint Speed
 
 
-	//interface
-	virtual void WeaponShoot()override;
+	
 	//HP
 	float HP;
 

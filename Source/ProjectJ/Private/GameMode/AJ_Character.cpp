@@ -201,18 +201,7 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 	ServerInteraction();
 }
 
-//Sprint
-void AAJ_Character::Sprint(const FInputActionValue& Value)
-{
-	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
-	PlayAnimMontage(SprintMontage);
-}
 
-void AAJ_Character::StopSprint(const FInputActionValue& Value)
-{
-	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
-	PlayAnimMontage(StopSprintMontage);
-}
 
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -284,7 +273,7 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 		WeaponData = Cast<IWeaponInterface>(OtherActor);
 	}
 
-	AmmoBase = Cast<AAmmoBase>(OtherActor)
+	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
 	{
 		//damage계산 나중에 delegate로 계산
