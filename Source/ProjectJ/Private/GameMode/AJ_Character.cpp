@@ -34,15 +34,17 @@ AAJ_Character::AAJ_Character()
 	// Character initial Rotation value
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
 	
-	// Crouch variables
-	bIsCrouching = false;
+	//Crouch value
+	bIsCrouching = false; 
 	 
-	//Sprint Velocity
-	SprintSpeedMultiplier = 2.0f;
+	//Equip Value
+	bIsEquiped = false;
 
-	//Equip variables 
-	bIsEquiped = false; 
-
+	//Sprint 
+	SprintSpeedMultiplier = 1.5f; //Sprint Speed
+	bIsSprint = false;//Spint valuables value
+	AJDefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed; //DefaultSpeed
+	
 	//HP
 	HP = 100;
 	
@@ -91,7 +93,7 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UEIC->BindAction(IA_Reload, ETriggerEvent::Started, this, &AAJ_Character::Reload);
 		//Interaction
 		UEIC->BindAction(IA_Interaction, ETriggerEvent::Started, this, &AAJ_Character::Interaction);
-		
+		//Sprint
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
@@ -122,7 +124,6 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 }
 
 // Look
-//��
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
 	// ĳ������ ȸ���� ���ؼ� �Է°����κ��� ���� ����.
@@ -136,7 +137,6 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 
 
 // Crouch
-//�ɱ�
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
 	if (!bIsCrouching)
@@ -150,9 +150,8 @@ void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 		//Crouch();
 		bIsCrouching = true;
 	}
-	PlayAnimMontage(CrouchMontage);
+	//PlayAnimMontage(CrouchMontage);
 }
-
 void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 {
 	if (bIsCrouching)
@@ -164,16 +163,33 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 	}
 
 }
+//Sprint
+void AAJ_Character::Sprint(const FInputActionValue& Value)
+{
+	if (!bIsSprint)
+	{
+		bIsSprint = true;
+		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+	}
 
+}
 
-//������
+void AAJ_Character::StopSprint(const FInputActionValue& Value)
+{
+	if (bIsSprint)
+	{
+		bIsSprint = false;
+		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
+	}
+}
+
+//Reload
 void AAJ_Character::Reload(const FInputActionValue& Value)
 {
 	ServerReload();
 }
 
 // Trigger
-//����
 void AAJ_Character::Trigger(const FInputActionValue& Value)
 {
 	ServerTrigger();
@@ -184,7 +200,6 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 {
 	ServerInteraction();
 }
-
 
 //Sprint
 void AAJ_Character::Sprint(const FInputActionValue& Value)
@@ -200,6 +215,7 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 }
 
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
+
 //Trigger
 void AAJ_Character::ServerTrigger_Implementation()
 {

@@ -81,7 +81,6 @@ public:
 
 	////////////�Է�Ű �Լ� ����///////////////////////////////////////////////////////////////////////////
 	
-	//������ �̹� �⺻���ÿ� �ֱ� ������ �߰� ������
 	
 	// Move
 	void Move(const FInputActionValue& Value);
@@ -103,7 +102,7 @@ public:
 	// Sprint
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
-	float SprintSpeedMultiplier;
+	
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -138,21 +137,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage>TriggerMontage;
 
-	// Crouch
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> CrouchMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> StopCrouchMontage;
 
 	// Reload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
-	// Sprint
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> SprintMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<UAnimMontage> StopSprintMontage;
 
 
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
@@ -167,14 +156,32 @@ protected:
 
 	TObjectPtr<AWeaponBase> WeaponClass;
 
-	//variables bool bIsEquiped
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
-	bool bIsEquiped;
+
+
 
 	///////////////////////Variables//////////////////
+
+	
+public:
+	//Crouch varuables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsCrouching;
 
+	//Equip variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsEquiped;
+
+	//Sprint variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsSprint; //Sprint variabel
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	float AJDefaultWalkSpeed; //CharacterDefaultWalkSpeed
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	float SprintSpeedMultiplier; //Sprint Speed
+
+
+	//interface
+	virtual void WeaponShoot()override;
 	//HP
 	float HP;
 
