@@ -35,12 +35,13 @@ void APlayerHUD::BindMyPlayerState()
 			ps->m_Dele_UpdateHp.AddDynamic(this, &APlayerHUD::OnUpdateMyHp);
 			OnUpdateMyHp(ps->m_CurHp, 100);
 
-			ps->m_Dele_UpdateSTM.AddDynamic(this, &APlayerHUD::OnUpdateMySTM);
+			ps->m_Dele_UpdateSTM.AddDynamic(this, &APlayerHUD::OnUpdateMySTM); // 값을 확인한다. 
 			OnUpdateMySTM(ps->m_CurSTM, 150);
 
 			ps->m_Dele_UpdateMag.AddDynamic(this, &APlayerHUD::OnUpdateMyMag);
 			OnUpdateMyMag(ps->m_Mag);
 
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("HUD Bind Success!"));
 			return;
 		}
 	}
@@ -53,7 +54,7 @@ void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp)
 {
 }
 
-void APlayerHUD::OnUpdateMySTM_Implementation(float CurSTM, float MaxSTM)
+void APlayerHUD::OnUpdateMySTM_Implementation(float CurSTM, float MaxSTM) // 전파를 받는다
 {
 }
 

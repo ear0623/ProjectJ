@@ -31,7 +31,7 @@ public:
 	void AddDamage(float Damage);
 
 	UFUNCTION()
-	void AddSTM(float P_Run);
+	void AddSTM(); // 1. ÀÌ °ªÀ»
 
 	UFUNCTION()
 	void UseSTM();

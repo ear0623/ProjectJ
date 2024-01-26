@@ -100,9 +100,11 @@ public:
 	// Interaction
 	void Interaction(const FInputActionValue& Value);
 	// Sprint
+	UFUNCTION()
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
 	
+
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -191,4 +193,12 @@ public:
 	TObjectPtr<AAmmoBase> AmmoBase;
 
 
+
+public:
+
+	void STMDTimer();
+	void STMUTimer();
+
+	FTimerHandle STMDTimerHandle;
+	FTimerHandle STMUTimerHandle;
 };	

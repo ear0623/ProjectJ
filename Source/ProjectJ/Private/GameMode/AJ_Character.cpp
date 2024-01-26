@@ -2,6 +2,7 @@
 
 
 #include "GameMode/AJ_Character.h"
+#include "GameFramework/Actor.h"
 #include "Camera/CameraComponent.h" //Camera
 #include "GameFramework/SpringArmComponent.h"//SpringArm
 #include "Components/CapsuleComponent.h" //CapsuleComponent
@@ -14,6 +15,16 @@
 #include "WeaponBase.h"
 #include "AmmoBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Widget/Player/PlayerPlayerState.h"
+#include "Blueprint/UserWidget.h"
+
+
+
+
+
+
+
+
 
 // Sets default values
 AAJ_Character::AAJ_Character()
@@ -59,6 +70,7 @@ void AAJ_Character::BeginPlay()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAJ_Character::OnWeaponBeingOverap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AAJ_Character::OnWeaponEndOverap);
+	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
 }
 
 // Called every frame
@@ -98,7 +110,6 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
-
 }
 
 
@@ -122,6 +133,9 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 	AddMovementInput(ForwardVector, Dir.Y);
 	
 	AddMovementInput(RightVector, Dir.X);
+
+	
+
 }
 
 // Look
@@ -203,6 +217,76 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 }
 
 
+//Sprint
+//�޸���
+void AAJ_Character::Sprint(const FInputActionValue& Value)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			
+			
+
+
+			GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+			GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+			GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+
+			PlayAnimMontage(SprintMontage);
+
+		}
+	}
+
+
+}
+
+void AAJ_Character::StopSprint(const FInputActionValue& Value)
+{
+	GetWorldTimerManager().ClearTimer(STMDTimerHandle);
+	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+
+
+
+	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+
+	PlayAnimMontage(StopSprintMontage);
+}
+
+
+
+void AAJ_Character::STMDTimer()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			
+			PlayerPlayerState->AddSTM();
+			
+		}
+	}
+}
+
+void AAJ_Character::STMUTimer()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+
+			PlayerPlayerState->UseSTM();
+			
+		}
+	}
+}
 
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
 

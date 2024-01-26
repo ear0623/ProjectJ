@@ -4,9 +4,12 @@
 #include "Widget/Player/PlayerPlayerState.h"
 #include "Net/UnrealNetwork.h"
 #include "Widget/Player/PlayerHUD.h"
+#include "GameMode/AJ_Character.h"
 
-APlayerPlayerState::APlayerPlayerState():m_CurHp(100), m_CurSTM(150)
+APlayerPlayerState::APlayerPlayerState()
 {
+	m_CurHp = 100;
+	m_CurSTM = 150;
 }
 
 void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -51,15 +54,30 @@ void APlayerPlayerState::AddDamage(float Damage)
 	OnRep_CurHp();
 }
 
-void APlayerPlayerState::AddSTM(float P_Run)
+void APlayerPlayerState::AddSTM()
 {
-	m_CurSTM = m_CurSTM - P_Run;
 
+	//Stamina Up
+	float StaminaUp = 2.0f;
+
+
+	m_CurSTM = FMath::Clamp((m_CurSTM + StaminaUp), 0.0f, 150.0f);
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("STMU"));
 	OnRep_CurSTM();
 }
 
 void APlayerPlayerState::UseSTM()
 {
+	//Stamina Dawn
+	float StaminaDawn = 4.0f;
+
+	m_CurSTM = FMath::Clamp((m_CurSTM - StaminaDawn), 0.0f, 150.0f);
+
+
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("STMD"));
+	OnRep_CurSTM();
 }
 
 void APlayerPlayerState::AddMag()
@@ -81,8 +99,8 @@ void APlayerPlayerState::OnRep_CurHp()
 
 void APlayerPlayerState::OnRep_CurSTM()
 {
-	if (m_Dele_UpdateSTM.IsBound())
-		m_Dele_UpdateSTM.Broadcast(m_CurSTM, 150);
+	if (m_Dele_UpdateSTM.IsBound()) // 바인딩 (팔로우)가 되어 있는지 확인
+		m_Dele_UpdateSTM.Broadcast(m_CurSTM, 150); // 브로드케스트 -> 전파한다
 }
 
 void APlayerPlayerState::OnRep_Mag()
