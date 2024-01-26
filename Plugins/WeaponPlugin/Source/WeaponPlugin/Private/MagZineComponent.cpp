@@ -82,7 +82,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	if (SpawnedActor)
 	{
 	
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
 
 	}
 
@@ -104,20 +104,26 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 	float SaveSin = sin(Sin);
 
 	AccelateX = Accelate * SaveCos;
-	AccelateY = Accelate * SaveSin - 9.8f;
+	AccelateY = -9.8;//Accelate * SaveSin - 9.8f;
 
 	if (AWeaponBase&&SpawnedActor)
 	{
-		FVector FowardVector = SpawnedActor->GetActorForwardVector();
-		FVector ActorLocation = SpawnedActor->GetActorLocation();
-		float FowardX = FowardVector.X * AccelateX;
-		FVector Impulse = FVector(FowardX, 0, AccelateY);
-		FRotator DesiredRotation = FRotationMatrix::MakeFromX(Impulse).Rotator();
-		SpawnedActor->SetActorRotation(DesiredRotation);
-		SpawnedActor->AmmoMesh->AddImpulseAtLocation(Impulse,ActorLocation);
-		//GEngine->AddOnScreenDebug
-		// ]
-		// Message(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
+		FVector FowardVector = AWeaponBase->GetActorForwardVector();
+		FVector FRrightVector = AWeaponBase->GetActorRightVector();
+		FVector FUpVector = AWeaponBase->GetActorUpVector();
+
+		FVector ActorLocation = SpawnLocation;
+
+		FVector WeaponXAixs = FowardVector;
+		FVector WeaponYAixs = FRrightVector;
+		FVector WeaponZAxis = FVector::CrossProduct(FRrightVector, FowardVector);//외적계산
+		//vector의 합산
+		FVector Impulse = (AccelateX * WeaponXAixs) + (AccelateY * WeaponZAxis); //FVector(FowardX, 0, AccelateY);
+		//FRotator DesiredRotation = FRotationMatrix::MakeFromX(WeaponXAixs).Rotator()+ FRotationMatrix::MakeFromY(WeaponYAixs).Rotator() + FRotationMatrix::MakeFromZ(WeaponZAxis);
+		//SpawnedActor->SetActorRotation(DesiredRotation);
+		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
+
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("X : %lf ,Y : %lf ,Z : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }
