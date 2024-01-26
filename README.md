@@ -44,3 +44,4 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.25 overrap 부분 ammo 삭제 후 캐릭터의 overlap부분에 작업, 작업중(0!=0) 발생
 
 2024.01.25 Crouchㅇ ㅐ니 수정수정최수정
+2024.01.26 미완성된 파쿠르...

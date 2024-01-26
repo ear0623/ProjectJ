@@ -78,6 +78,9 @@ public:
 	//Sprint
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
 	UInputAction* IA_Sprint;
+	//Parkour
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
+	UInputAction* IA_Parkour;
 
 	////////////�Է�Ű �Լ� ����///////////////////////////////////////////////////////////////////////////
 	
@@ -102,7 +105,8 @@ public:
 	// Sprint
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
-	
+	//Parkour
+	void Parkour(const FInputActionValue& Value);
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -115,6 +119,8 @@ public:
 	void MultiTrigger();
 
 	void MultiTrigger_Implementation();
+
+	void MultiParkour_Implementation();
 	
 	//Reload
 	UFUNCTION(Server, Reliable)
@@ -127,6 +133,12 @@ public:
 	void ServerInteraction();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiInteraction();
+
+	//Parkour
+	UFUNCTION(Server, Reliable)
+	void ServerParkour();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiParkour();
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
@@ -141,8 +153,6 @@ public:
 	// Reload
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
-
-
 
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
 protected:
@@ -178,7 +188,14 @@ public:
 	float AJDefaultWalkSpeed; //CharacterDefaultWalkSpeed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	float SprintSpeedMultiplier; //Sprint Speed
-
+	
+	//Parkour variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	float TraceDistance = 10.0f; //ParkourLinTrace
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bDrawDebugLine = true;//LineTraceDebugLine
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsParkour; //Parkour variables
 
 	
 	//HP
@@ -188,5 +205,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	TObjectPtr<AAmmoBase> AmmoBase;
 
+	//Parkour
+	void ResetCameraRotation();
 
+	FTimerHandle ParkourTimerHandle;
+
+	void ParkourTimer();
+
+	FTimerHandle ParkourAnimation;
+
+	void animationTimer();
 };	
