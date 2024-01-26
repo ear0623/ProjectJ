@@ -9,6 +9,7 @@
 APlayerPlayerState::APlayerPlayerState()
 {
 	m_CurHp = 100;
+	m_CurHpText = 0;
 	m_CurSTM = 150;
 }
 
@@ -17,6 +18,7 @@ void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerPlayerState, m_CurHp);
+	DOREPLIFETIME(APlayerPlayerState, m_CurHpText);
 	DOREPLIFETIME(APlayerPlayerState, m_CurSTM);
 	DOREPLIFETIME(APlayerPlayerState, m_Mag);
 
@@ -94,7 +96,14 @@ void APlayerPlayerState::UseMag()
 void APlayerPlayerState::OnRep_CurHp()
 {
 	if (m_Dele_UpdateHp.IsBound())
-		m_Dele_UpdateHp.Broadcast(m_CurHp, 100);
+		m_Dele_UpdateHp.Broadcast(m_CurHp, 100, m_CurHpText);
+}
+
+void APlayerPlayerState::OnRep_CurHpText()
+{
+	if (m_Dele_UpdateHp.IsBound())
+		m_Dele_UpdateHp.Broadcast(m_CurHp, 100, m_CurHpText);
+
 }
 
 void APlayerPlayerState::OnRep_CurSTM()

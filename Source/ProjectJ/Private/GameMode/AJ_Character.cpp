@@ -62,6 +62,9 @@ AAJ_Character::AAJ_Character()
 
 	//HP
 	HP = 100;
+
+	//IsSprint?
+	bIsSprintKeyPressed = false;
 	
 
 }
@@ -182,21 +185,40 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 	}
 
 }
+
+
+
 //Sprint
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
-	if (!bIsSprint)
-	{
-		bIsSprint = true;
-		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
-	}
+	bIsSprintKeyPressed = true;
 
-	GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
-	GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			float VSTM = PlayerPlayerState->m_CurSTM;
+
+			if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
+			{
+				bIsSprint = true;
+				GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+
+				GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+				GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+			}
+		}
+	}
 }
+
 
 void AAJ_Character::StopSprint(const FInputActionValue& Value)
 {
+	bIsSprintKeyPressed = false;
+
 	if (bIsSprint)
 	{
 		bIsSprint = false;
@@ -242,9 +264,18 @@ void AAJ_Character::STMDTimer()
 		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
 		if (PlayerPlayerState)
 		{
-			
 			PlayerPlayerState->AddSTM();
+
+			float VSTM = PlayerPlayerState->m_CurSTM;
 			
+			if (bIsSprint && VSTM >= 150)
+			{
+				bIsSprint = false;
+				GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
+
+				GetWorldTimerManager().ClearTimer(STMDTimerHandle);
+				GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+			}
 		}
 	}
 }
