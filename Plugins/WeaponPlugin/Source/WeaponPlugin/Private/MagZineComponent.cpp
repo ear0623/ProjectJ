@@ -16,13 +16,13 @@ UMagZineComponent::UMagZineComponent()
 
 	SpawnLocation = { 0, 0, 0 };
 	//속도
-	Velocity =1;
+	Velocity =200;
 	//속도X
-	AccelateX = 0;
+	AccelateX = 1;
 	//속도Y
-	AccelateY = 0;
+	AccelateY = 1;
 	//속도Z
-	AccelateZ = 0;
+	AccelateZ = 1;
 	//밀도
 	AirDencity = 1;
 	//단면적
@@ -32,7 +32,7 @@ UMagZineComponent::UMagZineComponent()
 	//항력계수
 	DragCoefficient = 1;
 	//질량
-	Mass = 100;
+	Mass =1;
 	//가속도
 	Accelate = 1;
 	//힘
@@ -83,6 +83,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	{
 	
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
+
 	}
 
 	
@@ -94,7 +95,7 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();
 	
-	float diameter = 1;
+	float diameter = 5.56;
 	CrossSectionalArea = FMath::Pow(diameter, 2) * 3.14 / 4;// 3.14 * (diameter * diameter) / 4;
 	DragCoefficient = (Velocity * Velocity) * CrossSectionalArea * AirDencity * Drag / 2;
 	Force = DragCoefficient;
@@ -107,11 +108,16 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 
 	if (AWeaponBase&&SpawnedActor)
 	{
-		FVector Impulse = FVector(AccelateX, 0, AccelateY);
+		FVector FowardVector = SpawnedActor->GetActorForwardVector();
+		FVector ActorLocation = SpawnedActor->GetActorLocation();
+		float FowardX = FowardVector.X * AccelateX;
+		FVector Impulse = FVector(FowardX, 0, AccelateY);
 		FRotator DesiredRotation = FRotationMatrix::MakeFromX(Impulse).Rotator();
 		SpawnedActor->SetActorRotation(DesiredRotation);
-		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
+		SpawnedActor->AmmoMesh->AddImpulseAtLocation(Impulse,ActorLocation);
+		//GEngine->AddOnScreenDebug
+		// ]
+		// Message(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("X : %d ,Y : %d ,Z : %d"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }

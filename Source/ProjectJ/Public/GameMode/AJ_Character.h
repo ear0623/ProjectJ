@@ -156,7 +156,9 @@ protected:
 
 	TObjectPtr<AWeaponBase> WeaponClass;
 
+	void SaveVariable(AActor* OtherActor);
 
+	TObjectPtr<AWeaponBase> WeaponClass_Save;
 
 
 	///////////////////////Variables//////////////////

@@ -215,10 +215,11 @@ void AAJ_Character::ServerTrigger_Implementation()
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
-	//캐릭터 전체가 영향이 있는듯
-	if (WeaponData != nullptr)
+		
+	IWeaponInterface* WeaponData_Multi = Cast<IWeaponInterface>(GetClass());
+	if (WeaponClass_Save)
 	{
-		WeaponData->Execute_WeaponShoot(WeaponClass);
+		WeaponData_Multi->Execute_WeaponShoot(WeaponClass_Save);
 	}
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WeaponData Null")));
 }
@@ -245,18 +246,18 @@ void AAJ_Character::MultiInteraction_Implementation()
 	if (WeaponData != nullptr)
 	{
 		//AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
-		WeaponData->Execute_SettingOwner(WeaponClass,this);
+		WeaponData->Execute_SettingOwner(WeaponClass_Save,this);
 		//WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
 		{
 			bIsEquiped = false;
-			WeaponData->Execute_DropWeapon(WeaponClass);
+			WeaponData->Execute_DropWeapon(WeaponClass_Save);
 			WeaponData = nullptr;
 		}
 		else
 		{
 			//무기를 들고있을 경우 drop처리
-			WeaponData->Execute_EquipWeapon(WeaponClass);
+			WeaponData->Execute_EquipWeapon(WeaponClass_Save);
 			bIsEquiped = true;
 		}
 	}
@@ -298,7 +299,7 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 		
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("AmmoClassOverlap"));
 	}
-
+	SaveVariable(OtherActor);
 	//UE_LOG����
 	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
 
@@ -320,6 +321,15 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			AmmoBase->K2_DestroyActor();
 		}
+		
+	}
+}
+
+void AAJ_Character::SaveVariable(AActor* OtherActor)
+{
+	if (OtherActor == WeaponClass)
+	{
+		WeaponClass_Save = Cast<AWeaponBase>(OtherActor);
 		
 	}
 }
