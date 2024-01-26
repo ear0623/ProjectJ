@@ -2,6 +2,7 @@
 
 
 #include "GameMode/AJ_Character.h"
+#include "GameFramework/Actor.h"
 #include "Camera/CameraComponent.h" //Camera
 #include "GameFramework/SpringArmComponent.h"//SpringArm
 #include "Components/CapsuleComponent.h" //CapsuleComponent
@@ -12,6 +13,10 @@
 #include "Net/UnrealNetwork.h"//
 #include "WeaponBase.h"
 #include "WeaponInterface.h"
+#include "Widget/Player/PlayerPlayerState.h"
+#include "Blueprint/UserWidget.h"
+
+
 
 
 
@@ -47,28 +52,8 @@ AAJ_Character::AAJ_Character()
 
 	//Equip variables 
 	bIsEquiped = false; 
-	//SpringArm�̶�� �̸����� SpringArmComponent �߰�,RootConent�� �ڽ�����
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComponent->SetupAttachment(RootComponent);
 
-	//Camera��� �̸����� CameraComponent �߰�, SpringArm�� �ڽ�����
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
 
-	//ĳ���� �ʱ� ��ġ ��
-	GetMesh()->SetRelativeLocation(FVector(0, 0, -GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
-
-	// ĳ���� �ʱ� ȸ����(Pitch, Yaw, Roll)
-	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
-	
-	//�ɱ� �ʱ� ��
-	bIsCrouching = false; // �⺻���� fals�� �д�
-	 
-	//ĳ���� �޸��� �ӵ�
-	SprintSpeedMultiplier = 2.0f; // �޸��� ���
-
-	//Bool
-	bIsEquiped = false;
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +63,7 @@ void AAJ_Character::BeginPlay()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAJ_Character::OnWeaponBeingOverap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AAJ_Character::OnWeaponEndOverap);
+	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
 }
 
 // Called every frame
@@ -117,7 +103,6 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
 	}
-
 }
 
 /////////////////�Է� Ű �Լ� ����/////////////////////////////////////////////////////////
@@ -142,6 +127,9 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 	AddMovementInput(ForwardVector, Dir.Y);
 	// ���� ������ ���Ϳ� �¿� �̵� �Է� Dir.X �� ���ؼ� �̵����� �߰�.
 	AddMovementInput(RightVector, Dir.X);
+
+	
+
 }
 
 // Look
@@ -216,14 +204,71 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 //�޸���
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
-	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
-	PlayAnimMontage(SprintMontage);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			
+			
+
+
+			GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+			GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+			GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+
+			PlayAnimMontage(SprintMontage);
+
+		}
+	}
+
+
 }
 
 void AAJ_Character::StopSprint(const FInputActionValue& Value)
 {
+	GetWorldTimerManager().ClearTimer(STMDTimerHandle);
+	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+
+
+
 	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+
 	PlayAnimMontage(StopSprintMontage);
+}
+
+
+
+void AAJ_Character::STMDTimer()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			
+			PlayerPlayerState->AddSTM();
+			
+		}
+	}
+}
+
+void AAJ_Character::STMUTimer()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+
+			PlayerPlayerState->UseSTM();
+			
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,3 +357,4 @@ void AAJ_Character::WeaponShoot()
 {
 	
 }
+

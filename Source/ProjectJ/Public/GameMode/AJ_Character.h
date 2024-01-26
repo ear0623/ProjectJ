@@ -106,9 +106,11 @@ public:
 	// Interaction
 	void Interaction(const FInputActionValue& Value);
 	// Sprint
+	UFUNCTION()
 	void Sprint(const FInputActionValue& Value);
 	void StopSprint(const FInputActionValue& Value);
 	float SprintSpeedMultiplier;
+
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -181,4 +183,12 @@ protected:
 	//interface
 	virtual void WeaponShoot()override;
 
+
+public:
+
+	void STMDTimer();
+	void STMUTimer();
+
+	FTimerHandle STMDTimerHandle;
+	FTimerHandle STMUTimerHandle;
 };	
