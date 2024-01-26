@@ -46,3 +46,5 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.25 Crouchㅇ ㅐ니 수정수정최수정
 2024.01.26 미완성된 파쿠르...
 2024 01.25 코드 정리,instance에 FSocket으로 클라이언트코드작성 및 (0 !=0)이 winterface.gen.cpp에서 발생한것으로 확인.
+
+2024.01.26 STM 완성, HP->progress bar & Text 생성 = HP 작업하실 때 progress bar, progress bar Text 함께 작업 주셔야합니다. 아 관련 작업하고 HP 작업과 바인딩은 민호가 하니 변경사항이나 수정이 필요한 부분은 따로 알려주세요. 

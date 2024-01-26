@@ -82,6 +82,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "InPut", meta = (AllowprivateAccess = "true"))
 	UInputAction* IA_Parkour;
 
+
 	////////////�Է�Ű �Լ� ����///////////////////////////////////////////////////////////////////////////
 	
 	
@@ -109,6 +110,9 @@ public:
 	//Parkour
 	void Parkour(const FInputActionValue& Value);
 
+private:
+	//IsSprint?
+	bool bIsSprintKeyPressed;
 
 
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
@@ -214,6 +218,8 @@ public:
 
 
 public:
+
+
 
 	void STMDTimer();
 	void STMUTimer();

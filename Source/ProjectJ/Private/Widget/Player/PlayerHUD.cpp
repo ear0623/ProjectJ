@@ -33,7 +33,7 @@ void APlayerHUD::BindMyPlayerState()
 		if (IsValid(ps))
 		{
 			ps->m_Dele_UpdateHp.AddDynamic(this, &APlayerHUD::OnUpdateMyHp);
-			OnUpdateMyHp(ps->m_CurHp, 100);
+			OnUpdateMyHp(ps->m_CurHp, 100, ps->m_CurHpText);
 
 			ps->m_Dele_UpdateSTM.AddDynamic(this, &APlayerHUD::OnUpdateMySTM); // 값을 확인한다. 
 			OnUpdateMySTM(ps->m_CurSTM, 150);
@@ -50,7 +50,7 @@ void APlayerHUD::BindMyPlayerState()
 	timerManger.SetTimer(th_BindMyPlayerState, this, &APlayerHUD::BindMyPlayerState, 0.01f, false);
 }
 
-void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp)
+void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp, float CurHpText)
 {
 }
 
