@@ -46,3 +46,4 @@ C:\Work\ProjectJ\Source\ProjectJ\Private\Character(파일명)
 2024.01.25 Crouchㅇ ㅐ니 수정수정최수정
 2024.01.26 미완성된 파쿠르...
 2024 01.25 코드 정리,instance에 FSocket으로 클라이언트코드작성 및 (0 !=0)이 winterface.gen.cpp에서 발생한것으로 확인.
+2024.01.26 Ai 배회하기 구현, 쫒아오는건 애매함
