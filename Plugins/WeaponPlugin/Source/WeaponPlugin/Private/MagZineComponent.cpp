@@ -16,7 +16,7 @@ UMagZineComponent::UMagZineComponent()
 
 	SpawnLocation = { 0, 0, 0 };
 	//속도
-	Velocity =200;
+	Velocity =900;
 	//속도X
 	AccelateX = 1;
 	//속도Y
@@ -24,13 +24,13 @@ UMagZineComponent::UMagZineComponent()
 	//속도Z
 	AccelateZ = 1;
 	//밀도
-	AirDencity = 1;
+	AirDencity = 1.225f;
 	//단면적
 	CrossSectionalArea = 1;
 	//항력
 	Drag = 1;
 	//항력계수
-	DragCoefficient = 1;
+	DragCoefficient = 0.3;
 	//질량
 	Mass =1;
 	//가속도
@@ -40,9 +40,9 @@ UMagZineComponent::UMagZineComponent()
 	//sin
 	Sin = 30;
 	//cos
-	Cos = 30;
+	Cos = 60;
 	//cos
-	Tan = 30;
+	Tan = 90;
 
 
 }
@@ -95,32 +95,36 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();
 	
-	float diameter = 5.56;
+	float diameter = 0.556;
 	CrossSectionalArea = FMath::Pow(diameter, 2) * 3.14 / 4;// 3.14 * (diameter * diameter) / 4;
-	DragCoefficient = (Velocity * Velocity) * CrossSectionalArea * AirDencity * Drag / 2;
-	Force = DragCoefficient;
+	DragCoefficient=0.3f;
+	Force = DragCoefficient * FMath::Pow(Velocity,2) * CrossSectionalArea * AirDencity * Drag / 2;
+	
 	Accelate = Force / Mass;
-	float SaveCos = cos(Cos);
-	float SaveSin = sin(Sin);
-
-	AccelateX = Accelate * SaveCos;
-	AccelateY = -9.8;//Accelate * SaveSin - 9.8f;
+	
 
 	if (AWeaponBase&&SpawnedActor)
 	{
 		FVector FowardVector = AWeaponBase->GetActorForwardVector();
-		FVector FRrightVector = AWeaponBase->GetActorRightVector();
+		FVector FRightVector = AWeaponBase->GetActorRightVector();
 		FVector FUpVector = AWeaponBase->GetActorUpVector();
+
+		float SaveCos = -FVector::DotProduct(FVector::RightVector,FowardVector);
+
+		float SaveSin = -FVector::DotProduct(FVector::UpVector,FowardVector);
+
+		AccelateX = Accelate * SaveCos;
+		AccelateY = Accelate * SaveSin - 9.8f;
 
 		FVector ActorLocation = SpawnLocation;
 
 		FVector WeaponXAixs = FowardVector;
-		FVector WeaponYAixs = FRrightVector;
-		FVector WeaponZAxis = FVector::CrossProduct(FRrightVector, FowardVector);//외적계산
+		FVector WeaponYAixs = FRightVector;
+		FVector WeaponZAxis = FVector::CrossProduct(FRightVector, FowardVector);//외적계산
 		//vector의 합산
-		FVector Impulse = (AccelateX * WeaponXAixs) + (AccelateY * WeaponZAxis); //FVector(FowardX, 0, AccelateY);
-		//FRotator DesiredRotation = FRotationMatrix::MakeFromX(WeaponXAixs).Rotator()+ FRotationMatrix::MakeFromY(WeaponYAixs).Rotator() + FRotationMatrix::MakeFromZ(WeaponZAxis);
-		//SpawnedActor->SetActorRotation(DesiredRotation);
+		FVector Impulse = (AccelateX * WeaponXAixs) +(AccelateY * WeaponZAxis); //
+		FRotator DesiredRotation = WeaponXAixs.Rotation() + WeaponYAixs.Rotation(); 
+		SpawnedActor->SetActorRotation(WeaponXAixs.Rotation());
 		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("X : %lf ,Y : %lf ,Z : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
