@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h" // InputAction 
 #include "WeaponInterface.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"  // AISense_Sight 헤더 파일 추가
+
 #include "AJ_Character.generated.h"
 
 //DECLARE_MULTICAST_DELEGATE_OneParam(FDele_Update)
@@ -233,4 +236,10 @@ public:
 	FTimerHandle ParkourAnimation;
 
 	void animationTimer();
+
+public:
+
+	UPROPERTY(VisibleAnywhere)
+	UAIPerceptionStimuliSourceComponent* StimuliSourceComponent;
+
 };	
