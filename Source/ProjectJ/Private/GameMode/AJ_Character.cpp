@@ -57,6 +57,9 @@ AAJ_Character::AAJ_Character()
 	bIsSprint = false;//Spint valuables value
 	AJDefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed; //DefaultSpeed
 	
+	//Parkour 
+	bIsParkour = false;
+
 	//HP
 	HP = 100;
 	
@@ -109,9 +112,10 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		//Sprint
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Started, this, &AAJ_Character::Sprint);
 		UEIC->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &AAJ_Character::StopSprint);
+		//Parkour
+		UEIC->BindAction(IA_Parkour, ETriggerEvent::Started, this, &AAJ_Character::Parkour);
 	}
 }
-
 
 
 // Move
@@ -196,6 +200,12 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 		bIsSprint = false;
 		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
 	}
+}
+
+//Parkour
+void AAJ_Character::Parkour(const FInputActionValue& Value)
+{
+	ServerParkour();
 }
 
 //Reload
@@ -307,6 +317,108 @@ void AAJ_Character::MultiTrigger_Implementation()
 	}
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WeaponData Null")));
 }
+void AAJ_Character::ServerParkour_Implementation()
+{
+	MultiParkour();
+}
+void AAJ_Character::MultiParkour_Implementation()
+{if(!bIsParkour)
+{
+	bIsParkour = true;
+	{
+		// 트레이스 시작 위치 설정
+		FVector StartLocation = GetActorLocation();
+
+		// 수평 방향으로 라인 트레이스 수행
+		FVector ForwardVector = GetActorForwardVector();
+		FVector EndLocation = StartLocation + ForwardVector * TraceDistance;
+
+		// 트레이스 파라미터 설정
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(this);
+
+		// 히트 결과를 저장할 구조체
+		FHitResult HitResult;
+
+		// 수평 방향으로 라인 트레이스 수행
+		bool bHitHorizontal = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			StartLocation,
+			EndLocation,
+			ECC_Visibility,
+			CollisionParams
+		);
+
+		// 수직 방향으로 라인 트레이스 수행
+		FVector VerticalEndLocation = StartLocation + FVector(0, 0, -TraceDistance); // 수직 방향으로 트레이스
+		bool bHitVertical = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			StartLocation,
+			VerticalEndLocation,
+			ECC_Visibility,
+			CollisionParams
+		);
+
+		DrawDebugLine(GetWorld(),StartLocation, VerticalEndLocation,FColor::Green,false, -1, 0,1.0f);
+
+		// 히트한 경우 처리
+		if (bHitHorizontal && bHitVertical)
+		{
+			// 히트한 액터에 대한 추가 작업 수행
+			AActor* HitActor = HitResult.GetActor();
+			if (HitActor)
+			{
+				// 여기에서 원하는 작업을 수행하세요.
+				// 높이 정보는 HitResult.ImpactPoint.Z 등을 통해 얻을 수 있습니다.
+				float Height = HitResult.ImpactPoint.Z - StartLocation.Z;
+			}
+		}
+
+		// 디버그 레이를 그리기 위한 코드 (원하는 경우 사용)
+		if (bDrawDebugLine)
+		{
+			DrawDebugLine(
+				GetWorld(),
+				StartLocation,
+				EndLocation,
+				FColor::Green,
+				false, -1, 0,
+				1.0f
+			);
+
+			DrawDebugLine(
+				GetWorld(),
+				StartLocation,
+				VerticalEndLocation,
+				FColor::Blue,
+				false, -1, 0,
+				1.0f
+			);
+		}
+	}
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	GetWorldTimerManager().SetTimer(ParkourTimerHandle, this, &AAJ_Character::ParkourTimer, 1.0f, false);
+	//캡슐을 전방으로 1M이동하게 만드세요.
+	//GetCapsuleComponent()->GetForwardVector();
+	// 
+
+	FVector ForwardVector = GetCapsuleComponent()->GetForwardVector();
+	float ForwardX = ForwardVector.X * 100;
+	FVector MovePosion(ForwardX, 0, 0);
+	GetCapsuleComponent()->AddRelativeLocation(MovePosion);// 전방 벡터를 이용하여 플레이어 캐릭터를 앞으로 이동시키기
+
+	//GetWorldTimerManager().SetTimer(ParkourAnimation, this, &AAJ_Character::animationTimer, 0.1f, bLessIsDistnace);
+
+	
+	//float MovementSpeed = 100.0f; // 이동 속도 설정 (원하는 값으로 변경)
+	//AddMovementInput(ForwardVector, MovementSpeed);
+}
+else
+{
+	bIsParkour = false;
+}
+}
+
 //Reload
 void AAJ_Character::ServerReload_Implementation()
 {
@@ -416,5 +528,26 @@ void AAJ_Character::SaveVariable(AActor* OtherActor)
 		WeaponClass_Save = Cast<AWeaponBase>(OtherActor);
 		
 	}
+}
+
+void AAJ_Character::ResetCameraRotation()
+{
+	// 여기에 카메라 회전을 초기 상태로 되돌리는 로직을 추가
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		FRotator NewRotation = GetActorRotation();
+		PlayerController->SetControlRotation(NewRotation);
+	}
+}
+
+void AAJ_Character::ParkourTimer()
+{
+	GetCapsuleComponent()->SetCollisionProfileName("Pawn");
+}
+
+void AAJ_Character::animationTimer()
+{
+	
 }
 
