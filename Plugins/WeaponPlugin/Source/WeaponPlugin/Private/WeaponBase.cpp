@@ -132,6 +132,9 @@ void AWeaponBase::Trigger()
 	FVector BulletForwardVector = WeaponMesh->GetSocketTransform(TEXT("Muzzle")).GetUnitAxis(EAxis::X);
 	FRotator MuzzleRotation = FRotator(BulletForwardVector.X,0,0);
 	FTransform MuzleTransfrom = { MuzzleRotation,MuzzleLocation, FVector(1.0f,1.0f,1.0f)}; 
+
+	FVector SenterSocket = WeaponMesh->GetSocketLocation(TEXT("Senter"));
+	
 	if (TriggerEffect != nullptr)
 	{
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
@@ -140,7 +143,7 @@ void AWeaponBase::Trigger()
 	//Bullet 생성
 	
 	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation);
-	MagzineCompo->Fire(this);
+	MagzineCompo->Fire(this, SenterSocket);
 
 }
 

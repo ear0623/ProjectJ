@@ -5,7 +5,7 @@
 #include "Components/SceneComponent.h"
 #include "WeaponPlugin/Public/AmmoBase.h"
 #include "WeaponBase.h"
-
+#include "GameFramework/PlayerController.h"
 
 // Sets default values for this component's properties
 UMagZineComponent::UMagZineComponent()
@@ -90,7 +90,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 }
 
 
-void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
+void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 {
 	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
 //	FVector Location = GetActorLocation();
@@ -103,18 +103,19 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 	Accelate = Force / Mass;
 	
 
-	if (AWeaponBase&&SpawnedActor)
+	if (WeaponBase&&SpawnedActor)
 	{
-		FVector FowardVector = AWeaponBase->GetActorForwardVector();
-		FVector FRightVector = AWeaponBase->GetActorRightVector();
-		FVector FUpVector = AWeaponBase->GetActorUpVector();
+		FVector FowardVector = WeaponBase->GetActorForwardVector(); 
+		FVector FRightVector = WeaponBase->GetActorRightVector(); 
+		FVector FUpVector = WeaponBase->GetActorUpVector(); 
 
-		float SaveCos = -FVector::DotProduct(FVector::RightVector,FowardVector);
+		float SaveCos_X = FVector::DotProduct(FowardVector,Center.XAxisVector);
+		float SaveCos_Y = FVector::DotProduct(FowardVector, FRightVector);
+		float SaveSin = -FVector::DotProduct(FowardVector,FVector::UpVector);
 
-		float SaveSin = -FVector::DotProduct(FVector::UpVector,FowardVector);
-
-		AccelateX = Accelate * SaveCos;
-		AccelateY = Accelate * SaveSin - 9.8f;
+		AccelateX = Accelate * SaveCos_X;
+		AccelateY = Accelate * SaveCos_Y;
+		AccelateZ = Accelate * SaveSin - 9.8f;
 
 		FVector ActorLocation = SpawnLocation;
 
@@ -122,12 +123,21 @@ void UMagZineComponent::Fire(AWeaponBase* AWeaponBase)
 		FVector WeaponYAixs = FRightVector;
 		FVector WeaponZAxis = FVector::CrossProduct(FRightVector, FowardVector);//외적계산
 		//vector의 합산
-		FVector Impulse = (AccelateX * WeaponXAixs) +(AccelateY * WeaponZAxis); //
+		FVector Impulse =(AccelateX * WeaponXAixs)+ (AccelateY * WeaponYAixs)+(AccelateZ * WeaponZAxis); //
 		FRotator DesiredRotation = WeaponXAixs.Rotation() + WeaponYAixs.Rotation(); 
 		SpawnedActor->SetActorRotation(WeaponXAixs.Rotation());
 		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("X : %lf ,Y : %lf ,Z : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CrossSectionalAreaa : %lf"), CrossSectionalArea));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Force : %lf"), Force));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Mass : %lf"), Mass));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveCos_X : %lf"), SaveCos_X));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveSin : %lf"), SaveSin));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateX : %lf"), AccelateX));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateY : %lf"), AccelateY));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateZ : %lf"), AccelateZ));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("WeaponXAixsX : %lf ,WeaponXAixsY : %lf ,WeaponXAixsZ : %lf"), WeaponXAixs.X, WeaponYAixs.Y, WeaponZAxis.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("ImpulseX : %lf ,ImpulseY : %lf ,ImpulseZ : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }

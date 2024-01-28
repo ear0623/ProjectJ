@@ -82,7 +82,7 @@ public:
 	UFUNCTION()
 	void SpawnAmmo(const FVector& Location,const FRotator& Rotation);
 
-	void Fire(AWeaponBase* AWeaponBase);
+	void Fire(AWeaponBase* AWeaponBase,const FVector &Center);
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
