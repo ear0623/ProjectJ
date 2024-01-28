@@ -7,6 +7,7 @@
 #include "WeaponBase.h"
 #include "GameFramework/PlayerController.h"
 
+
 // Sets default values for this component's properties
 UMagZineComponent::UMagZineComponent()
 {
@@ -102,7 +103,6 @@ void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 	
 	Accelate = Force / Mass;
 	
-
 	if (WeaponBase&&SpawnedActor)
 	{
 		FVector FowardVector = WeaponBase->GetActorForwardVector(); 
@@ -110,34 +110,39 @@ void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 		FVector FUpVector = WeaponBase->GetActorUpVector(); 
 
 		float SaveCos_X = FVector::DotProduct(FowardVector,Center.XAxisVector);
-		float SaveCos_Y = FVector::DotProduct(FowardVector, FRightVector);
-		float SaveSin = -FVector::DotProduct(FowardVector,FVector::UpVector);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%lf"), SaveCos_X));
+		float SaveCos_Y = FVector::DotProduct(FowardVector, Center.XAxisVector);
+		float SaveSin = FVector::DotProduct(FowardVector,FVector::UpVector);
 
-		AccelateX = Accelate * SaveCos_X;
+		AccelateX = Accelate *SaveCos_X;
 		AccelateY = Accelate * SaveCos_Y;
 		AccelateZ = Accelate * SaveSin - 9.8f;
 
 		FVector ActorLocation = SpawnLocation;
 
 		FVector WeaponXAixs = FowardVector;
-		FVector WeaponYAixs = FRightVector;
+		FVector WeaponYAixs = FUpVector;
 		FVector WeaponZAxis = FVector::CrossProduct(FRightVector, FowardVector);//외적계산
 		//vector의 합산
-		FVector Impulse =(AccelateX * WeaponXAixs)+ (AccelateY * WeaponYAixs)+(AccelateZ * WeaponZAxis); //
+		FVector Impulse = (AccelateX *WeaponXAixs);//+ (AccelateY * WeaponYAixs)+(AccelateZ * WeaponZAxis); //
+		FVector WorldImpulse = WeaponBase->GetTransform().TransformVectorNoScale(Impulse);
 		FRotator DesiredRotation = WeaponXAixs.Rotation() + WeaponYAixs.Rotation(); 
 		SpawnedActor->SetActorRotation(WeaponXAixs.Rotation());
-		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
+		SpawnedActor->AmmoMesh->AddImpulse(WorldImpulse);
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CrossSectionalAreaa : %lf"), CrossSectionalArea));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Force : %lf"), Force));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Mass : %lf"), Mass));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveCos_X : %lf"), SaveCos_X));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveSin : %lf"), SaveSin));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateX : %lf"), AccelateX));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateY : %lf"), AccelateY));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateZ : %lf"), AccelateZ));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("WeaponXAixsX : %lf ,WeaponXAixsY : %lf ,WeaponXAixsZ : %lf"), WeaponXAixs.X, WeaponYAixs.Y, WeaponZAxis.Z));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("ImpulseX : %lf ,ImpulseY : %lf ,ImpulseZ : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%lf"), WeaponXAixs.X));
+		
+
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CrossSectionalAreaa : %lf"), CrossSectionalArea));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Force : %lf"), Force));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Mass : %lf"), Mass));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveCos_X : %lf"), SaveCos_X));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveSin : %lf"), SaveSin));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateX : %lf"), AccelateX));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateY : %lf"), AccelateY));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateZ : %lf"), AccelateZ));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("WeaponXAixsX : %lf ,WeaponXAixsY : %lf ,WeaponXAixsZ : %lf"), WeaponXAixs.X, WeaponYAixs.Y, WeaponZAxis.Z));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("ImpulseX : %lf ,ImpulseY : %lf ,ImpulseZ : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }

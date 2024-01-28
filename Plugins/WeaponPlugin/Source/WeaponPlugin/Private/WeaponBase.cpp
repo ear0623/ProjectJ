@@ -140,10 +140,22 @@ void AWeaponBase::Trigger()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
+	FHitResult OutHit;
+	FVector EndLocation = FVector(MuzzleLocation + (this->GetActorForwardVector()*100000));
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	bool RayResult = GetWorld()->LineTraceSingleByChannel(OutHit, MuzzleLocation,EndLocation, ECollisionChannel::ECC_Camera, Params);
+
+	if (RayResult)
+	{
+		
+	}
+
 	//Bullet 생성
+	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation); 
+	MagzineCompo->Fire(this, MuzzleLocation);
 	
-	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation);
-	MagzineCompo->Fire(this, SenterSocket);
+	
 
 }
 
