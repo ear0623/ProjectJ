@@ -17,7 +17,7 @@ UMagZineComponent::UMagZineComponent()
 
 	SpawnLocation = { 0, 0, 0 };
 	//속도
-	Velocity =900;
+	Velocity =450;
 	//속도X
 	AccelateX = 1;
 	//속도Y
@@ -82,9 +82,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	SpawnedActor= GetWorld()->SpawnActor<AAmmoBase>(Bullet,SpawnTransform,ActorSpawnParamers);
 	if (SpawnedActor)
 	{
-	
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
-
 	}
 
 	
@@ -93,9 +91,6 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 
 void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 {
-	//FVector Aim = this->GetActorTransform().GetUnitAxis(EAxis::X);
-//	FVector Location = GetActorLocation();
-	
 	float diameter = 0.556;
 	CrossSectionalArea = FMath::Pow(diameter, 2) * 3.14 / 4;// 3.14 * (diameter * diameter) / 4;
 	DragCoefficient=0.3f;
@@ -109,40 +104,27 @@ void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 		FVector FRightVector = WeaponBase->GetActorRightVector(); 
 		FVector FUpVector = WeaponBase->GetActorUpVector(); 
 
-		float SaveCos_X = FVector::DotProduct(FowardVector,Center.XAxisVector);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%lf"), SaveCos_X));
-		float SaveCos_Y = FVector::DotProduct(FowardVector, Center.XAxisVector);
-		float SaveSin = FVector::DotProduct(FowardVector,FVector::UpVector);
+		AccelateX = Accelate;
+		AccelateY = Accelate;
+		AccelateZ = Accelate - 9.8f;
 
-		AccelateX = Accelate *SaveCos_X;
-		AccelateY = Accelate * SaveCos_Y;
-		AccelateZ = Accelate * SaveSin - 9.8f;
-
-		FVector ActorLocation = SpawnLocation;
+		FVector ActorLocation = SpawnLocation;//prefab? componentbase; unity
 
 		FVector WeaponXAixs = FowardVector;
-		FVector WeaponYAixs = FUpVector;
-		FVector WeaponZAxis = FVector::CrossProduct(FRightVector, FowardVector);//외적계산
+		FVector WeaponYAixs = FRightVector;
+		FVector WeaponZAxis = FUpVector;//FVector::CrossProduct(FRightVector, FowardVector);//외적계산
 		//vector의 합산
-		FVector Impulse = (AccelateX *WeaponXAixs);//+ (AccelateY * WeaponYAixs)+(AccelateZ * WeaponZAxis); //
-		FVector WorldImpulse = WeaponBase->GetTransform().TransformVectorNoScale(Impulse);
+		FVector AxisY = (AccelateY * WeaponYAixs);
+		FVector AxisX = (AccelateX * WeaponXAixs);
+		FVector Impulse = Accelate*(FowardVector);
+	
+		//FVector WorldImpulse = WeaponBase->GetTransform().TransformVectorNoScale(AxisX);
 		FRotator DesiredRotation = WeaponXAixs.Rotation() + WeaponYAixs.Rotation(); 
 		SpawnedActor->SetActorRotation(WeaponXAixs.Rotation());
-		SpawnedActor->AmmoMesh->AddImpulse(WorldImpulse);
+		SpawnedActor->AmmoMesh->AddImpulse(Impulse);
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%lf"), WeaponXAixs.X));
-		
 
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CrossSectionalAreaa : %lf"), CrossSectionalArea));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Force : %lf"), Force));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Mass : %lf"), Mass));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveCos_X : %lf"), SaveCos_X));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("SaveSin : %lf"), SaveSin));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateX : %lf"), AccelateX));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateY : %lf"), AccelateY));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AccelateZ : %lf"), AccelateZ));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("WeaponXAixsX : %lf ,WeaponXAixsY : %lf ,WeaponXAixsZ : %lf"), WeaponXAixs.X, WeaponYAixs.Y, WeaponZAxis.Z));
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("ImpulseX : %lf ,ImpulseY : %lf ,ImpulseZ : %lf"), Impulse.X, Impulse.Y, Impulse.Z));
 	}
 	
 }
