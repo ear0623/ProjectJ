@@ -51,3 +51,5 @@ ProjectJ
 2024.01.26 STM 완성, HP->progress bar & Text 생성 = HP 작업하실 때 progress bar, progress bar Text 함께 작업 주셔야합니다. 아 관련 작업하고 HP 작업과 바인딩은 민호가 하니 변경사항이나 수정이 필요한 부분은 따로 알려주세요. 
 
 2024.01.28  메인메뉴 exit제작 및 exit 기능구현
+
+2024.01.30 캐릭터 사망모션 삽입 - 코드입력 더 해야함

@@ -112,6 +112,9 @@ public:
 	void StopSprint(const FInputActionValue& Value);
 	//Parkour
 	void Parkour(const FInputActionValue& Value);
+	//Dead
+	void Dead(const FInputActionValue& Value);
+	
 
 private:
 	//IsSprint?
@@ -148,6 +151,12 @@ public:
 	void ServerParkour();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiParkour();
+
+	//Dead
+	UFUNCTION(Server, Reliable)
+	void ServerDead();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiDead();
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
@@ -207,7 +216,9 @@ public:
 	bool bDrawDebugLine = true;//LineTraceDebugLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsParkour; //Parkour variables
-
+	//Dead
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
+	bool bIsDead; //Dead variables
 	
 	//HP
 	float HP;
