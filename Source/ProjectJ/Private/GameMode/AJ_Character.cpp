@@ -65,6 +65,9 @@ AAJ_Character::AAJ_Character()
 
 	//IsSprint?
 	bIsSprintKeyPressed = false;
+
+	//IsDead?
+	bIsDead = false;
 	
 
 }
@@ -232,6 +235,11 @@ void AAJ_Character::StopSprint(const FInputActionValue& Value)
 void AAJ_Character::Parkour(const FInputActionValue& Value)
 {
 	ServerParkour();
+}
+// Dead
+void AAJ_Character::Dead(const FInputActionValue& Value)
+{
+	ServerDead();
 }
 
 //Reload
@@ -457,6 +465,20 @@ void AAJ_Character::MultiInteraction_Implementation()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
 }
 
+//Dead
+void AAJ_Character::ServerDead_Implementation()
+{
+	MultiDead();
+}
+
+void AAJ_Character::MultiDead_Implementation()
+{
+	if (!bIsDead)
+	{
+		bIsDead = true;
+	}
+}
+
 void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Name %s"), *OtherActor->GetClass()->GetName()));
@@ -547,4 +569,5 @@ void AAJ_Character::animationTimer()
 {
 	
 }
+
 
