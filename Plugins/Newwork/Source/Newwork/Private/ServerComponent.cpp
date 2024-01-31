@@ -6,6 +6,7 @@
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
+#include "HAL/RunnableThread.h"
 
 // Sets default values for this component's properties
 UServerComponent::UServerComponent()
@@ -15,6 +16,7 @@ UServerComponent::UServerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
 }
 
 
@@ -36,68 +38,30 @@ void UServerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-bool UServerComponent::InitializeSocketSubsystem()
+bool UServerComponent::StartServer(int32 Port)
 {
-	bool bSuccess = false;
-	TObjectPtr<ISocketSubsystem> SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
 	if (!SocketSubsystem)
 	{
-		bSuccess = true;
+		//socket test
+		return false;
 	}
-	return bSuccess;
-}
-
-void UServerComponent::AcceptThread(FSocket* ListenSocket)
-{
-	FSocket* ClientSocket = nullptr;
-	while (true)
-	{
-		FIPv4Endpoint ClientEndpoint;
-		//if (ListenSocket->HasPendingConnection())
-		//{
-			ClientSocket = ListenSocket->Accept(*ClientEndpoint.ToString());
-			if (ClientSocket != nullptr)
-			{
-
-			}
-		//}
-	}
-}
-
-int32 UServerComponent::ServertoClient()
-{
-	if (!InitializeSocketSubsystem)
-	{
-		//Socket
-		check(InitializeSocketSubsystem);
-	}
-
-	FIPv4Endpoint ListenEndpoint(FIPv4Address::Any, 15689);
-	TSharedPtr<FInternetAddr> Addr = ListenEndpoint.ToInternetAddr();
+	FIPv4Endpoint Endpoint(FIPv4Address::Any, Port);
+	TSharedPtr<FInternetAddr>Addr = Endpoint.ToInternetAddr();
 	if (!Addr.IsValid())
 	{
-		//Address
-		check(Addr);
+		//Addr
+		return false;
 	}
-
-	FSocket* ListenSocket = FTcpSocketBuilder(TEXT("ListenSocket")).AsBlocking().BoundToEndpoint(ListenEndpoint).Listening(5);
+	FSocket* ListenSocket = FTcpSocketBuilder(TEXT("ServerSocket")).BoundToEndpoint(Endpoint).Listening(10);
 	if (!ListenSocket)
 	{
-		//Listen소켓실패
-		check(ListenSocket);
+		//listensocket
+		return false;
 	}
+	//FRunnableThread::Create(new FServerThread())
+}
 
-	//FRunnableThread::Create(new AcceptThread,ListenSocket);
-	while (true)
-	{
-		//작업수행
-		FPlatformProcess::Sleep(0.1);
-	}
-
-	ListenSocket->Close();
-	ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ListenSocket);
-	
-	//FSocketSubsystem::Shutdown();
-	return 0;
+void UServerComponent::HandleClientCommunication(FSocket* ClientSocket)
+{
 }
 

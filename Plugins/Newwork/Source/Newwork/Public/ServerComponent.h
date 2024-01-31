@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ServerComponent.generated.h"
 
+class ISocketSubsystem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NEWWORK_API UServerComponent : public UActorComponent
@@ -24,11 +25,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	bool InitializeSocketSubsystem();
-	
-	void AcceptThread(FSocket* ListenSocket);
+	UFUNCTION(BlueprintCallable,Category="Server TCP")
+	bool StartServer(int32 port);
 
-	int32 ServertoClient();
+protected:
+	void HandleClientCommunication(FSocket* ClientSocket);
 
+private:
+	ISocketSubsystem* SocketSubsystem;
 
 };
