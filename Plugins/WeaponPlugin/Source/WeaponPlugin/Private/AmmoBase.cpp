@@ -88,12 +88,12 @@ float AAmmoBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		break;
 	}
 	Controller = EventInstigator;
-	DamageCauser;
+	DamageCauser = this;
 
 
 	TSubclassOf<UDamageType>DamageType;
-
-	UGameplayStatics::ApplyDamage(this, DamageAmount, Controller, DamageCauser,DamageType);
+	TObjectPtr<AActor> ConvertActor = Cast<AActor>(Controller);
+	UGameplayStatics::ApplyDamage(ConvertActor, DamageAmount, Controller, DamageCauser,DamageType);
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("%s"),DamageCauser->GetClass()));
 
 	return DamageAmount;
