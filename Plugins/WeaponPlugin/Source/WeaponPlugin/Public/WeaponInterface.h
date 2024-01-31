@@ -34,4 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void DropWeapon();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Hit(AController* EventInstigator);
+
 };

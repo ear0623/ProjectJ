@@ -484,34 +484,29 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("Name %s"), *OtherActor->GetClass()->GetName()));
 
 	WeaponClass = Cast<AWeaponBase>(OtherActor);
-	if (WeaponClass)
-	{
-		WeaponData = Cast<IWeaponInterface>(OtherActor);
-	}
-
+	WeaponData = Cast<IWeaponInterface>(OtherActor);
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
 	{	
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("%s"), *SweepResult.GetActor()->GetName()));
+		TObjectPtr<ACharacter> ConvertCharacter = this;
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);//트레이스채널로 다시체크?
-
-
-		TArray<FOverlapResult> Overlaps;
-
-		GetWorld()->OverlapMultiByObjectType(Overlaps, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams::AllDynamicObjects, FCollisionShape::MakeCapsule(32.0f, 88.0f), QueryParams);
-		for (const FOverlapResult& Overlap : Overlaps)
-		{
-			if (Overlap.GetActor() == this)
-			{
-				//damage계산 나중에 delegate로 계산
-				//-10이 아니라 takedamage로 self 제외.
-				HP -= 10;
-				AmmoBase->K2_DestroyActor();
-				break;
-			}
-		}
-		
+		WeaponData->Execute_Hit(AmmoBase,GetWorld()->GetFirstPlayerController());
+		//TArray<FOverlapResult> Overlaps;
+		//GetWorld()->OverlapMultiByObjectType(Overlaps, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams::AllDynamicObjects, FCollisionShape::MakeCapsule(32.0f, 88.0f), QueryParams);
+		//for (const FOverlapResult& Overlap : Overlaps)
+		//{
+		//	if (Overlap.GetActor() == this)
+		//	{
+		//		//damage계산 나중에 delegate로 계산
+		//		//-10이 아니라 takedamage로 self 제외.
+		//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("%s"), *SweepResult.GetActor()->GetName()));
+		//		HP -= 10;
+		//		
+		//		break;
+		//	}
+		//}
+		AmmoBase->K2_DestroyActor();
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("AmmoClassOverlap"));
 	}
 	SaveVariable(OtherActor);

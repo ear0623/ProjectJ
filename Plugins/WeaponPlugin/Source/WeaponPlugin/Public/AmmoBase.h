@@ -11,7 +11,7 @@ class UStaticMeshComponent;
 class AWeaponBase;
 class IWeaponInterface;
 class AController;
-
+class UTexture2D;
 
 UENUM(BlueprintType)
 enum class EBulletType : uint8
@@ -45,7 +45,15 @@ public:
 
 	void SettingOwner_Implementation(ACharacter* character);
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Hit(AController* EventInstigator);
+
+	void Hit_Implementation(AController* EventInstigator);
+
 	//FHitResult;
+	void HitResult(FVector NormalImpulse);
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	////////Component///////////////////////////////////////////////////////////////////
@@ -56,12 +64,15 @@ private:
 	//instigater
 	TObjectPtr<AController> Controller;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Data", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTexture2D> BulletMarks;
+
 public:
 	//¿ÜÇü
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
-
+	
 
 
 
