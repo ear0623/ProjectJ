@@ -60,8 +60,6 @@ AAJ_Character::AAJ_Character()
 	//Parkour 
 	bIsParkour = false;
 
-	//HP
-	HP = 100;
 
 	//IsSprint?
 	bIsSprintKeyPressed = false;
@@ -488,26 +486,38 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
 	{	
+		float Damage= 10;
+	/*	switch (AmmoBase->AmmoType)
+		{
+			case 
+				Damage = 10;
+			break;
+		case EBulletType::AR_7:
+			DamageAmount = 12;
+			break;
+		case EBulletType::AR_9:
+			DamageAmount = 9;
+			break;
+			DamageAmount = 0;
+		default:
+			break;
+		}*/
+		
 		TObjectPtr<ACharacter> ConvertCharacter = this;
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);//트레이스채널로 다시체크?
 		WeaponData->Execute_Hit(AmmoBase,GetWorld()->GetFirstPlayerController());
-		//TArray<FOverlapResult> Overlaps;
-		//GetWorld()->OverlapMultiByObjectType(Overlaps, GetActorLocation(), FQuat::Identity, FCollisionObjectQueryParams::AllDynamicObjects, FCollisionShape::MakeCapsule(32.0f, 88.0f), QueryParams);
-		//for (const FOverlapResult& Overlap : Overlaps)
-		//{
-		//	if (Overlap.GetActor() == this)
-		//	{
-		//		//damage계산 나중에 delegate로 계산
-		//		//-10이 아니라 takedamage로 self 제외.
-		//		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("%s"), *SweepResult.GetActor()->GetName()));
-		//		HP -= 10;
-		//		
-		//		break;
-		//	}
-		//}
+
+		APlayerPlayerState* PS = Cast<APlayerPlayerState>(GetPlayerState());
+		if (PS)
+		{
+	
+			PS->AddDamage(Damage);
+		}
+
+		
 		AmmoBase->K2_DestroyActor();
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("AmmoClassOverlap"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("%f"),HP));
 	}
 	SaveVariable(OtherActor);
 	//UE_LOG����

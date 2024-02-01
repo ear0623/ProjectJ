@@ -120,7 +120,6 @@ private:
 	//IsSprint?
 	bool bIsSprintKeyPressed;
 
-
 /////////////////////////////Network/////////////////////////////////////////////////////////////////
 public:
 
@@ -219,9 +218,7 @@ public:
 	//Dead
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsDead; //Dead variables
-	
-	//HP
-	float HP;
+
 
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)

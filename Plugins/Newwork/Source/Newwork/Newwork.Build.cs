@@ -25,7 +25,7 @@ public class Newwork : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", "Sockets", "Networking",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

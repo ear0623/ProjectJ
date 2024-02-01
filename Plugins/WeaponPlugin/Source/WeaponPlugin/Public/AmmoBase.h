@@ -58,8 +58,7 @@ public:
 private:
 	////////Component///////////////////////////////////////////////////////////////////
 	//무기타입
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
-	EBulletType AmmoType;
+	
 
 	//instigater
 	TObjectPtr<AController> Controller;
@@ -72,6 +71,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	EBulletType AmmoType;
 	
 
 

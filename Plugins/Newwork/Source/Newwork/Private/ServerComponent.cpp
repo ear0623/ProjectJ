@@ -6,6 +6,7 @@
 #include "Sockets.h"
 #include "SocketSubsystem.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
+#include "Interfaces/IPv4/IPv4Address.h"
 #include "HAL/RunnableThread.h"
 
 // Sets default values for this component's properties
@@ -16,9 +17,7 @@ UServerComponent::UServerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
-	SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-	ListenSocket = SocketSubsystem->CreateSocket(NAME_Stream, TEXT("Default"), false);
-	ClientSocket = ListenSocket->Accept(TEXT("ClientSocket"));
+
 	
 }
 
@@ -29,7 +28,9 @@ void UServerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM); 
+	ListenSocket = SocketSubsystem->CreateSocket(NAME_Stream, TEXT("Default"), false); 
+	ClientSocket = ListenSocket->Accept(TEXT("ClientSocket")); 
 }
 
 
@@ -43,6 +44,8 @@ void UServerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UServerComponent::MadeSocket()
 {
+
+
 	if (!SocketSubsystem)
 	{
 		//socket empty

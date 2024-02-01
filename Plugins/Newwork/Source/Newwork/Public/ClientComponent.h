@@ -4,40 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "ServerComponent.generated.h"
+#include "ClientComponent.generated.h"
 
 class ISocketSubsystem;
 class FSocket;
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NEWWORK_API UServerComponent : public UActorComponent
+class NEWWORK_API UClientComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UServerComponent();
-	
+	UClientComponent();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void MadeSocket();
+	void Connect();
+
 protected:
-	
-
-
-private:
-	
-	TObjectPtr<FSocket>ListenSocket;
-
-	TObjectPtr<ISocketSubsystem> SocketSubsystem;
-
-	TObjectPtr<FSocket> ClientSocket;
-
+	bool bIsRunning;
 };
