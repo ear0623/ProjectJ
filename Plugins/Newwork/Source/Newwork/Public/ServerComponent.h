@@ -6,7 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "ServerComponent.generated.h"
 
-class ISocketSubsystem;
+class SOCKET_API ISocketSubsystem;
+class FSocket;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NEWWORK_API UServerComponent : public UActorComponent
@@ -16,6 +17,7 @@ class NEWWORK_API UServerComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UServerComponent();
+	
 
 protected:
 	// Called when the game starts
@@ -25,13 +27,17 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable,Category="Server TCP")
-	bool StartServer(int32 port);
-
+	void MadeSocket();
 protected:
-	void HandleClientCommunication(FSocket* ClientSocket);
+	
+
 
 private:
-	ISocketSubsystem* SocketSubsystem;
+	
+	TObjectPtr<FSocket>ListenSocket;
+
+	TObjectPtr<ISocketSubsystem> SocketSubsystem;
+
+	TObjectPtr<FSocket> ClientSocket;
 
 };

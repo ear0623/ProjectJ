@@ -17,6 +17,9 @@ UServerComponent::UServerComponent()
 
 	// ...
 	SocketSubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+	ListenSocket = SocketSubsystem->CreateSocket(NAME_Stream, TEXT("Default"), false);
+	ClientSocket = ListenSocket->Accept(TEXT("ClientSocket"));
+	
 }
 
 
@@ -38,30 +41,62 @@ void UServerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-bool UServerComponent::StartServer(int32 Port)
+void UServerComponent::MadeSocket()
 {
 	if (!SocketSubsystem)
 	{
-		//socket test
-		return false;
+		//socket empty
+		return;
 	}
-	FIPv4Endpoint Endpoint(FIPv4Address::Any, Port);
-	TSharedPtr<FInternetAddr>Addr = Endpoint.ToInternetAddr();
-	if (!Addr.IsValid())
-	{
-		//Addr
-		return false;
-	}
-	FSocket* ListenSocket = FTcpSocketBuilder(TEXT("ServerSocket")).BoundToEndpoint(Endpoint).Listening(10);
 	if (!ListenSocket)
 	{
-		//listensocket
-		return false;
+		//socket error
+		return;
 	}
-	//FRunnableThread::Create(new FServerThread())
+	FIPv4Endpoint Endpoint(FIPv4Address::Any, 15689);
+	FIPv4Address Addr = Endpoint.Address;
+
+	TSharedRef<FInternetAddr> ListenAddr = SocketSubsystem->CreateInternetAddr();
+	ListenAddr->SetIp(Addr.Value);
+	ListenAddr->SetPort(Endpoint.Port);
+
+	if (ListenSocket->Bind(*ListenAddr))
+	{
+		if (ListenSocket->Listen(10))
+		{
+			//success
+		}
+		else
+		{
+			//fail
+		}
+	}
+
+	if (!ClientSocket)
+	{
+		//socket error
+	}
+	else
+	{
+		//success
+		// 클라이언트 소켓이 성공적으로 수락됨
+		// 클라이언트와의 통신이 가능한 상태가 됨
+
+	}
+
+
+
+	if (ListenSocket)
+	{
+		ListenSocket->Close();
+		ISocketSubsystem::Get()->DestroySocket(ListenSocket);
+	}
+	if (ClientSocket)
+	{
+		ClientSocket->Close();
+		ISocketSubsystem::Get()->DestroySocket(ClientSocket);
+	}
+	
 }
 
-void UServerComponent::HandleClientCommunication(FSocket* ClientSocket)
-{
-}
 
