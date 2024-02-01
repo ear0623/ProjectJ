@@ -59,6 +59,7 @@ void UClientComponent::Connect()
 	bool Connected = ServerSocket->Connect(*ServerAddr);
 
 	TArray<uint8> SendBuffer;
+	TArray<uint8> ReciveBuffer;
 	FTimespan WaitTime = FTimespan::FromSeconds(1);
 	while (bIsRunning)
 	{
@@ -70,9 +71,14 @@ void UClientComponent::Connect()
 			int32 ByteRecived = 0;
 			if (ServerSocket->Wait(ESocketWaitConditions::WaitForRead, WaitTime))
 			{
-
+				ReciveBuffer.SetNumUninitialized(1024);
+				ServerSocket->Recv(ReciveBuffer.GetData(), ReciveBuffer.Num(), ByteRecived);
 			}
 		}
+		FPlatformProcess::Sleep(0.01f);
 	}
+
+	ServerSocket->Close();
+	ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ServerSocket);
 }
 
