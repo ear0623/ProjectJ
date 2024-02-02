@@ -23,8 +23,8 @@ public:
 	void BindMyPlayerState();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnUpdateMyHp(float CurHp, float MaxHp, float CurHpText);
-	void OnUpdateMyHp_Implementation(float CurHp, float MaxHp, float CurHpText);
+	void OnUpdateMyHp(float CurHp, float MaxHp, int CurHpText);
+	void OnUpdateMyHp_Implementation(float CurHp, float MaxHp, int CurHpText);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent) // STM = Stemina
 	void OnUpdateMySTM(float CurSTM, float MaxSTM);

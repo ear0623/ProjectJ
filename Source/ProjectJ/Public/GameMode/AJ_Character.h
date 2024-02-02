@@ -245,6 +245,7 @@ public:
 
 	void animationTimer();
 
+
 public:
 
 	UPROPERTY(VisibleAnywhere)

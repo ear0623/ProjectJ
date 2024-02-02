@@ -10,6 +10,7 @@
 #include "MagZineComponent.h"
 
 
+
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -155,7 +156,43 @@ void AWeaponBase::Trigger()
 	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation); 
 	MagzineCompo->Fire(this, MuzzleLocation);
 	
+
+
+	UseAmmo();
 	
+
+}
+
+bool AWeaponBase::IsCanShoot()
+{
+	if (m_Ammo <= 0)
+		return false;
+
+	
+	return true;
+}
+
+bool AWeaponBase::UseAmmo()
+{
+	if (false == IsCanShoot())
+		return false;
+	m_Ammo = m_Ammo - 1;
+	m_Ammo = FMath::Clamp(m_Ammo, 0, 30);
+
+	OnRep_Ammo();
+
+	return true;
+}
+
+void AWeaponBase::SetAmmo(int Ammo)
+{
+	m_Ammo = Ammo;
+
+	OnRep_Ammo();
+}
+
+void AWeaponBase::OnRep_Ammo()
+{
 
 }
 

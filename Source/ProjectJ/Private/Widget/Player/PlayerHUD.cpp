@@ -50,7 +50,7 @@ void APlayerHUD::BindMyPlayerState()
 	timerManger.SetTimer(th_BindMyPlayerState, this, &APlayerHUD::BindMyPlayerState, 0.01f, false);
 }
 
-void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp, float CurHpText)
+void APlayerHUD::OnUpdateMyHp_Implementation(float CurHp, float MaxHp, int CurHpText)
 {
 }
 

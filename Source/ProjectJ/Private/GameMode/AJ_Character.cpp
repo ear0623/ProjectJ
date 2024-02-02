@@ -513,6 +513,7 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 		{
 	
 			PS->AddDamage(Damage);
+		/*	PS->AddDamage_Text(Damage);*/
 		}
 
 		
@@ -574,5 +575,3 @@ void AAJ_Character::animationTimer()
 {
 	
 }
-
-
