@@ -132,4 +132,23 @@ public:
 	FName GetWeaponTag()const { return WeaponTag; }
 
 	void SetWeaponTag(const FName& newTag) { WeaponTag = newTag; }
+
+public:
+	
+	UFUNCTION(BlueprintPure)
+	bool IsCanShoot();
+
+	bool UseAmmo();
+
+	void SetAmmo(int Ammo);
+
+
+
+	UFUNCTION()
+	void OnRep_Ammo();
+
+	UPROPERTY(ReplicatedUsing = OnRep_Ammo)
+	int m_Ammo;
+	
+
 };

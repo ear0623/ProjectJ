@@ -6,10 +6,12 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerPlayerState.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDele_UpdateHp, float, CurHp, float, MaxHp, float, CurHpText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDele_UpdateHp, float, CurHp, float, MaxHp, int, CurHpText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDele_UpdateSTM, float, CurSTM, float, MaxSTM);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_UpdateMag, int, Mag);
 
+
+//class AWeaponBase;
 /**
  * 
  */
@@ -30,6 +32,9 @@ public:
 	UFUNCTION()
 	void AddDamage(float Damage);
 
+	//UFUNCTION()
+	//void AddDamage_Text(float Damage);
+
 	UFUNCTION()
 	void AddSTM(); // 1. ÀÌ °ªÀ»
 
@@ -47,8 +52,8 @@ public:
 	UFUNCTION()
 	void OnRep_CurHp();
 
-	UFUNCTION()
-	void OnRep_CurHpText();
+	//UFUNCTION()
+	//void OnRep_CurHpText();
 	
 
 	UFUNCTION()
@@ -57,12 +62,15 @@ public:
 	UFUNCTION()
 	void OnRep_Mag();
 
+	UFUNCTION(BlueprintCallable)
+	void UpDateAmmoToHUD(int Ammo);
+
 public:
 
 	UPROPERTY(ReplicatedUsing = OnRep_CurHp)
 	float m_CurHp;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CurHpText)
+	UPROPERTY(ReplicatedUsing = OnRep_CurHp)
 	float m_CurHpText;
 
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
