@@ -114,7 +114,8 @@ public:
 	void Parkour(const FInputActionValue& Value);
 	//Dead
 	void Dead(const FInputActionValue& Value);
-	
+	//Hit
+	void Hit(const FInputActionValue& Value);
 
 private:
 	//IsSprint?
@@ -156,11 +157,16 @@ public:
 	void ServerDead();
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiDead();
+
+	//Hit
+	UFUNCTION(Server, Reliable)
+	void ServerHit();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiHit();
+	// 
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
-	
-
 public:
 	// Trigger
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
@@ -171,6 +177,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
+	//Hit
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> HitMontage;
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
 public:
 	UFUNCTION()

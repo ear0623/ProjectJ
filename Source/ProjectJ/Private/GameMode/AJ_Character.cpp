@@ -239,6 +239,11 @@ void AAJ_Character::Dead(const FInputActionValue& Value)
 {
 	ServerDead();
 }
+//Hit
+void AAJ_Character::Hit(const FInputActionValue& Value)
+{
+	ServerHit();
+}
 
 //Reload
 void AAJ_Character::Reload(const FInputActionValue& Value)
@@ -260,8 +265,6 @@ void AAJ_Character::Interaction(const FInputActionValue& Value)
 
 
 //Sprint
-
-
 void AAJ_Character::STMDTimer()
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -285,7 +288,6 @@ void AAJ_Character::STMDTimer()
 		}
 	}
 }
-
 void AAJ_Character::STMUTimer()
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -476,6 +478,17 @@ void AAJ_Character::MultiDead_Implementation()
 		bIsDead = true;
 	}
 }
+//Hit
+void AAJ_Character::ServerHit_Implementation()
+{
+	MultiHit();
+}
+
+void AAJ_Character::MultiHit_Implementation()
+{
+	PlayAnimMontage(HitMontage);
+}
+
 
 void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -574,5 +587,4 @@ void AAJ_Character::animationTimer()
 {
 	
 }
-
 
