@@ -55,3 +55,5 @@ ProjectJ
 2024.01.30 캐릭터 사망모션 삽입 - 코드입력 더 해야함
 
 2024.01.30 servertcp 생성 시도.
+
+2024.02.04 sql thirdparty 생성 driver.h virtual 소멸자부분 오류처리 미해결 인클루드에서 임시주석처리
