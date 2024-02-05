@@ -9,7 +9,7 @@ public class ProjectJ : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","UMG", "WeaponPlugin", "Sockets", "Networking", "AIModule", "Newwork", "MySqlPlugin" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput","UMG", "WeaponPlugin", "Sockets", "Networking", "AIModule", "Newwork" });
 
 
         // Uncomment if you are using Slate UI
