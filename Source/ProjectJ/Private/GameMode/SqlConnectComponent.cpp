@@ -7,7 +7,7 @@
 #include "MySqlPlugin/Public/include/jdbc/cppconn/resultset.h"
 #include "MySqlPlugin/Public/include/jdbc/cppconn/statement.h"
 #include "MySqlPlugin/Public/include/jdbc/cppconn/prepared_statement.h"
-//#include "MySqlPlugin/Public/include/jdbc/cppconn/driver.h"
+#include "MySqlPlugin/Public/include/jdbc/cppconn/driver.h"
 
 
 
