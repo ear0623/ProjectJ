@@ -26,9 +26,15 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI")
-	TObjectPtr<UChatUserWidget> LobbyWidgetObject;
+	/// ///
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	TSubclassOf<ULobbyWidget> HUdWidgetClass;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Widget")
+	TObjectPtr<ULobbyWidget> HUdwidget;
+
+	/// /// ///
+	
 	UFUNCTION(Server, Unreliable, WithValidation)
 	void C2S_SendMessage(const FString& InMessage); //client call
 	bool C2S_SendMessage_Validate(const FString& InMessage);

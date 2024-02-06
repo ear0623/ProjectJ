@@ -74,18 +74,3 @@ void UChatUserWidget::AddMessage(const FString& InMessge)
 	}
 }
 
-void UChatUserWidget::UpdateLeftTime(int InLeftTime)
-{
-	/*if (LeftTimeTextBox)
-	{
-		if (InLeftTime > 0)
-		{
-			FString Message = FString::Printf(TEXT("%d초 남음"), InLeftTime);
-			LeftTimeTextBox->SetText(FText::FromString(Message));
-		}
-		else
-		{
-			LeftTimeTextBox->SetText(FText::FromString(TEXT("시작")));
-		}
-	}*/
-}

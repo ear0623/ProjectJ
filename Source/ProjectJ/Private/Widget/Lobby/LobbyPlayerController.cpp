@@ -5,6 +5,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Widget/Lobby/ChatUserWidget.h"
 #include "Widget/Lobby/LobbyWidget.h"
+#include "Widget/Lobby/LobbyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -15,23 +17,12 @@ void ALobbyPlayerController::BeginPlay()
 		SubSystem->AddMappingContext(DefaultIMC, 0);
 
 
-	FSoftClassPath ChatWidgetObject(TEXT("C:/Work/ProjectJ/Content/ProjectJ/Widget/Lobby/WBP_LobbyWidget.uasset"));
-	UClass* WidgetClass = ChatWidgetObject.TryLoadClass<UChatUserWidget>();
-
-	LobbyWidgetObject = Cast<UChatUserWidget>(WidgetClass);
-	if (WidgetClass && IsLocalPlayerController())
+	check(HUdWidgetClass);
+	if (HUdWidgetClass != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("If true"));
-		LobbyWidgetObject = CreateWidget<UChatUserWidget>(this, WidgetClass);
-		if (LobbyWidgetObject)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Lobbywidgettrue"));
-			LobbyWidgetObject->AddToViewport();
-			//LobbyWidgetObject->RemoveFromViewport();
-		}
+		HUdwidget = CreateWidget<ULobbyWidget>(GetWorld(), HUdWidgetClass); 
+		HUdwidget->AddToViewport();
 	}
-
-	
 }
 
 bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)
@@ -41,14 +32,18 @@ bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)
 
 void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMessage)
 {
-	
+	TObjectPtr<ALobbyGameModeBase> LobbyGameMode = Cast<ALobbyGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (LobbyGameMode)
+	{
+		uint32 InMessageLength = InMessage.Len();
+		LobbyGameMode->SendClientToServer(InMessageLength,InMessage);
+	}
 	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 		//for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(*It);
 		if (LobbyPC)
 		{
-			
 			LobbyPC->S2C_SendMessage(InMessage);
 		}
 	}
@@ -58,9 +53,10 @@ void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMes
 void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMessage)
 {
 	
-	if (LobbyWidgetObject != nullptr)
+	if (HUdwidget)
 	{
-		LobbyWidgetObject->AddMessage(InMessage);
+		HUdwidget->ChatWidget->AddMessage(InMessage);
+		UE_LOG(LogTemp, Warning, TEXT("true"));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("LobbyWidgetObject Null"));
+	
 }

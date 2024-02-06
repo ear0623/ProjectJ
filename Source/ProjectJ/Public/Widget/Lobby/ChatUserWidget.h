@@ -33,8 +33,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI", meta = (BindWidget))
 	TObjectPtr<UEditableTextBox> ChatInputTextBox;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
-	TObjectPtr<UTextBlock> LeftTimeTextBox;
 
 	UFUNCTION()
 	void ProcessChanged(const FText& Text);
@@ -45,5 +43,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddMessage(const FString& InMessge);
 
-	void UpdateLeftTime(int InLeftTime);
+
 };

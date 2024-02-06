@@ -211,16 +211,25 @@ int main()
 	int ClientSockAddrSize = sizeof(ListenSockAddr);
 	SOCKET ClientSocket = accept(ListenSocket, (SOCKADDR*)&ClientSocketAddr, &ClientSockAddrSize);
 	//accept 家南
-	char Buffer[1024] = { 0, };
+	char SendBuffer[1024] = { 0, };
+	char RecvBuffer[1024] = { 0, };
 	while (true)
 	{
-		//send家南
-		
-		if (accept != nullptr)
+		//recive家南
+		int RecvLength =recv(ClientSocket, RecvBuffer, sizeof(RecvBuffer));
+		if (RecvLength<0)
 		{
-			std::cout << "NotNull" << std::endl;
 
-			send(ClientSocket, Buffer, sizeof(Buffer), 0);
+		}
+		if (RecvLength == 0)
+		{
+
+		}
+		if (RecvLength > 0)
+		{
+			std::cout << "Received: " << recv << std::endl;
+
+			int SendLength = send(ClientSocket, SendBuffer, sizeof(sendBuffer), 0);
 		}
 	}
 	
