@@ -20,10 +20,30 @@ class PROJECTJ_API UChatUserWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	/*UPROPERTY(BlueprintReadOnly, EditAnywhere,Category ="UI")
-	TObjectPtr<UTextBlock> ChatBox;
+	virtual void NativeConstruct() override;
+
+	void UpatePlayerCount(int32 InPlayerCount);
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI", meta = (BindWidget))
+	TObjectPtr<UTextBlock> PlayerCountTextBox;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI", meta = (BindWidget))
+	TObjectPtr<UScrollBox> ChatScrollBox;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI", meta = (BindWidget))
+	TObjectPtr<UEditableTextBox> ChatInputTextBox;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "UI")
-	TObjectPtr<UEditableTextBox> ChatMultiBox*/
+	TObjectPtr<UTextBlock> LeftTimeTextBox;
 
+	UFUNCTION()
+	void ProcessChanged(const FText& Text);
+
+	UFUNCTION()
+	void ProcessCommitted(const FText& Text, ETextCommit::Type CommitMethod);
+	
+	UFUNCTION(BlueprintCallable)
+	void AddMessage(const FString& InMessge);
+
+	void UpdateLeftTime(int InLeftTime);
 };
