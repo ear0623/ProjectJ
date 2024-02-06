@@ -5,6 +5,7 @@
 
 
 
+
 // Sets default values for this component's properties
 USqlConnectComponent::USqlConnectComponent()
 {
@@ -32,11 +33,5 @@ void USqlConnectComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-
-void USqlConnectComponent::ConnectSQL()
-{
-
-
 }
 

@@ -59,3 +59,6 @@ ProjectJ
 2024.02.01 캐릭터 피격모션 (미완성)
 
 2024.02.04 sql thirdparty 생성 driver.h virtual 소멸자부분 오류처리 미해결 인클루드에서 임시주석처리
+
+2024.02.05 patrol, chase, attack 
+2024.02.06 patrol, chase, attack 다 고침
