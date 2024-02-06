@@ -2,12 +2,6 @@
 
 
 #include "GameMode/SqlConnectComponent.h"
-#include "MySqlPlugin/Public/include/jdbc/mysql_connection.h"
-#include "MySqlPlugin/Public/include/jdbc/cppconn/exception.h"
-#include "MySqlPlugin/Public/include/jdbc/cppconn/resultset.h"
-#include "MySqlPlugin/Public/include/jdbc/cppconn/statement.h"
-#include "MySqlPlugin/Public/include/jdbc/cppconn/prepared_statement.h"
-#include "MySqlPlugin/Public/include/jdbc/cppconn/driver.h"
 
 
 
@@ -42,21 +36,7 @@ void USqlConnectComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void USqlConnectComponent::ConnectSQL()
 {
-	sql::Driver* Driver = nullptr;
-	sql::Connection* Connection = nullptr;
-	sql::Statement* State = nullptr;
-	sql::ResultSet* Resultset = nullptr;
-	sql::PreparedStatement* PreparedStatement = nullptr;
 
-	try
-	{
-		//Driver = get_driver_instance();
-		//Connection = Driver->
-	}
-	catch (const std::exception&)
-	{
-
-	}
 
 }
 

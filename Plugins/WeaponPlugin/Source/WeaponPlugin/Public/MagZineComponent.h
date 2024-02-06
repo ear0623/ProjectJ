@@ -51,12 +51,15 @@ private:
 	//속도Z
 	float AccelateZ;
 	//밀도
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable",meta = (AllowPrivateAccess = "true"))
 	float AirDencity;
 	//단면적
 	float CrossSectionalArea;
 	//항력
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable", meta = (AllowPrivateAccess = "true"))
 	float Drag;
 	//항력계수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable", meta = (AllowPrivateAccess = "true"))
 	float  DragCoefficient;
 	//질량
 	float Mass;
@@ -64,12 +67,9 @@ private:
 	float Accelate;
 	//힘
 	float Force;
-	//sin
-	float Sin;
-	//cos
-	float Cos;
-	//tan
-	float Tan;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variable", meta = (AllowPrivateAccess = "true"))
+	float diameter;
 	///////////////////////////////변수//////////////////////////
 		//Damage
 	float Damage;

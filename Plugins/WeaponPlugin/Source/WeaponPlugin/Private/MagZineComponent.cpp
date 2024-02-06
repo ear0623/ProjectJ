@@ -38,12 +38,6 @@ UMagZineComponent::UMagZineComponent()
 	Accelate = 1;
 	//힘
 	Force = 1;
-	//sin
-	Sin = 30;
-	//cos
-	Cos = 60;
-	//cos
-	Tan = 90;
 
 
 }
@@ -91,7 +85,7 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 
 void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 {
-	float diameter = 0.556;
+	diameter = 0.556;
 	CrossSectionalArea = FMath::Pow(diameter, 2) * 3.14 / 4;// 3.14 * (diameter * diameter) / 4;
 	DragCoefficient=0.3f;
 	Force = DragCoefficient * FMath::Pow(Velocity,2) * CrossSectionalArea * AirDencity * Drag / 2;
@@ -112,10 +106,9 @@ void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 
 		FVector WeaponXAixs = FowardVector;
 		FVector WeaponYAixs = FRightVector;
-		FVector WeaponZAxis = FUpVector;//FVector::CrossProduct(FRightVector, FowardVector);//외적계산
+		FVector WeaponZAxis = FUpVector;
 		//vector의 합산
-		FVector AxisY = (AccelateY * WeaponYAixs);
-		FVector AxisX = (AccelateX * WeaponXAixs);
+		
 		FVector Impulse = Accelate*(FowardVector);
 	
 		//FVector WorldImpulse = WeaponBase->GetTransform().TransformVectorNoScale(AxisX);

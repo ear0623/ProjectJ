@@ -1,6 +1,7 @@
 #include <WinSock2.h>
 #include <windows.h>
 #include <process.h>
+#include <iostream>
 
 #pragma comment(lib,"ws2_32")
 
@@ -22,12 +23,25 @@ int main()
 
 	listen(ListenSocket, 5);
 	// 罐绰 家南
-	
+
 	SOCKADDR_IN ClientSocketAddr;
 	memset(&ClientSocketAddr, 0, sizeof(ClientSocketAddr));
 	int ClientSockAddrSize = sizeof(ListenSockAddr);
-	SOCKET ClientSocket = accept(ListenSocket,(SOCKADDR*)&ClientSocketAddr,&ClientSockAddrSize);
+	SOCKET ClientSocket = accept(ListenSocket, (SOCKADDR*)&ClientSocketAddr, &ClientSockAddrSize);
 	//accept 家南
+	char Buffer[1024] = { 0, };
+	while (true)
+	{
+		//send家南
+		
+		if (accept != nullptr)
+		{
+			std::cout << "NotNull" << std::endl;
+
+			send(ClientSocket, Buffer, sizeof(Buffer), 0);
+		}
+	}
+	
 
 	//HANDLE ThreadHandle = (HANDLE)_beginthreadex(0,)
 
