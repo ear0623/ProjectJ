@@ -203,7 +203,11 @@ int main()
 
 	bind(ListenSocket, (SOCKADDR*)&ListenSockAddr, sizeof(ListenSockAddr));
 
-	listen(ListenSocket, 5);
+	int ListenResult = listen(ListenSocket, 5);
+	if (ListenResult > 0)
+	{
+		std::cout << "ListenSucess" << std::endl;
+	}
 	// 罐绰 家南
 
 	SOCKADDR_IN ClientSocketAddr;
@@ -215,21 +219,26 @@ int main()
 	char RecvBuffer[1024] = { 0, };
 	while (true)
 	{
+		std::cout << "While True" << std::endl;
 		//recive家南
-		int RecvLength =recv(ClientSocket, RecvBuffer, sizeof(RecvBuffer));
+		int RecvLength =recv(ClientSocket, RecvBuffer, sizeof(RecvBuffer),0);
 		if (RecvLength<0)
 		{
-
+			std::cout << "-1" << std::endl;
+			break;
 		}
 		if (RecvLength == 0)
 		{
-
+			std::cout << "0" << std::endl;
+			break;
 		}
 		if (RecvLength > 0)
 		{
-			std::cout << "Received: " << recv << std::endl;
-
-			int SendLength = send(ClientSocket, SendBuffer, sizeof(sendBuffer), 0);
+			std::cout << "1" << std::endl;
+			std::cout << "Received: " << RecvLength << std::endl;
+			int SendBuuferLength = sizeof(RecvLength);
+			int SendLength = send(ClientSocket, SendBuffer,SendBuuferLength, 0);
+			std::cout << "Send:" << SendLength << std::endl;
 		}
 	}
 	

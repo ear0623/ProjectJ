@@ -81,9 +81,12 @@ public:
 	static void PrintSocketError(FString& OutText);
 	static void DestroySocket(FSocket* Socket);
 
-
+	
 protected:
 	bool bIsRunning;
 private:
 	FSocket* Socket;
+public:
+	FSocket* GetSocket() const { return Socket; }
+
 };

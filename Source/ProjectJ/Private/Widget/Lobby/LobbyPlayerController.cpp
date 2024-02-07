@@ -52,11 +52,15 @@ void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMes
 
 void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMessage)
 {
-	
+	TObjectPtr<ALobbyGameModeBase> LobbyGameMode = Cast<ALobbyGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (LobbyGameMode)
+	{
+		LobbyGameMode->RecvServerToClient();
+	}
 	if (HUdwidget)
 	{
 		HUdwidget->ChatWidget->AddMessage(InMessage);
-		UE_LOG(LogTemp, Warning, TEXT("true"));
+
 	}
 	
 }

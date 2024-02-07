@@ -29,7 +29,7 @@ public:
 	UFUNCTION()
 	void SendClientToServer(uint32 Type, const FString& Text);
 
-	void RecvServerToClient(FSocket* Socket, uint8* Results, int32 Size);
+	void RecvServerToClient();
 
 	//virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)override;
 
