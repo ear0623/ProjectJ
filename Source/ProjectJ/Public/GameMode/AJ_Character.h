@@ -113,9 +113,8 @@ public:
 	//Parkour
 	void Parkour(const FInputActionValue& Value);
 	//Dead
-	void Dead(const FInputActionValue& Value);
-	//Hit
-	void Hit(const FInputActionValue& Value);
+	void Dead();
+	
 
 private:
 	//IsSprint?
@@ -154,16 +153,13 @@ public:
 
 	//Dead
 	UFUNCTION(Server, Reliable)
-	void ServerDead();
+	void ServerDead(float CurHp, float MaxHp, int CurHpText);
+	
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiDead();
+	void MultiDead(float CurHp, float MaxHp, int CurHpText);
 
-	//Hit
-	UFUNCTION(Server, Reliable)
-	void ServerHit();
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiHit();
-	// 
+	
+	
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
@@ -180,6 +176,10 @@ public:
 	//Hit
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> HitMontage;
+
+	//Dead
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> DeadMontage;
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
 public:
 	UFUNCTION()
@@ -224,10 +224,10 @@ public:
 	bool bDrawDebugLine = true;//LineTraceDebugLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsParkour; //Parkour variables
+	
 	//Dead
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsDead; //Dead variables
-
 
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)

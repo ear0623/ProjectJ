@@ -26,6 +26,7 @@
 
 
 
+
 // Sets default values
 AAJ_Character::AAJ_Character()
 {
@@ -60,14 +61,11 @@ AAJ_Character::AAJ_Character()
 	//Parkour 
 	bIsParkour = false;
 
+	//Dead
+	bIsDead = false;
 
 	//IsSprint?
 	bIsSprintKeyPressed = false;
-
-	//IsDead?
-	bIsDead = false;
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +76,7 @@ void AAJ_Character::BeginPlay()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAJ_Character::OnWeaponBeingOverap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AAJ_Character::OnWeaponEndOverap);
 	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+	Dead();
 }
 
 // Called every frame
@@ -234,16 +233,18 @@ void AAJ_Character::Parkour(const FInputActionValue& Value)
 {
 	ServerParkour();
 }
+
 // Dead
-void AAJ_Character::Dead(const FInputActionValue& Value)
+void AAJ_Character::Dead()
 {
-	ServerDead();
+
+	APlayerPlayerState* ps = Cast<APlayerPlayerState>(GetPlayerState());
+	if (IsValid(ps))
+	{
+		ps->m_Dele_UpdateHp.AddDynamic(this, &AAJ_Character::ServerDead);
+	}
 }
-//Hit
-void AAJ_Character::Hit(const FInputActionValue& Value)
-{
-	ServerHit();
-}
+
 
 //Reload
 void AAJ_Character::Reload(const FInputActionValue& Value)
@@ -320,17 +321,21 @@ void AAJ_Character::MultiTrigger_Implementation()
 	{
 		WeaponData_Multi->Execute_WeaponShoot(WeaponClass_Save);
 	}
+
+
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WeaponData Null")));
 }
+//Parkour
 void AAJ_Character::ServerParkour_Implementation()
 {
 	MultiParkour();
 }
 void AAJ_Character::MultiParkour_Implementation()
-{if(!bIsParkour)
 {
-	bIsParkour = true;
+	if(!bIsParkour)
 	{
+		bIsParkour = true;
+		
 		// 트레이스 시작 위치 설정
 		FVector StartLocation = GetActorLocation();
 
@@ -401,6 +406,10 @@ void AAJ_Character::MultiParkour_Implementation()
 			);
 		}
 	}
+	else
+	{
+		bIsParkour = false;
+	}
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	GetWorldTimerManager().SetTimer(ParkourTimerHandle, this, &AAJ_Character::ParkourTimer, 1.0f, false);
 	//캡슐을 전방으로 1M이동하게 만드세요.
@@ -417,12 +426,10 @@ void AAJ_Character::MultiParkour_Implementation()
 	
 	//float MovementSpeed = 100.0f; // 이동 속도 설정 (원하는 값으로 변경)
 	//AddMovementInput(ForwardVector, MovementSpeed);
+	
 }
-else
-{
-	bIsParkour = false;
-}
-}
+
+
 
 //Reload
 void AAJ_Character::ServerReload_Implementation()
@@ -466,27 +473,31 @@ void AAJ_Character::MultiInteraction_Implementation()
 }
 
 //Dead
-void AAJ_Character::ServerDead_Implementation()
+void AAJ_Character::ServerDead_Implementation(float CurHp, float MaxHp, int CurHpText)
 {
-	MultiDead();
+	MultiDead(CurHp,  MaxHp, CurHpText);
 }
 
-void AAJ_Character::MultiDead_Implementation()
+void AAJ_Character::MultiDead_Implementation(float CurHp, float MaxHp, int CurHpText)
 {
-	if (!bIsDead)
+	if (CurHp <= 0)
 	{
-		bIsDead = true;
+		if (!bIsDead)
+		{
+			bIsDead = true;
+			
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			
+			USkeletalMeshComponent* MeshComp = GetMesh();
+			if (MeshComp)
+			{
+				MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
+				MeshComp->SetSimulatePhysics(true);
+			}
+		}
 	}
-}
-//Hit
-void AAJ_Character::ServerHit_Implementation()
-{
-	MultiHit();
-}
-
-void AAJ_Character::MultiHit_Implementation()
-{
-	PlayAnimMontage(HitMontage);
+	//collision
+	//regdoll
 }
 
 

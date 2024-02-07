@@ -31,6 +31,7 @@ public:
 
 	UFUNCTION()
 	void AddDamage(float Damage);
+	
 
 	//UFUNCTION()
 	//void AddDamage_Text(float Damage);

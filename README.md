@@ -62,3 +62,5 @@ ProjectJ
 
 2024.02.05 patrol, chase, attack 
 2024.02.06 patrol, chase, attack 다 고침
+
+2024.02.07 사망모션 구현
