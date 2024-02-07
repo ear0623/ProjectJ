@@ -36,9 +36,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private:
 
@@ -63,14 +60,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Variable", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMagZineComponent> MagzineCompo;
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "Variable", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, Category = "Variable")
 	TObjectPtr<ACharacter> OwnedCharacter;
-
-	//////////////////////////////////델리게이트/////////////////////////////////////////////////////////////////////
-public:
-
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps)const override;
-
 public:
 	/////////인터페이스///////////////////////////////////////////////////////////////////
 
@@ -100,7 +91,7 @@ public:
 	void DropWeapon_Implementation();
 
 public:
-	/////////액터///////////////////////////////////////////////////////////////////
+
 	UFUNCTION(Server, Reliable)
 	void EquipWeapon_Server();
 
