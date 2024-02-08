@@ -93,7 +93,6 @@ public:
 	void Move(const FInputActionValue& Value);
 	// Look
 	void Look(const FInputActionValue& Value);
-
 	// Crouch
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouching(const FInputActionValue& Value);
@@ -114,8 +113,9 @@ public:
 	//Parkour
 	void Parkour(const FInputActionValue& Value);
 	//Dead
-	void Dead();
-	
+	void Dead(const FInputActionValue& Value);
+	//Hit
+	void Hit(const FInputActionValue& Value);
 
 private:
 	//IsSprint?
@@ -140,29 +140,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiReload();
 
-	//crouch
-	UFUNCTION(Server, Reliable)
-	void ServerStartCrouch();
-	UFUNCTION(Server, Reliable)
-	void ServerStopCrouching();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiStartCrouch();
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiStopCrouching();
-
-	//Sprint
-	UFUNCTION(Server, Reliable)
-	void ServerSprint();
-	UFUNCTION(Server, Reliable)
-	void ServerStopSprint();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiSprint();
-	UFUNCTION(NetMulticast, Reliable)
-	void MultiStopSprint();
-
-
 	//Interaction
 	UFUNCTION(Server, Reliable)
 	void ServerInteraction();
@@ -177,13 +154,16 @@ public:
 
 	//Dead
 	UFUNCTION(Server, Reliable)
-	void ServerDead(float CurHp, float MaxHp, int CurHpText);
-	
+	void ServerDead();
 	UFUNCTION(NetMulticast, Reliable)
-	void MultiDead(float CurHp, float MaxHp, int CurHpText);
+	void MultiDead();
 
-	FTimerHandle th_looping;
-	
+	//Hit
+	UFUNCTION(Server, Reliable)
+	void ServerHit();
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiHit();
+	// 
 /////////////////////////////Deligate/////////////////////////////////////////////////////////////////
 
 //////////////////////////////////Animontage/////////////////////////////////////////////////////////////////////
@@ -197,6 +177,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<UAnimMontage> ReloadMontage;
 
+	//Hit
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<UAnimMontage> HitMontage;
 	//////////////////////////////////Actor///////////////////////////////////////////////////////////////////
 public:
 	UFUNCTION()
@@ -241,10 +224,10 @@ public:
 	bool bDrawDebugLine = true;//LineTraceDebugLine
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsParkour; //Parkour variables
-	
 	//Dead
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsDead; //Dead variables
+
 
 	//
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
@@ -276,7 +259,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	UAIPerceptionStimuliSourceComponent* StimuliSourceComponent;
-
-
 
 };	
