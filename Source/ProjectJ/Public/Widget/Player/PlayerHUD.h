@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "WeaponBase.h"
 #include "PlayerHUD.generated.h"
 
 /**
@@ -35,11 +36,28 @@ public:
 	void OnUpdateMyAmmo_Implementation(int Ammo);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnUpdateMyMag(int Mag);
-	void OnUpdateMyMag_Implementation(int Mag);
+	void OnUpdateMyMag(int32 Mag);
+	void OnUpdateMyMag_Implementation(int32 Mag);
 
 	//public: NameTag 필요 없을 듯?
 	//	void BindPlayerState(class AsootingPlayerState* PlayerState);
+
+public:
+
+	//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateMagDelegate, int32, Mag);
+
+	//UPROPERTY(ReplicatedUsing = OnRep_Mag)
+
+
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	FUpdateMagDelegate m_Dele_UpdateMag;
+	int m_Mag;
+
+
+	UFUNCTION()
+	void BindMag(int32 MagValue);
+
+	FUpdateMagDelegate OnUpdateMag;
 
 public:
 

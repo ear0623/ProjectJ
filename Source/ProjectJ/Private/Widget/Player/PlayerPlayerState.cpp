@@ -12,6 +12,8 @@ APlayerPlayerState::APlayerPlayerState()
 	m_CurHp = 100;
 	m_CurHpText = 0;
 	m_CurSTM = 150;
+
+
 }
 
 void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,7 +23,7 @@ void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(APlayerPlayerState, m_CurHp);
 	DOREPLIFETIME(APlayerPlayerState, m_CurHpText);
 	DOREPLIFETIME(APlayerPlayerState, m_CurSTM);
-	DOREPLIFETIME(APlayerPlayerState, m_Mag);
+	//DOREPLIFETIME(APlayerPlayerState, m_Mag);
 
 }
 
@@ -72,6 +74,46 @@ void APlayerPlayerState::UpdateBind()
 	TimeMgr.SetTimer(th_UpdateBind, this, &APlayerPlayerState::UpdateBind, 0.01f, false);
 }
 
+void APlayerPlayerState::HandleUpdateMag(int32 MagValue)
+{
+	APlayerController* pPlayer0 = GetWorld()->GetFirstPlayerController();
+	if (IsValid(pPlayer0))
+	{
+		APlayerHUD* pHud = Cast<APlayerHUD>(pPlayer0->GetHUD());
+		if (IsValid(pHud))
+		{
+			pHud->BindMag(MagValue);
+		}
+	}
+}
+
+void APlayerPlayerState::IPS()
+{
+	APlayerController* pPlayer0 = GetWorld()->GetFirstPlayerController();
+	if (pPlayer0)
+	{
+		APawn* pPawn = pPlayer0->GetPawn();
+		if (pPawn)
+		{
+			AWeaponBase* pWeapon = Cast<AWeaponBase>(pPawn);
+			if (pWeapon)
+			{
+				pWeapon->OnUpdateMag.AddDynamic(this, &APlayerPlayerState::HandleUpdateMag);
+			}
+		}
+
+	}
+}
+
+void APlayerPlayerState::AddDamage(float Damage)
+{
+	m_CurHp = m_CurHp - Damage;
+
+	m_CurHpText = m_CurHpText + Damage;
+
+	OnRep_CurHp();
+}
+
 //void APlayerPlayerState::AddDamage_Text(float Damage)
 //{
 //	//m_CurHpText = m_CurHpText + Damage;
@@ -108,9 +150,9 @@ void APlayerPlayerState::UseSTM()
 
 void APlayerPlayerState::AddMag()
 {
-	m_Mag = m_Mag + 1;
+	//m_Mag = m_Mag + 1;
 
-	OnRep_Mag();
+	//OnRep_Mag();
 }
 
 void APlayerPlayerState::UseMag()
@@ -136,15 +178,21 @@ void APlayerPlayerState::OnRep_CurHp()
 
 void APlayerPlayerState::OnRep_CurSTM()
 {
-	if (m_Dele_UpdateSTM.IsBound()) // ¹ÙÀÎµù (ÆÈ·Î¿ì)°¡ µÇ¾î ÀÖ´ÂÁö È®ÀÎ
-		m_Dele_UpdateSTM.Broadcast(m_CurSTM, 150); // ºê·ÎµåÄÉ½ºÆ® -> ÀüÆÄÇÑ´Ù
+	if (m_Dele_UpdateSTM.IsBound()) // ï¿½ï¿½ï¿½Îµï¿½ (ï¿½È·Î¿ï¿½)ï¿½ï¿½ ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+		m_Dele_UpdateSTM.Broadcast(m_CurSTM, 150); // ï¿½ï¿½Îµï¿½ï¿½É½ï¿½Æ® -> ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 }
 
-void APlayerPlayerState::OnRep_Mag()
-{
-	if (m_Dele_UpdateMag.IsBound())
-		m_Dele_UpdateMag.Broadcast(m_Mag);
-}
+//void APlayerPlayerState::OnRep_Mag()
+//{
+//		if (m_Dele_UpdateMag.IsBound())
+//			m_Dele_UpdateMag.Broadcast(m_Mag);
+//}
+
+//void APlayerPlayerState::OnRep_Mag()
+//{
+//	if (m_Dele_UpdateMag.IsBound())
+//		m_Dele_UpdateMag.Broadcast(m_Mag);
+//}
 
 void APlayerPlayerState::UpDateAmmoToHUD(int Ammo)
 {

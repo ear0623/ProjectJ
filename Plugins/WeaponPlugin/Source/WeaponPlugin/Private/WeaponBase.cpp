@@ -48,6 +48,14 @@ void AWeaponBase::BeginPlay()
 }
 
 
+
+void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AWeaponBase, m_Mag);
+}
+
 void AWeaponBase::WeaponShoot_Implementation()
 {
 	Trigger();
@@ -94,6 +102,7 @@ void AWeaponBase::DropWeapon_Implementation()
 {
 	DropWeapon_Multicast();
 }
+
 
 void AWeaponBase::DropWeapon_Multicast_Implementation()
 {
@@ -178,6 +187,13 @@ void AWeaponBase::SetAmmo(int Ammo)
 void AWeaponBase::OnRep_Ammo()
 {
 
+}
+
+void AWeaponBase::Cur_Mag()
+{
+	int32 MagValue = 10;
+	
+	OnUpdateMag.Broadcast(MagValue);
 }
 
 

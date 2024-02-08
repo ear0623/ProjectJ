@@ -4,6 +4,7 @@
 #include "Widget/Player/PlayerHUD.h"
 #include "Blueprint/UserWidget.h"
 #include "Widget/Player/PlayerPlayerState.h"
+#include "WeaponBase.h"
 
 void APlayerHUD::BeginPlay()
 {
@@ -38,13 +39,18 @@ void APlayerHUD::BindMyPlayerState()
 			ps->m_Dele_UpdateSTM.AddDynamic(this, &APlayerHUD::OnUpdateMySTM); // 값을 확인한다. 
 			OnUpdateMySTM(ps->m_CurSTM, 150);
 
-			ps->m_Dele_UpdateMag.AddDynamic(this, &APlayerHUD::OnUpdateMyMag);
-			OnUpdateMyMag(ps->m_Mag);
-
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("HUD Bind Success!"));
+			
+		
+
 			return;
+
 		}
 	}
+
+	m_Dele_UpdateMag.AddDynamic(this, &APlayerHUD::OnUpdateMyMag);
+	BindMag(m_Mag);
+
 
 	FTimerManager& timerManger = GetWorld()->GetTimerManager();
 	timerManger.SetTimer(th_BindMyPlayerState, this, &APlayerHUD::BindMyPlayerState, 0.01f, false);
@@ -62,6 +68,18 @@ void APlayerHUD::OnUpdateMyAmmo_Implementation(int Ammo)
 {
 }
 
-void APlayerHUD::OnUpdateMyMag_Implementation(int Mag)
+void APlayerHUD::OnUpdateMyMag_Implementation(int32 Mag)
 {
 }
+
+
+void APlayerHUD::BindMag(int32 MagValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("MagValue: %d"), MagValue);
+
+	OnUpdateMag.Broadcast(MagValue);
+}
+
+//void APlayerHUD::OnUpdateMyMag_Implementation(int Mag)
+//{
+//}
