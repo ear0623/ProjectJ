@@ -12,6 +12,8 @@ APlayerPlayerState::APlayerPlayerState()
 	m_CurHp = 100;
 	m_CurHpText = 0;
 	m_CurSTM = 150;
+
+
 }
 
 void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -21,7 +23,7 @@ void APlayerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(APlayerPlayerState, m_CurHp);
 	DOREPLIFETIME(APlayerPlayerState, m_CurHpText);
 	DOREPLIFETIME(APlayerPlayerState, m_CurSTM);
-	DOREPLIFETIME(APlayerPlayerState, m_Mag);
+	//DOREPLIFETIME(APlayerPlayerState, m_Mag);
 
 }
 
@@ -48,6 +50,37 @@ void APlayerPlayerState::UpdateBind()
 
 	FTimerManager& TimeMgr = GetWorldTimerManager();
 	TimeMgr.SetTimer(th_UpdateBind, this, &APlayerPlayerState::UpdateBind, 0.01f, false);
+}
+
+void APlayerPlayerState::HandleUpdateMag(int32 MagValue)
+{
+	APlayerController* pPlayer0 = GetWorld()->GetFirstPlayerController();
+	if (IsValid(pPlayer0))
+	{
+		APlayerHUD* pHud = Cast<APlayerHUD>(pPlayer0->GetHUD());
+		if (IsValid(pHud))
+		{
+			pHud->BindMag(MagValue);
+		}
+	}
+}
+
+void APlayerPlayerState::IPS()
+{
+	APlayerController* pPlayer0 = GetWorld()->GetFirstPlayerController();
+	if (pPlayer0)
+	{
+		APawn* pPawn = pPlayer0->GetPawn();
+		if (pPawn)
+		{
+			AWeaponBase* pWeapon = Cast<AWeaponBase>(pPawn);
+			if (pWeapon)
+			{
+				pWeapon->OnUpdateMag.AddDynamic(this, &APlayerPlayerState::HandleUpdateMag);
+			}
+		}
+
+	}
 }
 
 void APlayerPlayerState::AddDamage(float Damage)
@@ -95,9 +128,9 @@ void APlayerPlayerState::UseSTM()
 
 void APlayerPlayerState::AddMag()
 {
-	m_Mag = m_Mag + 1;
+	//m_Mag = m_Mag + 1;
 
-	OnRep_Mag();
+	//OnRep_Mag();
 }
 
 void APlayerPlayerState::UseMag()
@@ -127,11 +160,17 @@ void APlayerPlayerState::OnRep_CurSTM()
 		m_Dele_UpdateSTM.Broadcast(m_CurSTM, 150); // 브로드케스트 -> 전파한다
 }
 
-void APlayerPlayerState::OnRep_Mag()
-{
-	if (m_Dele_UpdateMag.IsBound())
-		m_Dele_UpdateMag.Broadcast(m_Mag);
-}
+//void APlayerPlayerState::OnRep_Mag()
+//{
+//		if (m_Dele_UpdateMag.IsBound())
+//			m_Dele_UpdateMag.Broadcast(m_Mag);
+//}
+
+//void APlayerPlayerState::OnRep_Mag()
+//{
+//	if (m_Dele_UpdateMag.IsBound())
+//		m_Dele_UpdateMag.Broadcast(m_Mag);
+//}
 
 void APlayerPlayerState::UpDateAmmoToHUD(int Ammo)
 {

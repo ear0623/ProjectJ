@@ -37,4 +37,6 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Hit(AController* EventInstigator);
 
+
+
 };

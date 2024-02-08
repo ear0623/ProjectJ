@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Delegates/Delegate.h"
 #include "WeaponInterface.h"
 #include "WeaponBase.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateMagDelegate, int32, Mag);
 
 class UStaticMeshComponent;
 class USphereComponent;
@@ -22,6 +24,7 @@ enum class EWeaponType : uint8
 	ShotGun UMETA(DisplayName = "SG"),
 	AssaultRifle UMETA(DisplayName = "AR"),
 };
+
 
 UCLASS()
 class WEAPONPLUGIN_API AWeaponBase : public AActor, public IWeaponInterface
@@ -39,6 +42,10 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//public:
+	//	static 
+
 
 private:
 
@@ -99,6 +106,7 @@ public:
 
 	void DropWeapon_Implementation();
 
+
 public:
 	/////////╬вем///////////////////////////////////////////////////////////////////
 	UFUNCTION(Server, Reliable)
@@ -149,6 +157,12 @@ public:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Ammo)
 	int m_Ammo;
+
+	void Cur_Mag();
+
+	FUpdateMagDelegate OnUpdateMag;
+
 	
 
 };
+
