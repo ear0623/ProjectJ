@@ -23,8 +23,10 @@ public:
 	//Target Searching
 	void FindRandomTarget();
 	//Target Attack
-	void AttackTarget();
+	void Attack();
+	
 
 	// Selected Target
 	AActor* Target;
+
 };

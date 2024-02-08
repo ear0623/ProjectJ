@@ -6,9 +6,11 @@
 #include "Kismet/GameplayStatics.h" //UGameplayStatics
 #include "GameFramework/Character.h"
 
+
 AAJ_AIController::AAJ_AIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void AAJ_AIController::BeginPlay()
@@ -23,7 +25,7 @@ void AAJ_AIController::Tick(float DelaTime)
 
 	if (IsValid(Target))
 	{
-		AttackTarget();
+		Attack();
 	}
 	else
 	{
@@ -44,8 +46,9 @@ void AAJ_AIController::FindRandomTarget()
 	}
 }
 
-void AAJ_AIController::AttackTarget()
+void AAJ_AIController::Attack()
 {
-	// Trigger 함수 완성되면 복붙하면 됨
-
+	
 }
+
+
