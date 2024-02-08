@@ -31,7 +31,7 @@ void ALobbyPlayerController::BeginPlay()
 		HUdwidget->AddToViewport();
 	}
 
-	ClientComponent->TestConnect();
+	ClientComponent->Connect();
 }
 
 bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)

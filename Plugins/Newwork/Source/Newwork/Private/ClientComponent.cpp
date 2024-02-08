@@ -140,6 +140,7 @@ void UClientComponent::Connect()
 
 		DestroySocket(Socket);
 	}
+	
 }
 
 void UClientComponent::Disconnect()
@@ -194,11 +195,23 @@ bool UClientComponent::Connecter(FSocket* Socket, FString IPAddress, int PortNum
 		{
 			return true;
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SocketElse1-1"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ConnectElse"));
 	}
 
 	if (Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
 	{
 		return true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SocketElse1-2"));
 	}
 
 	FString ErrorText;

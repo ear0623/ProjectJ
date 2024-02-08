@@ -84,8 +84,8 @@ public:
 	
 protected:
 	bool bIsRunning;
-private:
 	FSocket* Socket;
+
 public:
 	FSocket* GetSocket() const { return Socket; }
 
