@@ -30,7 +30,7 @@
 // Sets default values
 AAJ_Character::AAJ_Character()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//SpringArm 
@@ -46,10 +46,10 @@ AAJ_Character::AAJ_Character()
 
 	// Character initial Rotation value
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.0f, 0));
-	
+
 	//Crouch value
-	bIsCrouching = false; 
-	 
+	bIsCrouching = false;
+
 	//Equip Value
 	bIsEquiped = false;
 
@@ -57,7 +57,7 @@ AAJ_Character::AAJ_Character()
 	SprintSpeedMultiplier = 1.5f; //Sprint Speed
 	bIsSprint = false;//Spint valuables value
 	AJDefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed; //DefaultSpeed
-	
+
 	//Parkour 
 	bIsParkour = false;
 
@@ -90,12 +90,12 @@ void AAJ_Character::Tick(float DeltaTime)
 void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
+
 	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UEIC)
 	{
-		
-		
+
+
 		//Jump
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
@@ -131,17 +131,17 @@ void AAJ_Character::Move(const FInputActionValue& Value)
 
 	FRotator CameraRotation = GetControlRotation();
 	FRotator DirectionRotation = FRotator(0, CameraRotation.Yaw, 0);
-	
+
 
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(DirectionRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(DirectionRotation);
 
 
 	AddMovementInput(ForwardVector, Dir.Y);
-	
+
 	AddMovementInput(RightVector, Dir.X);
 
-	
+
 
 }
 
@@ -161,8 +161,9 @@ void AAJ_Character::Look(const FInputActionValue& Value)
 // Crouch
 void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 {
-	if (!bIsCrouching)
-	{
+	ServerStartCrouch();
+	//if (!bIsCrouching)
+	//{
 		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
 		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 
@@ -170,19 +171,22 @@ void AAJ_Character::StartCrouch(const FInputActionValue& Value)
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
 		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
 		//Crouch();
-		bIsCrouching = true;
-	}
-	//PlayAnimMontage(CrouchMontage);
+		//bIsCrouching = true;
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartCrouch!")));
+	//}
+
 }
-void AAJ_Character::StopCrouching(const FInputActionValue & Value)
+void AAJ_Character::StopCrouching(const FInputActionValue& Value)
 {
-	if (bIsCrouching)
-	{
-		bIsCrouching = false;
+	ServerStopCrouching();
+	//if (bIsCrouching)
+	//{
+		//bIsCrouching = false;
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StopCrouch!")));
 		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
 		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
-	}
+	//}
 
 }
 
@@ -191,41 +195,44 @@ void AAJ_Character::StopCrouching(const FInputActionValue & Value)
 //Sprint
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
-	bIsSprintKeyPressed = true;
+	ServerSprint();
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
-	{
-		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
-		if (PlayerPlayerState)
-		{
-			float VSTM = PlayerPlayerState->m_CurSTM;
+	//bIsSprintKeyPressed = true;
 
-			if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
-			{
-				bIsSprint = true;
-				GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//if (PlayerController)
+	//{
+	//	APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+	//	if (PlayerPlayerState)
+	//	{
+	//		float VSTM = PlayerPlayerState->m_CurSTM;
 
-				GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
-				GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+	//		if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
+	//		{
+	//			bIsSprint = true;
+	//			GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
 
-			}
-		}
-	}
+	//			GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+	//			GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+	//		}
+	//	}
+	//}
 }
 
 
 void AAJ_Character::StopSprint(const FInputActionValue& Value)
 {
-	bIsSprintKeyPressed = false;
+	ServerStopSprint();
+	//bIsSprintKeyPressed = false;
 
-	if (bIsSprint)
-	{
-		bIsSprint = false;
-		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
-	}
-	GetWorldTimerManager().ClearTimer(STMDTimerHandle);
-	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+	//if (bIsSprint)
+	//{
+	//	bIsSprint = false;
+	//	GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
+	//}
+	//GetWorldTimerManager().ClearTimer(STMDTimerHandle);
+	//GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
 }
 
 //Parkour
@@ -239,10 +246,17 @@ void AAJ_Character::Dead()
 {
 
 	APlayerPlayerState* ps = Cast<APlayerPlayerState>(GetPlayerState());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"),ps));
 	if (IsValid(ps))
 	{
 		ps->m_Dele_UpdateHp.AddDynamic(this, &AAJ_Character::ServerDead);
 	}
+	else
+	{
+		FTimerManager& timerManager = GetWorld()->GetTimerManager();
+		timerManager.SetTimer(th_looping, this, &AAJ_Character::Dead, 0.1f, true);
+	}
+
 }
 
 
@@ -277,7 +291,7 @@ void AAJ_Character::STMDTimer()
 			PlayerPlayerState->AddSTM();
 
 			float VSTM = PlayerPlayerState->m_CurSTM;
-			
+
 			if (bIsSprint && VSTM >= 150)
 			{
 				bIsSprint = false;
@@ -299,7 +313,7 @@ void AAJ_Character::STMUTimer()
 		{
 
 			PlayerPlayerState->UseSTM();
-			
+
 		}
 	}
 }
@@ -311,11 +325,11 @@ void AAJ_Character::ServerTrigger_Implementation()
 {
 	MultiTrigger();
 }
-	
+
 void AAJ_Character::MultiTrigger_Implementation()
 {
 	PlayAnimMontage(TriggerMontage);
-		
+
 	IWeaponInterface* WeaponData_Multi = Cast<IWeaponInterface>(GetClass());
 	if (WeaponClass_Save)
 	{
@@ -332,10 +346,10 @@ void AAJ_Character::ServerParkour_Implementation()
 }
 void AAJ_Character::MultiParkour_Implementation()
 {
-	if(!bIsParkour)
+	if (!bIsParkour)
 	{
 		bIsParkour = true;
-		
+
 		// 트레이스 시작 위치 설정
 		FVector StartLocation = GetActorLocation();
 
@@ -369,7 +383,7 @@ void AAJ_Character::MultiParkour_Implementation()
 			CollisionParams
 		);
 
-		DrawDebugLine(GetWorld(),StartLocation, VerticalEndLocation,FColor::Green,false, -1, 0,1.0f);
+		DrawDebugLine(GetWorld(), StartLocation, VerticalEndLocation, FColor::Green, false, -1, 0, 1.0f);
 
 		// 히트한 경우 처리
 		if (bHitHorizontal && bHitVertical)
@@ -423,19 +437,107 @@ void AAJ_Character::MultiParkour_Implementation()
 
 	//GetWorldTimerManager().SetTimer(ParkourAnimation, this, &AAJ_Character::animationTimer, 0.1f, bLessIsDistnace);
 
-	
+
 	//float MovementSpeed = 100.0f; // 이동 속도 설정 (원하는 값으로 변경)
 	//AddMovementInput(ForwardVector, MovementSpeed);
+
+}
+
+void AAJ_Character::ServerStartCrouch_Implementation()
+{
+	MultiStartCrouch();
+}
+
+void AAJ_Character::ServerStopCrouching_Implementation()
+{
+	MultiStopCrouching();
+}
+
+void AAJ_Character::MultiStartCrouch_Implementation()
+{
+	if (!bIsCrouching)
+	{
+		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
+		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+
+		// ��ġ, ���̰� ���ݾ� �پ���
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
+		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
+		//Crouch();
+		bIsCrouching = true;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartCrouch!")));
+	}
+}
+
+void AAJ_Character::MultiStopCrouching_Implementation()
+{
+	if (bIsCrouching)
+	{
+		bIsCrouching = false;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StopCrouch!")));
+		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
+		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
+	}
+}
+
+//Sprint
+void AAJ_Character::ServerSprint_Implementation()
+{
+	MultiSprint();
+}
+
+void AAJ_Character::ServerStopSprint_Implementation()
+{
+	MultiStopSprint();
+}
+
+void AAJ_Character::MultiSprint_Implementation()
+{
+	bIsSprintKeyPressed = true;
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+		if (PlayerPlayerState)
+		{
+			float VSTM = PlayerPlayerState->m_CurSTM;
+
+			if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartSprint!")));
+				bIsSprint = true;
+				GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+
+				GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+				GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+			}
+		}
+	}
 	
 }
 
+void AAJ_Character::MultiStopSprint_Implementation()
+{
+	bIsSprintKeyPressed = false;
 
+	if (bIsSprint)
+	{
+		bIsSprint = false;
+		GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed;
+	}
+	GetWorldTimerManager().ClearTimer(STMDTimerHandle);
+	GetWorldTimerManager().SetTimer(STMUTimerHandle, this, &AAJ_Character::STMUTimer, 0.1f, true);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StopSprint!")));
+}
 
 //Reload
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
-	
+
 }
 void AAJ_Character::MultiReload_Implementation()
 {
@@ -454,7 +556,7 @@ void AAJ_Character::MultiInteraction_Implementation()
 	if (WeaponData != nullptr)
 	{
 		//AAmmoBase* ammoClass = Cast<AAmmoBase>(WeaponClass);
-		WeaponData->Execute_SettingOwner(WeaponClass_Save,this);
+		WeaponData->Execute_SettingOwner(WeaponClass_Save, this);
 		//WeaponData->OwnedCharacter = this;
 		if (bIsEquiped == true)
 		{
@@ -475,7 +577,8 @@ void AAJ_Character::MultiInteraction_Implementation()
 //Dead
 void AAJ_Character::ServerDead_Implementation(float CurHp, float MaxHp, int CurHpText)
 {
-	MultiDead(CurHp,  MaxHp, CurHpText);
+	MultiDead(CurHp, MaxHp, CurHpText);
+
 }
 
 void AAJ_Character::MultiDead_Implementation(float CurHp, float MaxHp, int CurHpText)
@@ -485,9 +588,9 @@ void AAJ_Character::MultiDead_Implementation(float CurHp, float MaxHp, int CurHp
 		if (!bIsDead)
 		{
 			bIsDead = true;
-			
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiDead_Implementation")));
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			
+
 			USkeletalMeshComponent* MeshComp = GetMesh();
 			if (MeshComp)
 			{
@@ -496,8 +599,6 @@ void AAJ_Character::MultiDead_Implementation(float CurHp, float MaxHp, int CurHp
 			}
 		}
 	}
-	//collision
-	//regdoll
 }
 
 
@@ -508,39 +609,39 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	WeaponClass = Cast<AWeaponBase>(OtherActor);
 	WeaponData = Cast<IWeaponInterface>(OtherActor);
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
-	if(AmmoBase)
-	{	
-		float Damage= 10;
-	/*	switch (AmmoBase->AmmoType)
-		{
-			case 
-				Damage = 10;
-			break;
-		case EBulletType::AR_7:
-			DamageAmount = 12;
-			break;
-		case EBulletType::AR_9:
-			DamageAmount = 9;
-			break;
-			DamageAmount = 0;
-		default:
-			break;
-		}*/
-		
+	if (AmmoBase)
+	{
+		float Damage = 10;
+		/*	switch (AmmoBase->AmmoType)
+			{
+				case
+					Damage = 10;
+				break;
+			case EBulletType::AR_7:
+				DamageAmount = 12;
+				break;
+			case EBulletType::AR_9:
+				DamageAmount = 9;
+				break;
+				DamageAmount = 0;
+			default:
+				break;
+			}*/
+
 		TObjectPtr<ACharacter> ConvertCharacter = this;
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);//트레이스채널로 다시체크?
-		WeaponData->Execute_Hit(AmmoBase,GetWorld()->GetFirstPlayerController());
+		WeaponData->Execute_Hit(AmmoBase, GetWorld()->GetFirstPlayerController());
 
 		APlayerPlayerState* PS = Cast<APlayerPlayerState>(GetPlayerState());
 		if (PS)
 		{
-	
+
 			PS->AddDamage(Damage);
-		/*	PS->AddDamage_Text(Damage);*/
+			/*	PS->AddDamage_Text(Damage);*/
 		}
 
-		
+
 		AmmoBase->K2_DestroyActor();
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("%f"),HP));
 	}
@@ -566,7 +667,7 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			AmmoBase->K2_DestroyActor();
 		}
-		
+
 	}
 }
 
@@ -575,7 +676,7 @@ void AAJ_Character::SaveVariable(AActor* OtherActor)
 	if (OtherActor == WeaponClass)
 	{
 		WeaponClass_Save = Cast<AWeaponBase>(OtherActor);
-		
+
 	}
 }
 
@@ -597,6 +698,7 @@ void AAJ_Character::ParkourTimer()
 
 void AAJ_Character::animationTimer()
 {
-	
+
 }
+
 

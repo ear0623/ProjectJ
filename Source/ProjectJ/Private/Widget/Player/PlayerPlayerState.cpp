@@ -105,14 +105,14 @@ void APlayerPlayerState::IPS()
 	}
 }
 
-void APlayerPlayerState::AddDamage(float Damage)
-{
-	m_CurHp = m_CurHp - Damage;
+//void APlayerPlayerState::AddDamage(float Damage)
+//{
+	//m_CurHp = m_CurHp - Damage;
 
-	m_CurHpText = m_CurHpText + Damage;
+	//m_CurHpText = m_CurHpText + Damage;
 
-	OnRep_CurHp();
-}
+	//OnRep_CurHp();
+//}
 
 //void APlayerPlayerState::AddDamage_Text(float Damage)
 //{
