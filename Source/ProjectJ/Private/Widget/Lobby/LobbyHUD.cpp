@@ -8,12 +8,12 @@ void ALobbyHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//check(HUdWidgetClass);
+	/*check(HUdWidgetClass);
 	if (HUdWidgetClass != nullptr)
 	{
 		HUdwidget = CreateWidget<UUserWidget>(GetWorld(), HUdWidgetClass); 
 		HUdwidget->AddToViewport(); 
-	} 
+	} */
 
 
 }

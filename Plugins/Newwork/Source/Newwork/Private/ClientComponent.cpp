@@ -92,7 +92,9 @@ void UClientComponent::Connect()
 bool UClientComponent::Receive(FSocket* Socket, uint8* Results, int32 Size)
 {
 	int32 NumRead = 0;
+
 	bool bSuccess = Socket->Recv(Results, Size, NumRead, ESocketReceiveFlags::Type::WaitAll);
+
 
 	return bSuccess;
 }
@@ -194,7 +196,6 @@ void UClientComponent::Send(uint32 Type, const FString& Text)
 	FTCHARToUTF8 Convert(*Text);
 	FArrayWriter WriterArray;
 	WriterArray.Serialize((UTF8CHAR*)Convert.Get(), Convert.Length());
-
 	if (SendPacket(Socket, Type, WriterArray))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Sent Text : %s  Size : %d"), *Text, WriterArray.Num());
@@ -212,6 +213,10 @@ void UClientComponent::Recv()
 	{
 		FString Data(Payload.Num(), (char*)Payload.GetData());
 		UE_LOG(LogTemp, Log, TEXT("Recv data success.  data : %s  Payload : %d  size : %d"), *Data, Payload.Num(), Data.Len());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Fail"));
 	}
 }
 
