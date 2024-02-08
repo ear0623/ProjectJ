@@ -7,6 +7,13 @@
 #include "Widget/Lobby/LobbyWidget.h"
 #include "Widget/Lobby/LobbyGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "ClientComponent.h"
+
+ALobbyPlayerController::ALobbyPlayerController()
+{
+	ClientComponent = CreateDefaultSubobject<UClientComponent>(TEXT("ClientCompo"));
+
+}
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -23,6 +30,8 @@ void ALobbyPlayerController::BeginPlay()
 		HUdwidget = CreateWidget<ULobbyWidget>(GetWorld(), HUdWidgetClass); 
 		HUdwidget->AddToViewport();
 	}
+
+	ClientComponent->TestConnect();
 }
 
 bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)
@@ -36,7 +45,7 @@ void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMes
 	if (LobbyGameMode)
 	{
 		uint32 InMessageLength = InMessage.Len();
-		LobbyGameMode->SendClientToServer(InMessageLength,InMessage);
+		SendClientToServer(InMessageLength,InMessage);
 	}
 	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 		//for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
@@ -55,7 +64,7 @@ void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMes
 	TObjectPtr<ALobbyGameModeBase> LobbyGameMode = Cast<ALobbyGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (LobbyGameMode)
 	{
-		LobbyGameMode->RecvServerToClient();
+		RecvServerToClient();
 	}
 	if (HUdwidget)
 	{
@@ -63,4 +72,23 @@ void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMes
 
 	}
 	
+}
+
+
+void ALobbyPlayerController::SendClientToServer(uint32 Type, const FString& Text)
+{
+	ClientComponent->Send(Type, Text);
+	int32 Value = 1024;
+	uint8 Buffer = static_cast<uint8>(Value);
+	int32 BufferSize = sizeof(Buffer);
+	//	ClientComponent->Receive(ClientComponent->GetSocket(),&Buffer,BufferSize);
+}
+
+void ALobbyPlayerController::RecvServerToClient()
+{
+	//ClientComponent->Recv();
+	/*int32 Value = 1024;
+	uint8 Buffer = static_cast<uint8>(Value,0,255);
+	int32 BufferSize = sizeof(Buffer);
+	ClientComponent->Receive(ClientComponent->GetSocket(),&Buffer,BufferSize);*/
 }

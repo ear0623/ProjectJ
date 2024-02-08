@@ -27,7 +27,7 @@ void UClientComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TestConnect();
+	Connect();
 	// ...
 
 	
@@ -42,52 +42,7 @@ void UClientComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UClientComponent::Connect()
-{
-	ISocketSubsystem* Socketsubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
-	FSocket* ServerSocket = Socketsubsystem->CreateSocket(NAME_Stream, TEXT("serversocket"), false);
-	if (!Socketsubsystem)
-	{
-		//subsystem
-	}
-	if (!ServerSocket)
-	{
-		//socket
-	}
-	FIPv4Address ServerIP(127,0,0,1);
 
-	TSharedRef<FInternetAddr> ServerAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-	ServerAddr->SetIp(ServerIP.Value);
-	ServerAddr->SetPort(15689);
-
-	bool Connected = ServerSocket->Connect(*ServerAddr);
-
-	//TObjectPtr<FSocket> fSocket = FTcpSocketBuilder(TEXT("MyTCPClient")).AsReusable().BoundToAddress(ANY_ADDRESS)
-
-	TArray<uint8> SendBuffer;
-	TArray<uint8> ReciveBuffer;
-	FTimespan WaitTime = FTimespan::FromSeconds(1);
-	while (bIsRunning)
-	{
-		if (Connected)
-		{
-			int32 ByteSend = 0;
-			ServerSocket->Send(SendBuffer.GetData(), SendBuffer.Num(),ByteSend);
-
-			int32 ByteRecived = 0;
-			if (ServerSocket->Wait(ESocketWaitConditions::WaitForRead, WaitTime))
-			{
-				ReciveBuffer.SetNumUninitialized(1024);
-				ServerSocket->Recv(ReciveBuffer.GetData(), ReciveBuffer.Num(), ByteRecived);
-			}
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Client"));
-		FPlatformProcess::Sleep(0.01f);
-	}
-
-	ServerSocket->Close();
-	ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ServerSocket);
-}
 
 bool UClientComponent::Receive(FSocket* Socket, uint8* Results, int32 Size)
 {
@@ -108,11 +63,13 @@ bool UClientComponent::Send(FSocket* Socket, const uint8* Buffer, int32 Size)
 
 bool UClientComponent::SendPacket(FSocket* Socket, uint32 Type, const TArray<uint8>& Payload)
 {
+	UE_LOG(LogTemp, Log, TEXT("SendPacketPart"));
 	return SendPacket(Socket, Type, Payload.GetData(), Payload.Num());
 }
 
 bool UClientComponent::SendPacket(FSocket* Socket, uint32 Type, const uint8* Payload, int32 PayloadSize)
 {
+	UE_LOG(LogTemp, Log, TEXT("SendPacketPart2"));
 	// make a header for the payload
 	FMessageHeader Header(Type, PayloadSize);
 	constexpr static int32 HeaderSize = sizeof(FMessageHeader);
@@ -165,7 +122,7 @@ bool UClientComponent::ReceivePacket(FSocket* Socket, TArray<uint8>& OutPayload)
 	return false;
 }
 
-void UClientComponent::TestConnect()
+void UClientComponent::Connect()
 {
 	Socket = FTcpSocketBuilder(TEXT("ClientSocket"));
 
@@ -192,7 +149,7 @@ void UClientComponent::Disconnect()
 
 void UClientComponent::Send(uint32 Type, const FString& Text)
 {
-	
+	UE_LOG(LogTemp, Log, TEXT("SendPart"));
 	FTCHARToUTF8 Convert(*Text);
 	FArrayWriter WriterArray;
 	WriterArray.Serialize((UTF8CHAR*)Convert.Get(), Convert.Length());

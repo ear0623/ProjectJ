@@ -20,13 +20,6 @@
 
 
 
-
-
-
-
-
-
-
 // Sets default values
 AAJ_Character::AAJ_Character()
 {
@@ -510,22 +503,22 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
 	{	
+		
 		float Damage= 10;
-	/*	switch (AmmoBase->AmmoType)
+
+		EBulletType Type = EBulletType::AR_5;
+		switch (Type)
 		{
-			case 
-				Damage = 10;
+		case EBulletType::AR_5: 
+			Damage = 10;
 			break;
 		case EBulletType::AR_7:
-			DamageAmount = 12;
+			Damage = 20;
 			break;
 		case EBulletType::AR_9:
-			DamageAmount = 9;
+			Damage = 8;
 			break;
-			DamageAmount = 0;
-		default:
-			break;
-		}*/
+		}
 		
 		TObjectPtr<ACharacter> ConvertCharacter = this;
 		FCollisionQueryParams QueryParams;

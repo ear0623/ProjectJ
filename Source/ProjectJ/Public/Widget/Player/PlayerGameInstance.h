@@ -25,6 +25,10 @@ public:
 
 	virtual void Init();
 
+	void OpenWorld();
+
 	FSocket* Socket;
 	ISocketSubsystem* SocketSubsystem;
+	
+	
 };

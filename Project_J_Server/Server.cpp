@@ -236,10 +236,12 @@ int main()
 		{
 			std::cout << "1" << std::endl;
 			std::cout << "Received: " << RecvLength << std::endl;
-			int SendBuuferLength = sizeof(RecvLength);
-			int SendLength = send(ClientSocket, SendBuffer,SendBuuferLength, 0);
-			std::cout << "Send:" << SendLength << std::endl;
+			
+			
 		}
+		int SendBuuferLength = sizeof(RecvLength);
+		int SendLength = send(ClientSocket, SendBuffer,SendBuuferLength, 0);
+		std::cout << "Send:" << SendLength << std::endl;
 	}
 	
 

@@ -29,7 +29,7 @@ void AAmmoBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//Ammobase->Trigger().AddDynamic();
+	
 	
 }
 
