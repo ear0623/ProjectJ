@@ -102,13 +102,6 @@ public:
 
 	void EquipWeapon_Multicast_Implementation();
 
-	/*UFUNCTION(Server, Reliable)
-	void DropWeapon();
-
-	void DropWeapon_Implementation();*/
-
-	//UFUNCTION(Server, Reliable)
-	//void DropWeapon_Multicast();
 	UFUNCTION(NetMulticast, Reliable)
 	void DropWeapon_Multicast();
 
