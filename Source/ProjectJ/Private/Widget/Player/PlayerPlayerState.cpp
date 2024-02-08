@@ -32,6 +32,28 @@ void APlayerPlayerState::BeginPlay()
 	UpdateBind();
 }
 
+void APlayerPlayerState::AddDamage(float Damage)
+{
+	//m_CurHp = m_CurHp - Damage;
+
+	if (m_CurHp > 0.0f)
+	{
+		m_CurHp = m_CurHp - Damage;
+		
+
+
+		if (m_CurHp <= 0.0f)
+		{
+			
+		}
+	
+	}
+
+	//m_CurHpText = m_CurHpText + Damage;
+
+	OnRep_CurHp();
+}
+
 void APlayerPlayerState::UpdateBind()
 {
 	APlayerController* pPlayer0 = GetWorld()->GetFirstPlayerController();
@@ -48,15 +70,6 @@ void APlayerPlayerState::UpdateBind()
 
 	FTimerManager& TimeMgr = GetWorldTimerManager();
 	TimeMgr.SetTimer(th_UpdateBind, this, &APlayerPlayerState::UpdateBind, 0.01f, false);
-}
-
-void APlayerPlayerState::AddDamage(float Damage)
-{
-	m_CurHp = m_CurHp - Damage;
-
-	m_CurHpText = m_CurHpText + Damage;
-
-	OnRep_CurHp();
 }
 
 //void APlayerPlayerState::AddDamage_Text(float Damage)
