@@ -36,8 +36,6 @@ void APlayerPlayerState::BeginPlay()
 
 void APlayerPlayerState::AddDamage(float Damage)
 {
-	//m_CurHp = m_CurHp - Damage;
-
 	if (m_CurHp > 0.0f)
 	{
 		m_CurHp = m_CurHp - Damage;
@@ -50,9 +48,6 @@ void APlayerPlayerState::AddDamage(float Damage)
 		}
 	
 	}
-
-	//m_CurHpText = m_CurHpText + Damage;
-
 	OnRep_CurHp();
 }
 
@@ -104,23 +99,6 @@ void APlayerPlayerState::IPS()
 
 	}
 }
-
-//void APlayerPlayerState::AddDamage(float Damage)
-//{
-	//m_CurHp = m_CurHp - Damage;
-
-	//m_CurHpText = m_CurHpText + Damage;
-
-	//OnRep_CurHp();
-//}
-
-//void APlayerPlayerState::AddDamage_Text(float Damage)
-//{
-//	//m_CurHpText = m_CurHpText + Damage;
-//
-//	//OnRep_CurHpText();
-//}
-
 
 void APlayerPlayerState::AddSTM()
 {

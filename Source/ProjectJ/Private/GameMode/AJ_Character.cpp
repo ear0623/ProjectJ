@@ -18,6 +18,10 @@
 #include "Widget/Player/PlayerPlayerState.h"
 #include "Blueprint/UserWidget.h"
 
+#include "GameMode/AJ_AIController.h"
+
+
+
 
 
 // Sets default values
