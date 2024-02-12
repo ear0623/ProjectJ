@@ -53,7 +53,7 @@ public:
 
 
 	UFUNCTION()
-	void SendClientToServer(uint32 Type, const FString& Text);
+	void SendClientToServer(const FString& Text);
 
 	void RecvServerToClient();
 
