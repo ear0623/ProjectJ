@@ -493,26 +493,32 @@ void AAJ_Character::MultiSprint_Implementation()
 {
 	bIsSprintKeyPressed = true;
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	if (!bIsSprint)
 	{
-		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
-		if (PlayerPlayerState)
+		bIsSprint = true;
+
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		if (PlayerController)
 		{
-			float VSTM = PlayerPlayerState->m_CurSTM;
-
-			if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
+			APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
+			if (PlayerPlayerState)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartSprint!")));
-				bIsSprint = true;
-				GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+				float VSTM = PlayerPlayerState->m_CurSTM;
 
-				GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
-				GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+				if (bIsSprintKeyPressed && !bIsSprint && VSTM < 150)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartSprint!")));
 
+					GetCharacterMovement()->MaxWalkSpeed = AJDefaultWalkSpeed * SprintSpeedMultiplier;
+
+					GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
+					GetWorldTimerManager().ClearTimer(STMUTimerHandle);
+
+				}
 			}
 		}
 	}
+	
 	
 }
 
