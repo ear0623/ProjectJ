@@ -65,15 +65,13 @@ void AWeaponBase::SettingOwner_Implementation(ACharacter* character)
 {
 	this->SetOwner(character);
 	OwnedCharacter = character;
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s"),OwnedCharacter.GetFName()));
-
+	
 }
 
 void AWeaponBase::ClearOwner_Implementation()
 {
 	this->SetOwner(nullptr);
 	//OwnedCharacter = nullptr;
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("ClearOwner_Implementation"));
 }
 
 void AWeaponBase::EquipWeapon_Implementation()
@@ -144,16 +142,11 @@ void AWeaponBase::Trigger()
 	{
 		
 	}
-
 	//Bullet 생성
 	MagzineCompo->SpawnAmmo(MuzzleLocation, MuzzleRotation); 
 	MagzineCompo->Fire(this, MuzzleLocation);
 	
-
-
 	UseAmmo();
-	
-
 }
 
 bool AWeaponBase::IsCanShoot()

@@ -71,7 +71,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	EBulletType AmmoType;
 	
 

@@ -606,25 +606,25 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	WeaponClass = Cast<AWeaponBase>(OtherActor);
 	WeaponData = Cast<IWeaponInterface>(OtherActor);
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
-	if (AmmoBase)
-	{
-		float Damage = 10;
-		/*	switch (AmmoBase->AmmoType)
-			{
-				case
-					Damage = 10;
-				break;
-			case EBulletType::AR_7:
-				DamageAmount = 12;
-				break;
-			case EBulletType::AR_9:
-				DamageAmount = 9;
-				break;
-				DamageAmount = 0;
-			default:
-				break;
-			}*/
+	if(AmmoBase)
+	{	
+		
+		float Damage= 10;
 
+		EBulletType Type = EBulletType::AR_5;
+		switch (Type)
+		{
+		case EBulletType::AR_5: 
+			Damage = 10;
+			break;
+		case EBulletType::AR_7:
+			Damage = 20;
+			break;
+		case EBulletType::AR_9:
+			Damage = 8;
+			break;
+		}
+		
 		TObjectPtr<ACharacter> ConvertCharacter = this;
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);//트레이스채널로 다시체크?

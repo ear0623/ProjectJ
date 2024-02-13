@@ -7,7 +7,7 @@
 #include "LobbyGameModeBase.generated.h"
 
 
-class UClientComponent;
+
 /**
  * 
  */
@@ -22,14 +22,6 @@ public:
 
 
 	virtual void BeginPlay() override;
-
-	UPROPERTY()
-	TObjectPtr<UClientComponent> ClientComponent;
-
-	UFUNCTION()
-	void SendClientToServer(uint32 Type, const FString& Text);
-
-	void RecvServerToClient();
 
 	//virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)override;
 

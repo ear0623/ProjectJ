@@ -55,8 +55,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	UFUNCTION(BlueprintCallable)
-	void Connect();
+
+
 public:
 	static bool Receive(FSocket* Socket, uint8* Results, int32 Size);
 
@@ -69,7 +69,7 @@ public:
 	static bool ReceivePacket(FSocket* Socket, TArray<uint8>& OutPayload);
 
 	UFUNCTION()
-	void TestConnect();
+	void Connect();
 
 	void Disconnect();
 
@@ -81,12 +81,16 @@ public:
 	static void PrintSocketError(FString& OutText);
 	static void DestroySocket(FSocket* Socket);
 
+	void TestConeect();
+
 	
 protected:
 	bool bIsRunning;
-private:
-	FSocket* Socket;
+	FSocket* MySocket;
+	bool isConnected;
+
 public:
-	FSocket* GetSocket() const { return Socket; }
+	FSocket* GetSocket() const { return MySocket; }
+	void SetSocket(FSocket* Socket) { MySocket = Socket; }
 
 };
