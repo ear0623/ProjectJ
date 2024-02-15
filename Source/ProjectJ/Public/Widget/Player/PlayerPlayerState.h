@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
-#include "WeaponBase.h"
 #include "PlayerPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FDele_UpdateHp, float, CurHp, float, MaxHp, int, CurHpText);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDele_UpdateSTM, float, CurSTM, float, MaxSTM);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateMagDelegate, int32, Mag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_UpdateMag, int, Mag);
 
 
 //class AWeaponBase;
@@ -32,7 +31,6 @@ public:
 
 	UFUNCTION()
 	void AddDamage(float Damage);
-	
 
 	//UFUNCTION()
 	//void AddDamage_Text(float Damage);
@@ -61,8 +59,8 @@ public:
 	UFUNCTION()
 	void OnRep_CurSTM();
 
-	//UFUNCTION()
-	//void OnRep_Mag();
+	UFUNCTION()
+	void OnRep_Mag();
 
 	UFUNCTION(BlueprintCallable)
 	void UpDateAmmoToHUD(int Ammo);
@@ -87,21 +85,15 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
 	FDele_UpdateSTM m_Dele_UpdateSTM;
 
-	//UPROPERTY(ReplicatedUsing = OnRep_Mag)
-	//float m_Mag;
+	UPROPERTY(ReplicatedUsing = OnRep_Mag)
+	float m_Mag;
 
-	//UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
-	//FUpdateMagDelegate m_Dele_UpdateMag;
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable)
+	FDele_UpdateMag m_Dele_UpdateMag;
 
 	void UpdateBind();
 
 	FTimerHandle th_UpdateBind;
 	
-	UFUNCTION()
-	void HandleUpdateMag(int32 MagValue);
-
-public:
-
-	void IPS();
 	
 };

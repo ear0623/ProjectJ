@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "LobbyWidget.generated.h"
 
-class UChatUserWidget;
 /**
  * 
  */
@@ -16,7 +15,5 @@ class PROJECTJ_API ULobbyWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(meta= (BindWidget))
-	TObjectPtr<UChatUserWidget> ChatWidget;
-	
+
 };

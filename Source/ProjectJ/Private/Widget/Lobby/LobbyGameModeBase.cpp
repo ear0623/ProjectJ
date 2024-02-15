@@ -3,16 +3,3 @@
 
 #include "Widget/Lobby/LobbyGameModeBase.h"
 
-
-ALobbyGameModeBase::ALobbyGameModeBase()
-{
-	
-	
-}
-
-void ALobbyGameModeBase::BeginPlay()
-{
-
-	
-}
-
