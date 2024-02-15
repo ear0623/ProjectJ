@@ -25,9 +25,7 @@ void UChatUserWidget::NativeConstruct()
 void UChatUserWidget::UpatePlayerCount(int32 InPlayerCount)
 {
 	if (PlayerCountTextBox) 
-	{
-		//FString Message = FString::Printf(TEXT("%d Έν"), InPlayerCount); 
-		//PlayerCountTextBox->SetText(FText::FromString(Message)); 
+	{ 
 	}
 }
 

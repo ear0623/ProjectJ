@@ -39,7 +39,7 @@ void UClientComponent::BeginPlay()
 	TSharedRef<FInternetAddr>Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	Addr->SetIp(ip.Value);
 	Addr->SetPort(Port);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Trying to connect.")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Trying to connect.")));
 
 	isConnected = MySocket->Connect(*Addr);
 

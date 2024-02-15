@@ -84,13 +84,13 @@ public:
 
 	void Fire(AWeaponBase* AWeaponBase,const FVector &Center);
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TObjectPtr<UStaticMeshComponent> AmmoMesh;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TObjectPtr<USceneComponent> SceneCompo;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "WeaponComponents")
 	TSubclassOf<AAmmoBase> Bullet;
 
 	FVector SpawnLocation;

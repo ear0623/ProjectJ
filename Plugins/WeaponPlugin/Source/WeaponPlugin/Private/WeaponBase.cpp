@@ -119,7 +119,6 @@ void AWeaponBase::DropWeapon_Multicast_Implementation()
 
 void AWeaponBase::Trigger()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Trigger"));
 	FVector MuzzleLocation= WeaponMesh->GetSocketLocation((TEXT("Muzzle")));
 	FVector BulletForwardVector = WeaponMesh->GetSocketTransform(TEXT("Muzzle")).GetUnitAxis(EAxis::X);
 	FRotator MuzzleRotation = FRotator(BulletForwardVector.X,0,0);
@@ -130,14 +129,12 @@ void AWeaponBase::Trigger()
 	if (TriggerEffect != nullptr)
 	{
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TriggerEffect, MuzleTransfrom);
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Effect"));
 	}
 	FHitResult OutHit;
 	FVector EndLocation = FVector(MuzzleLocation + (this->GetActorForwardVector()*100000));
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	bool RayResult = GetWorld()->LineTraceSingleByChannel(OutHit, MuzzleLocation,EndLocation, ECollisionChannel::ECC_Camera, Params);
-
 	if (RayResult)
 	{
 		

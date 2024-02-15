@@ -32,7 +32,6 @@ void ULobbyMenuUerWidget::ProcessMakeRoom()
 	{
 		GameInstance->OpenWorld();
 	}
-	//UGameplayStatics::OpenLevel(GetWorld(), TEXT("DemoBase"), true, TEXT("listen"));
 }
 
 void ULobbyMenuUerWidget::ProcessConnectServer()

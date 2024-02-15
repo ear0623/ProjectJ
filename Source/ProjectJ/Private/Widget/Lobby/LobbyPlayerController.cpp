@@ -23,15 +23,12 @@ void ALobbyPlayerController::BeginPlay()
 	if (SubSystem && DefaultIMC)
 		SubSystem->AddMappingContext(DefaultIMC, 0);
 
-
 	check(HUdWidgetClass);
 	if (HUdWidgetClass != nullptr)
 	{
 		HUdwidget = CreateWidget<ULobbyWidget>(GetWorld(), HUdWidgetClass); 
 		HUdwidget->AddToViewport();
 	}
-
-	//ClientComponent->Connect();
 }
 
 bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)
@@ -43,7 +40,6 @@ void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMes
 {
 
 	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-		//for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(*It);
 		if (LobbyPC)
@@ -51,7 +47,6 @@ void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMes
 			LobbyPC->S2C_SendMessage(InMessage);
 		}
 	}
-
 }
 
 void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMessage)
@@ -64,9 +59,7 @@ void ALobbyPlayerController::S2C_SendMessage_Implementation(const FString& InMes
 	if (HUdwidget)
 	{
 		HUdwidget->ChatWidget->AddMessage(InMessage);
-
 	}
-	
 }
 
 
@@ -78,14 +71,8 @@ void ALobbyPlayerController::SendClientToServer( const FString& Text)
 	int32 Value = 1024;
 	uint8 Buffer = static_cast<uint8>(Value);
 	int32 BufferSize = sizeof(Buffer);
-	//	ClientComponent->Receive(ClientComponent->GetSocket(),&Buffer,BufferSize);
 }
 
 void ALobbyPlayerController::RecvServerToClient()
 {
-	//ClientComponent->Recv();
-	/*int32 Value = 1024;
-	uint8 Buffer = static_cast<uint8>(Value,0,255);
-	int32 BufferSize = sizeof(Buffer);
-	ClientComponent->Receive(ClientComponent->GetSocket(),&Buffer,BufferSize);*/
 }

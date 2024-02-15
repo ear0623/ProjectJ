@@ -38,8 +38,6 @@ UMagZineComponent::UMagZineComponent()
 	Accelate = 1;
 	//Èû
 	Force = 1;
-
-
 }
 
 
@@ -49,7 +47,6 @@ void UMagZineComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
 
@@ -76,12 +73,8 @@ void UMagZineComponent::SpawnAmmo(const FVector& Location, const FRotator& Rotat
 	SpawnedActor= GetWorld()->SpawnActor<AAmmoBase>(Bullet,SpawnTransform,ActorSpawnParamers);
 	if (SpawnedActor)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Cyan, FString::Printf(TEXT("%d"), SpawnRotation.Pitch));
 	}
-
-	
 }
-
 
 void UMagZineComponent::Fire(AWeaponBase* WeaponBase, const FVector& Center)
 {

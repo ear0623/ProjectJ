@@ -91,8 +91,6 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	UEnhancedInputComponent* UEIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UEIC)
 	{
-
-
 		//Jump
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Started, this, &AAJ_Character::Jump);
 		UEIC->BindAction(IA_Jump, ETriggerEvent::Completed, this, &AAJ_Character::StopJumping);
@@ -122,33 +120,25 @@ void AAJ_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void AAJ_Character::Move(const FInputActionValue& Value)
 {
-	// �Է°� Value �� ���� 2��(X, Y)������ ���� ����.
 	FVector2d Dir = Value.Get<FVector2D>();
-
 
 	FRotator CameraRotation = GetControlRotation();
 	FRotator DirectionRotation = FRotator(0, CameraRotation.Yaw, 0);
 
-
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(DirectionRotation);
 	FVector RightVector = UKismetMathLibrary::GetRightVector(DirectionRotation);
-
 
 	AddMovementInput(ForwardVector, Dir.Y);
 
 	AddMovementInput(RightVector, Dir.X);
-
-
 
 }
 
 // Look
 void AAJ_Character::Look(const FInputActionValue& Value)
 {
-	// ĳ������ ȸ���� ���ؼ� �Է°����κ��� ���� ����.
 	FVector2d Rotation = Value.Get<FVector2D>();
 
-	// Yaw �� ����, Pitch �� ���� �̵����� �߰�.
 	AddControllerYawInput(Rotation.X);
 	AddControllerPitchInput(Rotation.Y);
 }
@@ -187,8 +177,6 @@ void AAJ_Character::StopCrouching(const FInputActionValue& Value)
 
 }
 
-
-
 //Sprint
 void AAJ_Character::Sprint(const FInputActionValue& Value)
 {
@@ -215,7 +203,6 @@ void AAJ_Character::Sprint(const FInputActionValue& Value)
 		}
 	}
 	ServerSprint();
-
 }
 
 
@@ -244,7 +231,6 @@ void AAJ_Character::Dead()
 {
 
 	APlayerPlayerState* ps = Cast<APlayerPlayerState>(GetPlayerState());
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s"),ps));
 	if (IsValid(ps))
 	{
 		ps->m_Dele_UpdateHp.AddDynamic(this, &AAJ_Character::ServerDead);
@@ -309,14 +295,10 @@ void AAJ_Character::STMUTimer()
 		APlayerPlayerState* PlayerPlayerState = Cast<APlayerPlayerState>(PlayerController->PlayerState);
 		if (PlayerPlayerState)
 		{
-
 			PlayerPlayerState->UseSTM();
-
 		}
 	}
 }
-
-///////////////////////////////////////////////////////////Network////////////////////////////////////////////////////////////////////////////////////////////
 
 //Trigger
 void AAJ_Character::ServerTrigger_Implementation()
@@ -333,9 +315,6 @@ void AAJ_Character::MultiTrigger_Implementation()
 	{
 		WeaponData_Multi->Execute_WeaponShoot(WeaponClass_Save);
 	}
-
-
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("WeaponData Null")));
 }
 //Parkour
 void AAJ_Character::ServerParkour_Implementation()
@@ -424,21 +403,12 @@ void AAJ_Character::MultiParkour_Implementation()
 	}
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
 	GetWorldTimerManager().SetTimer(ParkourTimerHandle, this, &AAJ_Character::ParkourTimer, 1.0f, false);
-	//캡슐을 전방으로 1M이동하게 만드세요.
-	//GetCapsuleComponent()->GetForwardVector();
-	// 
-
+	
 	FVector ForwardVector = GetCapsuleComponent()->GetForwardVector();
 	float ForwardX = ForwardVector.X * 100;
 	FVector MovePosion(ForwardX, 0, 0);
-	GetCapsuleComponent()->AddRelativeLocation(MovePosion);// 전방 벡터를 이용하여 플레이어 캐릭터를 앞으로 이동시키기
-
-	//GetWorldTimerManager().SetTimer(ParkourAnimation, this, &AAJ_Character::animationTimer, 0.1f, bLessIsDistnace);
-
-
-	//float MovementSpeed = 100.0f; // 이동 속도 설정 (원하는 값으로 변경)
-	//AddMovementInput(ForwardVector, MovementSpeed);
-
+	GetCapsuleComponent()->AddRelativeLocation(MovePosion);
+	
 }
 
 void AAJ_Character::ServerStartCrouch_Implementation()
@@ -455,13 +425,6 @@ void AAJ_Character::MultiStartCrouch_Implementation()
 {
 	if (!bIsCrouching)
 	{
-		//OriginalCapsuleLocation = GetCapsuleComponent()->GetRelativeLocation();
-		//OriginalCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-
-		// ��ġ, ���̰� ���ݾ� �پ���
-		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight * 0.5f);
-		//GetCapsuleComponent()->SetRelativeLocation(FVector(0.0f, 0.0f, OriginalCapsuleHalfHeight * 0.5f));
-		//Crouch();
 		bIsCrouching = true;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StartCrouch!")));
 	}
@@ -473,9 +436,6 @@ void AAJ_Character::MultiStopCrouching_Implementation()
 	{
 		bIsCrouching = false;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("StopCrouch!")));
-		//GetCapsuleComponent()->SetCapsuleHalfHeight(OriginalCapsuleHalfHeight);
-		//GetCapsuleComponent()->SetRelativeLocation(OriginalCapsuleLocation);
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("falseline")));
 	}
 }
 
@@ -514,13 +474,10 @@ void AAJ_Character::MultiSprint_Implementation()
 
 					GetWorldTimerManager().SetTimer(STMDTimerHandle, this, &AAJ_Character::STMDTimer, 0.1f, true);
 					GetWorldTimerManager().ClearTimer(STMUTimerHandle);
-
 				}
 			}
 		}
 	}
-	
-	
 }
 
 void AAJ_Character::MultiStopSprint_Implementation()
@@ -541,7 +498,6 @@ void AAJ_Character::MultiStopSprint_Implementation()
 void AAJ_Character::ServerReload_Implementation()
 {
 	MultiReload();
-
 }
 void AAJ_Character::MultiReload_Implementation()
 {
@@ -575,14 +531,12 @@ void AAJ_Character::MultiInteraction_Implementation()
 			bIsEquiped = true;
 		}
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("MultiInteraction_Implementation")));
 }
 
 //Dead
 void AAJ_Character::ServerDead_Implementation(float CurHp, float MaxHp, int CurHpText)
 {
 	MultiDead(CurHp, MaxHp, CurHpText);
-
 }
 
 void AAJ_Character::MultiDead_Implementation(float CurHp, float MaxHp, int CurHpText)
@@ -615,7 +569,6 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 	AmmoBase = Cast<AAmmoBase>(OtherActor);
 	if(AmmoBase)
 	{	
-		
 		float Damage= 10;
 
 		EBulletType Type = EBulletType::AR_5;
@@ -640,29 +593,20 @@ void AAJ_Character::OnWeaponBeingOverap(UPrimitiveComponent* OverlappedComponent
 		APlayerPlayerState* PS = Cast<APlayerPlayerState>(GetPlayerState());
 		if (PS)
 		{
-
 			PS->AddDamage(Damage);
-			/*	PS->AddDamage_Text(Damage);*/
 		}
-
-
 		AmmoBase->K2_DestroyActor();
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("%f"),HP));
 	}
 	SaveVariable(OtherActor);
-	//UE_LOG����
-	//UE_LOG(LogTemp, Warning, TEXT("Current values are: vector %s, float %f, and integer %d"), *ExampleVector.ToString(), ExampleFloat, ExampleInteger);
-
 }
 
 void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
 	if (WeaponClass)
 	{
 		if (WeaponData != nullptr)
 		{
-			//WeaponData->Execute_ClearOwner(WeaponClass);
+			
 		}
 	}
 	else if (AmmoBase)
@@ -671,7 +615,6 @@ void AAJ_Character::OnWeaponEndOverap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			AmmoBase->K2_DestroyActor();
 		}
-
 	}
 }
 
@@ -680,7 +623,6 @@ void AAJ_Character::SaveVariable(AActor* OtherActor)
 	if (OtherActor == WeaponClass)
 	{
 		WeaponClass_Save = Cast<AWeaponBase>(OtherActor);
-
 	}
 }
 

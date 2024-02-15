@@ -39,11 +39,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	//public:
-	//	static 
-
-
 private:
 
 	////////Component///////////////////////////////////////////////////////////////////
@@ -117,7 +112,6 @@ public:
 
 	UFUNCTION()
 	void Trigger();
-	//chracter-trigger- winterface- weapon
 public:
 	FName WeaponTag;
 
