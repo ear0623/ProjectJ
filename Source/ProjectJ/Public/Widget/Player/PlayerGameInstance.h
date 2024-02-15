@@ -27,4 +27,6 @@ public:
 
 	FSocket* Socket;
 	ISocketSubsystem* SocketSubsystem;
+
+	void OpenWorld();
 };

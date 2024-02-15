@@ -3,6 +3,7 @@
 
 #include "Widget/Player/PlayerGameInstance.h"
 #include "Sockets.h"
+#include "Kismet/GameplayStatics.h"
 
 
 UPlayerGameInstance::UPlayerGameInstance()
@@ -26,4 +27,9 @@ void UPlayerGameInstance::Init()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("Try to Connet")));
 
 	bool isConnected = Socket->Connect(*Addr);
+}
+
+void UPlayerGameInstance::OpenWorld()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("DemoBase"), true, TEXT("listen"));
 }
