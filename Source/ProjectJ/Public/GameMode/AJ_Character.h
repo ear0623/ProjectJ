@@ -178,7 +178,6 @@ public:
 	//Dead
 	UFUNCTION(Server, Reliable)
 	void ServerDead(float CurHp, float MaxHp, int CurHpText);
-	
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiDead(float CurHp, float MaxHp, int CurHpText);
 
@@ -221,11 +220,9 @@ public:
 	//Crouch varuables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsCrouching;
-
 	//Equip variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsEquiped;
-
 	//Sprint variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	bool bIsSprint; //Sprint variabel
@@ -233,7 +230,6 @@ public:
 	float AJDefaultWalkSpeed; //CharacterDefaultWalkSpeed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	float SprintSpeedMultiplier; //Sprint Speed
-	
 	//Parkour variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Variables)
 	float TraceDistance = 10.0f; //ParkourLinTrace

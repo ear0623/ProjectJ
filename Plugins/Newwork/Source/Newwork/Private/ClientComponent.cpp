@@ -27,9 +27,43 @@ void UClientComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Connect();
+	//Connect();
 	// ...
+	MySocket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("ClientSocket"));
 
+	FString Address = TEXT("127.0.0.1");
+	FIPv4Address ip;
+	FIPv4Address::Parse(Address, ip);
+
+	int32 Port = 15689;
+	TSharedRef<FInternetAddr>Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	Addr->SetIp(ip.Value);
+	Addr->SetPort(Port);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Trying to connect.")));
+
+	isConnected = MySocket->Connect(*Addr);
+
+	if (isConnected)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("True")));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("False")));
+	}
+	FString Message = TEXT("ABCDE");
+	TArray<uint8> MessageBytes;
+
+	const TCHAR* MessageChars = Message.GetCharArray().GetData();
+	// TCHAR 배열을 uint8 배열로 변환
+	for (int32 i = 0; i < Message.Len(); ++i)
+	{
+		MessageBytes.Add(static_cast<uint8>(MessageChars[i]));
+	}
+	int32 BytesSend = 0;
+	// Socket->Send() 함수를 호출하여 uint8 배열을 전송합니다.
+	MySocket->Send(MessageBytes.GetData(), MessageBytes.Num(),BytesSend);
+	Send(MySocket,MessageBytes.GetData(),1024 );
 	
 }
 
@@ -57,19 +91,20 @@ bool UClientComponent::Receive(FSocket* Socket, uint8* Results, int32 Size)
 bool UClientComponent::Send(FSocket* Socket, const uint8* Buffer, int32 Size)
 {
 	int32 BytesSent = 0;
+	
 	bool bSuccess = Socket->Send(Buffer, Size, BytesSent);
+
 	return bSuccess;
 }
 
 bool UClientComponent::SendPacket(FSocket* Socket, uint32 Type, const TArray<uint8>& Payload)
 {
-	UE_LOG(LogTemp, Log, TEXT("SendPacketPart"));
 	return SendPacket(Socket, Type, Payload.GetData(), Payload.Num());
 }
 
 bool UClientComponent::SendPacket(FSocket* Socket, uint32 Type, const uint8* Payload, int32 PayloadSize)
 {
-	UE_LOG(LogTemp, Log, TEXT("SendPacketPart2"));
+	
 	// make a header for the payload
 	FMessageHeader Header(Type, PayloadSize);
 	constexpr static int32 HeaderSize = sizeof(FMessageHeader);
@@ -77,7 +112,12 @@ bool UClientComponent::SendPacket(FSocket* Socket, uint32 Type, const uint8* Pay
 	// serialize out the header
 	FBufferArchive Ar;
 	Ar << Header;
-
+	int32 BytesSent = 1024;
+	bool bSuccess = Socket->Send(Payload,HeaderSize,BytesSent);
+	if (bSuccess)
+	{
+		UE_LOG(LogTemp, Log, TEXT("True"));
+	}
 	// append the payload bytes to send it in one network packet
 	Ar.Append(Payload, PayloadSize);
 
@@ -124,39 +164,41 @@ bool UClientComponent::ReceivePacket(FSocket* Socket, TArray<uint8>& OutPayload)
 
 void UClientComponent::Connect()
 {
-	Socket = FTcpSocketBuilder(TEXT("ClientSocket"));
+	MySocket = FTcpSocketBuilder(TEXT("ClientSocket"));
 
 	FString IPAddress = TEXT("127.0.0.1");
 	uint16 PortNumber = 15689;
 
-	if (Connecter(Socket, IPAddress, PortNumber))
+	if (Connecter(MySocket, IPAddress, PortNumber))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Socket Connected"));
-		Socket->SetNonBlocking(false);
+		MySocket->SetNonBlocking(false);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Socket Connect Failed."));
 
-		DestroySocket(Socket);
+		DestroySocket(MySocket);
 	}
 	
 }
 
 void UClientComponent::Disconnect()
 {
-	DestroySocket(Socket);
+	DestroySocket(MySocket);
 }
 
 void UClientComponent::Send(uint32 Type, const FString& Text)
 {
-	UE_LOG(LogTemp, Log, TEXT("SendPart"));
+	
+	int32 BytesSent = 1024;
 	FTCHARToUTF8 Convert(*Text);
 	FArrayWriter WriterArray;
 	WriterArray.Serialize((UTF8CHAR*)Convert.Get(), Convert.Length());
-	if (SendPacket(Socket, Type, WriterArray))
+	if (SendPacket(MySocket, Type, WriterArray))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Sent Text : %s  Size : %d"), *Text, WriterArray.Num());
+		
 	}
 }
 
@@ -167,7 +209,7 @@ void UClientComponent::Recv()
 
 	TArray<uint8> Payload;
 
-	if (ReceivePacket(Socket, Payload))
+	if (ReceivePacket(MySocket, Payload))
 	{
 		FString Data(Payload.Num(), (char*)Payload.GetData());
 		UE_LOG(LogTemp, Log, TEXT("Recv data success.  data : %s  Payload : %d  size : %d"), *Data, Payload.Num(), Data.Len());
@@ -240,4 +282,54 @@ void UClientComponent::DestroySocket(FSocket* Socket)
 			UE_LOG(LogTemp, Log, TEXT("Socket Closed."));
 		}
 	}
+}
+
+void UClientComponent::TestConeect()
+{
+	
+		ISocketSubsystem* Socketsubsystem = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM);
+		FSocket* ServerSocket = Socketsubsystem->CreateSocket(NAME_Stream, TEXT("serversocket"), false);
+		if (!Socketsubsystem)
+		{
+			//subsystem
+		}
+		if (!ServerSocket)
+		{
+			//socket
+		}
+		FIPv4Address ServerIP(127, 0, 0, 1);
+
+		TSharedRef<FInternetAddr> ServerAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+		ServerAddr->SetIp(ServerIP.Value);
+		ServerAddr->SetPort(15689);
+
+		bool Connected = ServerSocket->Connect(*ServerAddr);
+
+		//TObjectPtr<FSocket> fSocket = FTcpSocketBuilder(TEXT("MyTCPClient")).AsReusable().BoundToAddress(ANY_ADDRESS)
+
+		TArray<uint8> SendBuffer;
+		TArray<uint8> ReciveBuffer;
+		FTimespan WaitTime = FTimespan::FromSeconds(1);
+		while (bIsRunning)
+		{
+			if (Connected)
+			{
+				int32 ByteSend = 0;
+				ServerSocket->Send(SendBuffer.GetData(), SendBuffer.Num(), ByteSend);
+
+				int32 ByteRecived = 0;
+				if (ServerSocket->Wait(ESocketWaitConditions::WaitForRead, WaitTime))
+				{
+					ReciveBuffer.SetNumUninitialized(1024);
+					ServerSocket->Recv(ReciveBuffer.GetData(), ReciveBuffer.Num(), ByteRecived);
+				}
+			}
+			UE_LOG(LogTemp, Warning, TEXT("Client"));
+			FPlatformProcess::Sleep(0.01f);
+		}
+
+		ServerSocket->Close();
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ServerSocket);
+	
+
 }

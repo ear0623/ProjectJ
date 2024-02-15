@@ -81,12 +81,16 @@ public:
 	static void PrintSocketError(FString& OutText);
 	static void DestroySocket(FSocket* Socket);
 
+	void TestConeect();
+
 	
 protected:
 	bool bIsRunning;
-	FSocket* Socket;
+	FSocket* MySocket;
+	bool isConnected;
 
 public:
-	FSocket* GetSocket() const { return Socket; }
+	FSocket* GetSocket() const { return MySocket; }
+	void SetSocket(FSocket* Socket) { MySocket = Socket; }
 
 };

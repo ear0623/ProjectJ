@@ -46,6 +46,7 @@ void UChatUserWidget::ProcessCommitted(const FText& Text, ETextCommit::Type Comm
 		{
 		case ETextCommit::OnEnter:
 			LobbyPC->C2S_SendMessage(ChatInputTextBox->GetText().ToString());
+			LobbyPC->SendClientToServer(ChatInputTextBox->GetText().ToString());
 			ChatInputTextBox->SetText(FText::FromString(TEXT("")));
 			break;
 		case ETextCommit::OnCleared:
