@@ -61,9 +61,13 @@ ProjectJ
 2024.02.04 sql thirdparty 생성 driver.h virtual 소멸자부분 오류처리 미해결 인클루드에서 임시주석처리
 
 2024.02.05 patrol, chase, attack 
+
 2024.02.06 patrol, chase, attack 다 고침
 
 2024.02.07 사망모션 구현
+
 2024.02.08 애니메이션 ㄹㅇ고침.
 
 2024.02.08 포크 수정중
+
+2024.02.15 맵 파일 체크
