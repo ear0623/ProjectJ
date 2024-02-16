@@ -38,7 +38,6 @@ bool ALobbyPlayerController::C2S_SendMessage_Validate(const FString& InMessage)
 
 void ALobbyPlayerController::C2S_SendMessage_Implementation(const FString& InMessage)
 {
-
 	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(*It);
